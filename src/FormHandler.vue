@@ -17,7 +17,7 @@ const props: FormHandlerParams = defineProps({
     interceptor: Function as PropType<FormHandlerParams['interceptor']>,
     validate: Function as PropType<FormHandlerParams['validate']>
 })
-const { handleBlur, handleChange, ...formHandler } = useFormHandler({
+const formHandler = useFormHandler({
     initialValues: props.initialValues,
     interceptor: props.interceptor,
     validate: props.validate,
