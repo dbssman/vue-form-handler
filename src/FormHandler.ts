@@ -2,6 +2,7 @@ import { useFormHandler } from './useFormHandler';
 import { FormHandlerParams } from './types';
 import { SetupContext } from 'vue';
 
+//TODO: Check why types are wrong on this
 export default {
     name: 'FormHandler',
     props: {
@@ -10,7 +11,7 @@ export default {
         validate: Function
     },
     setup: (props:FormHandlerParams, {slots}: SetupContext) => {
-        const { handleBlur, handleChange, ...formHandler } = useFormHandler({
+        const formHandler = useFormHandler({
             initialValues: props.initialValues,
             interceptor: props.interceptor,
             validate: props.validate,

@@ -1,25 +1,18 @@
-import { ModifiedValues } from './types';
-import { FormHandlerParams, FormState, FormHandlerReturn, BaseProps, HandleSubmit, KeyValueFn, KeyFn, Register } from './types';
-import { reactive, readonly } from 'vue'
+import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitFieldState, SetError, ClearErrors } from './types';
+import { FormState, HandleSubmit, KeyValueFn, KeyFn, Register } from './types';
+import { reactive, readonly, watch } from 'vue'
 import {isEqual} from 'lodash-es'
-
-//TODO: check if interesting to have or not
-const initState = (initialValues = {}) =>
-  Object.keys(initialValues).reduce((accumulator: any, current: string) => {
-    accumulator[current] = false
-    return accumulator
-  }, {})
-
-export const useFormHandler: (_:FormHandlerParams) => FormHandlerReturn = ({ 
+//TODO: unify key-name
+export const useFormHandler:FormHandler = ({ 
   initialValues = {}, 
   interceptor = () => true, 
-  validate = () => true 
-}) => {
+  validate,
+  options = { validationBehaviour: 'always', validationErrors: 'first' }
+} = {}) => {
+  const values:Record<string,any> = reactive({ ...initialValues })
+  let validations:Record<string,Validations> = {}
+  let defaultValues:Record<string,any> = {}
 
-  //TODO: proper initializer
-  const values = reactive<any>({ ...initialValues })
-
-  //TODO: formState initializer?
   const formState = reactive<FormState>({
     touched: {},
     dirty: {},
@@ -29,14 +22,37 @@ export const useFormHandler: (_:FormHandlerParams) => FormHandlerReturn = ({
     isValid: true,
   })
 
-  const register:Register = (name, {native} = {}) => ({
-   name,
-   modelValue: values[name],
-   ...(native !== false && {value: values[name]}),
-   ...(native !== false && {onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))}),
-   'onUpdate:modelValue': (value:any) => handleChange(name,value),
-   onBlur: () => handleBlur(name)
-  })
+  const initFieldState:InitFieldState = (name, options) => {
+    validations = {
+      ...validations,
+      [name]: options.validations || {}
+    }
+    defaultValues = {
+      ...defaultValues,
+      [name]: options.defaultValue
+    }
+    if(Object.keys(initialValues).includes(name) || values[name] !== undefined){
+      return
+    }
+    values[name] = options.defaultValue ?? null
+  }
+
+  const register:Register = (name, options = {}) => {
+    initFieldState(name,options);
+    return({
+      name,
+      errors: Object.values(formState.errors[name] || {}) || [],
+      modelValue: values[name],
+      'onUpdate:modelValue': (value:any) => handleChange(name,value),
+      onBlur: () => handleBlur(name),
+      ...(options.withDetails && {
+        isDirty: formState.dirty[name],
+        isTouched: formState.touched[name],
+      }),
+      ...(options.native !== false && {value: values[name]}),
+      ...(options.native !== false && {onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))}),
+      ...(options.clearable && {onClear: () => resetField(name)})
+  })}
 
   const setDirtyState:KeyValueFn = (key, value) => {
     if(formState.dirty[key] !== value){
@@ -52,57 +68,106 @@ export const useFormHandler: (_:FormHandlerParams) => FormHandlerReturn = ({
     }
   }
 
-  const setValue = (key: string, value: any = null) => {
-    if (interceptor()) {
+  const setValue:KeyValueFn = (key, value = null) => {
+    if (interceptor(key,value)) {
       values[key] = value
       setDirtyState(key, !isEqual(value, initialValues[key]))
     }
   }
 
+  const isValid = () => {
+    formState.isValid = !Object.keys(formState.errors).some(field => Object.keys(formState.errors[field]).length)
+  }
+
+  const triggerValidation:TriggerValidation = async (key) => {
+    formState.errors[key] = {}
+    for(const [name,validation] of Object.entries(validations[key])){
+      const result = validation(values[key])
+      formState.errors[key] = {
+        ...formState.errors[key],
+        ...(result !== true && {[name]: result})
+      }
+      if(result !== true && options.validationErrors !== 'all'){
+        break;
+      }
+    }
+  }
+
   const handleBlur:KeyFn = (key) => {
     setTouchedState(key,true)
+    triggerValidation(key)
   }
 
   const handleChange:KeyValueFn = (key, value = null) => {
     setValue(key, value)
     setTouchedState(key,true)
+    triggerValidation(key)
   }
 
-  const resetField:KeyValueFn = (key, initial = false) => {
-    setValue(key, initial ? initialValues[key] : null)
-    setDirtyState(key,false)
-    setTouchedState(key,false)
+  const resetField:ResetField = (key, initial = false) => {
+    setValue(key, initial ? initialValues[key] : (defaultValues[key] ?? null))
   }
 
-  const resetForm = (initial = false) => {
+  const resetForm:ResetForm = (initial = false) => {
     Object.keys(values).forEach((key)=>{
       resetField(key, initial)
     })
   }
 
-  const handleSubmit:HandleSubmit = (successFn, {full, diff}) => {
-    if(validate){
-      successFn(diff 
-        ? modifiedValues() 
-        : values,
-        full && !diff && modifiedValues());
+  const setError:SetError = (key, error, replace = false) => {
+    formState.errors[key] = {
+      ...(!replace && formState.errors[key]),
+      ...error
     }
+  }
+
+  const clearErrors:ClearErrors = (key, errors) => {
+    if(!key){
+      formState.errors = {}
+      return;
+    }
+    if(!errors){
+      formState.errors[key] = {}
+      return;
+    }
+    formState.errors[key] = Object.fromEntries(Object.entries(formState.errors[key])
+    .filter(([key])=> Array.isArray(errors) ? !errors.includes(key) : errors !== key))
   }
 
   const modifiedValues:ModifiedValues = () => {
     return Object.fromEntries(Object.entries(values).filter(([key]) => formState.dirty[key]))
   }
 
+  const handleSubmit:HandleSubmit = async (successFn, errorFn, {diff} = {}) => {
+    if(validate ? validate() : formState.isValid){
+      successFn(diff ? modifiedValues() : values)
+      return
+    }
+    if(errorFn){
+      errorFn(formState.errors)
+      return
+    }
+    throw new Error('One or more errors found during validation')
+  }
+
+
+  watch(
+  ()=> formState.errors,
+  ()=> {
+    isValid();
+  }, {deep:true})
+
   return {
     values: readonly(values),
     formState,
     register,
     setValue,
-    modifiedValues,
+    setError,
+    clearErrors,
     resetField,
     resetForm,
-    handleBlur,
-    handleChange,
     handleSubmit,
+    modifiedValues,
+    triggerValidation,
   }
 }
