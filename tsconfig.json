@@ -15,7 +15,10 @@
     ],
     "skipLibCheck": true,
     "noEmit": true,
-    "declaration": true
+    "declaration": true,
+    "types": [
+      "vitest/importMeta"
+    ]
   },
   "include": [
     "src/**/*.ts",

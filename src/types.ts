@@ -53,7 +53,7 @@ export interface FormState {
     errors: Record<string,any>
 }
 
-export type ValidationFn = (_:any)=>boolean|string
+export type ValidationFn = (_:any)=>Promise<boolean|string>|boolean|string
 export type Validations = Record<string,ValidationFn>
 export interface RegisterOptions {
     /** Indicates wether the input is native or not, set to false if the extra listeners are not desired */
@@ -73,13 +73,14 @@ export interface RegisterOptions {
 }
 export type Register = (name:string, options?: RegisterOptions) => BaseProps
 
-export type ResetField = (key:string, initial?:boolean) => void
-export type ResetForm = (initial:boolean) => void
+export type ResetField = (key:string) => void
+export type ResetForm = () => void
 export type SetError = (key:string, error:any, replace?:boolean) => void
 export type ClearErrors = (key?:string, errors?:string|string[]) => void
+export type ClearField = (key:string) => Promise<void>
 export type InitFieldState = (name:string, options:RegisterOptions) => void
 
-export type TriggerValidation = (key:string) => void
+export type TriggerValidation = (key?:string) => Promise<void>
 
 export interface HandleSubmitOptions {
     /** Set to true if just the dirty(modified) fields are desired to be emitted */
@@ -90,11 +91,17 @@ export interface HandleSubmitOptions {
 export type KeyFn = (key:string) => void
 export type KeyValueFn = (_:string, value:any) => void
 
+
+export type SetValue = (key:string,value:any) => Promise<void>
 export type ModifiedValues = () => Object
 export type HandleSubmitSuccessFn = (values: Object) => void
 export type HandleSubmitErrorFn = (errors:Object) => void
 export type HandleSubmit = (successFn:HandleSubmitSuccessFn, errorFn?:HandleSubmitErrorFn, options?: HandleSubmitOptions)=>void
-
+export interface InterceptorParams {
+    key:string,
+    value:any,
+    formState: FormState
+}
 export interface FormHandlerOptions{
     /** Set to submit if validations are desired before sending the form */
     validationBehaviour?: 'always' | 'submit'
@@ -107,10 +114,10 @@ export interface FormHandlerParams {
     initialValues?: {[key:string]: string}
 
     /** Field change interceptor */
-    interceptor?:(...args:any[])=>boolean
+    interceptor?:(_:InterceptorParams)=>boolean
 
     /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-    validate?:()=>boolean
+    validate?:()=>Promise<boolean>|boolean
 
     /** Options for the form handler */
     options?:FormHandlerOptions
@@ -130,13 +137,16 @@ export interface FormHandlerReturn {
     modifiedValues: ModifiedValues
 
     /** Function to set the value of a field programmatically */
-    setValue: KeyValueFn
+    setValue: SetValue
 
     /** Function to set an error on a field programmatically */
     setError: SetError
 
     /** Function to clear one or more errors on a desired field or the whole form*/
     clearErrors:ClearErrors
+
+    /** Function to clear a desired field*/
+    clearField:ClearField
 
     /** Function to reset a field */
     resetField: ResetField
