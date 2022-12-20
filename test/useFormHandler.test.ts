@@ -1,7 +1,7 @@
 import useFormHandler from '../src/useFormHandler';
 import { expect, it, describe } from "vitest"
 
-const sleep = ()=> new Promise((resolve) => setTimeout(()=> resolve(true),50))
+const sleep = () => new Promise((resolve) => setTimeout(()=> resolve(true),50))
 
 describe('Form handler testing', () => {
     it('Initial form state and values', () => {
@@ -29,7 +29,7 @@ describe('Form handler testing', () => {
         expect(values.field).toBe('oneTwoThree')
         expect(formState.isDirty).toBeTruthy()
     })
-    it('Clearing a field programmatically', async() => {
+    it('Clearing a field programmatically', async () => {
         const {values, setValue, formState, clearField} = useFormHandler();
         await setValue('field', 'oneTwoThree');
         expect(values.field).toBe('oneTwoThree')
@@ -37,6 +37,16 @@ describe('Form handler testing', () => {
         await clearField('field');
         expect(values.field).toBe(null)
         expect(formState.isDirty).toBeFalsy()
+    })
+    it('Clearing an initialized field leaves it dirty', async () => {
+        const {values, formState, clearField} = useFormHandler({
+            initialValues:{ field: 'value' }
+        });
+        expect(values.field).toBe('value')
+        expect(formState.isDirty).toBeFalsy()
+        await clearField('field');
+        expect(values.field).toBe(null)
+        expect(formState.isDirty).toBeTruthy()
     })
     it('Setting an error programmatically', async () => {
         const {formState,setError} = useFormHandler();
