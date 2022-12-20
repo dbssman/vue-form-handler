@@ -191,7 +191,7 @@ const useFormHandler:FormHandler = ({
   ()=> formState.errors,
   ()=> {
     isValid();
-  }, {deep:true})
+  }, {deep:true, immediate:true})
 
   return {
     values: readonly(values),
