@@ -1,4 +1,4 @@
-import { BaseEmits } from "./types"
+import { BaseControlEmits } from "./types"
 
 export const BaseInputProps = {
     name: { type: String, required: true },
@@ -10,4 +10,4 @@ export const BaseInputProps = {
     modelValue: { type: [String, Object, Array, Number,Boolean, null], required:true},
     'onUpdate:modelValue': { type: Function, required: true },
   }
-export const BaseInputEmits:BaseEmits = ['update:modelValue', 'blur', 'clear']
+export const BaseInputEmits:BaseControlEmits = ['update:modelValue', 'blur', 'clear']
