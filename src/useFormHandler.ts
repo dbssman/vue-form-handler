@@ -1,18 +1,16 @@
-import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitFieldState, SetError, ClearErrors } from './types';
+import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitFieldState, SetError, ClearErrors, SetValue, ClearField } from './types';
 import { FormState, HandleSubmit, KeyValueFn, KeyFn, Register } from './types';
 import { reactive, readonly, watch } from 'vue'
 import {isEqual} from 'lodash-es'
 //TODO: unify key-name
+//TODO: separate synchronous from asynchronous validations
 export const useFormHandler:FormHandler = ({ 
   initialValues = {}, 
-  interceptor = () => true, 
+  interceptor = async () => true, 
   validate,
   options = { validationBehaviour: 'always', validationErrors: 'first' }
 } = {}) => {
   const values:Record<string,any> = reactive({ ...initialValues })
-  let validations:Record<string,Validations> = {}
-  let defaultValues:Record<string,any> = {}
-
   const formState = reactive<FormState>({
     touched: {},
     dirty: {},
@@ -21,6 +19,9 @@ export const useFormHandler:FormHandler = ({
     isTouched: false,
     isValid: true,
   })
+
+  let validations:Record<string,Validations> = {}
+  let defaultValues:Record<string,any> = {}
 
   const initFieldState:InitFieldState = (name, options) => {
     validations = {
@@ -31,7 +32,8 @@ export const useFormHandler:FormHandler = ({
       ...defaultValues,
       [name]: options.defaultValue
     }
-    if(Object.keys(initialValues).includes(name) || values[name] !== undefined){
+    if(Object.keys(initialValues).includes(name) 
+    || values[name] !== undefined){
       return
     }
     values[name] = options.defaultValue ?? null
@@ -42,15 +44,19 @@ export const useFormHandler:FormHandler = ({
     return({
       name,
       errors: Object.values(formState.errors[name] || {}) || [],
-      modelValue: values[name],
-      'onUpdate:modelValue': (value:any) => handleChange(name,value),
       onBlur: () => handleBlur(name),
       ...(options.withDetails && {
-        isDirty: formState.dirty[name],
-        isTouched: formState.touched[name],
+        isDirty: !!formState.dirty[name],
+        isTouched: !!formState.touched[name],
       }),
-      ...(options.native !== false && {value: values[name]}),
-      ...(options.native !== false && {onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))}),
+      ...(options.native !== true && {
+        modelValue: values[name],
+        'onUpdate:modelValue': (value:any) => handleChange(name,value),
+      }),
+      ...(options.native !== false && {
+        value: values[name],
+        onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))
+      }),
       ...(options.clearable && {onClear: () => resetField(name)})
   })}
 
@@ -68,10 +74,11 @@ export const useFormHandler:FormHandler = ({
     }
   }
 
-  const setValue:KeyValueFn = (key, value = null) => {
-    if (interceptor(key,value)) {
+  const setValue:SetValue = async (key, value = null) => {
+    const result = await interceptor({key,value,formState});
+      if(!!result) {
       values[key] = value
-      setDirtyState(key, !isEqual(value, initialValues[key]))
+      setDirtyState(key, !isEqual(value, initialValues[key] ?? (defaultValues[key] ?? null)))
     }
   }
 
@@ -80,9 +87,21 @@ export const useFormHandler:FormHandler = ({
   }
 
   const triggerValidation:TriggerValidation = async (key) => {
+    if(!Object.keys(validations).length){
+      return
+    }
+    if(!key){
+      for(const field of Object.keys(values)){
+        await triggerValidation(field)
+      }
+      return
+    }
+    if(!Object.keys(validations[key]).length){
+      return
+    }
     formState.errors[key] = {}
     for(const [name,validation] of Object.entries(validations[key])){
-      const result = validation(values[key])
+      const result = await validation(values[key])
       formState.errors[key] = {
         ...formState.errors[key],
         ...(result !== true && {[name]: result})
@@ -98,19 +117,24 @@ export const useFormHandler:FormHandler = ({
     triggerValidation(key)
   }
 
-  const handleChange:KeyValueFn = (key, value = null) => {
-    setValue(key, value)
+  const handleChange:KeyValueFn = async (key, value = null) => {
+    await setValue(key, value)
     setTouchedState(key,true)
     triggerValidation(key)
   }
 
-  const resetField:ResetField = (key, initial = false) => {
-    setValue(key, initial ? initialValues[key] : (defaultValues[key] ?? null))
+  const clearField:ClearField = async (key) => {
+    await setValue(key, defaultValues[key] ?? null)
   }
 
-  const resetForm:ResetForm = (initial = false) => {
+  const resetField:ResetField = (key) => {
+    setValue(key, initialValues[key] ?? defaultValues[key] ?? null)
+    setTouchedState(key, false)
+  }
+
+  const resetForm:ResetForm = () => {
     Object.keys(values).forEach((key)=>{
-      resetField(key, initial)
+      resetField(key)
     })
   }
 
@@ -139,8 +163,16 @@ export const useFormHandler:FormHandler = ({
   }
 
   const handleSubmit:HandleSubmit = async (successFn, errorFn, {diff} = {}) => {
-    if(validate ? validate() : formState.isValid){
-      successFn(diff ? modifiedValues() : values)
+    let valid = false;
+    if(validate){
+      valid = await validate()
+    }
+    else{
+      await triggerValidation() // just validate non-dirty fields?
+      valid = formState.isValid
+    }
+    if(valid){
+      successFn(values)
       return
     }
     if(errorFn){
@@ -164,6 +196,7 @@ export const useFormHandler:FormHandler = ({
     setValue,
     setError,
     clearErrors,
+    clearField,
     resetField,
     resetForm,
     handleSubmit,
