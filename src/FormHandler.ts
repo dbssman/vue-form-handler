@@ -1,5 +1,5 @@
 import useFormHandler from './useFormHandler';
-import { FormHandlerParams } from './types';
+import { FormHandlerParams, FormHandlerReturn } from './types';
 import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
@@ -11,12 +11,12 @@ export default defineComponent({
         options: Object as PropType<FormHandlerParams['options']>
     },
     setup: (props, {slots}) => {
-        const {register, ...formHandler} = useFormHandler({
+        const {...formHandler} = useFormHandler({
             initialValues: props.initialValues,
             interceptor: props.interceptor,
             validate: props.validate,
             options: props.options
         })
-        return () => slots.default && slots.default({register,...formHandler})
+        return () => slots.default && slots.default({...formHandler} as FormHandlerReturn)
     }
 })

@@ -36,9 +36,6 @@ export type EmitOption = 'update:modelValue' | 'blur' | 'clear'
 /** Emit collection for a base control */
 export type BaseControlEmits = EmitOption[]
 
-export type ValidationFn = (_:any)=>Promise<boolean|string>|boolean|string
-export type Validations = Record<string,ValidationFn>
-
 export interface FormState {
     /** Boolean holding the dirty state of the form */
     isDirty: boolean
@@ -59,6 +56,12 @@ export interface FormState {
     errors: Record<string,any>
 }
 
+/** Function returning true for correct validation or a string with an error if it's invalid */
+export type ValidationFn = (_:any)=>Promise<boolean|string>|boolean|string
+
+/** Validations collection as an object */
+export type Validations = Record<string,ValidationFn>
+
 export interface RegisterOptions {
     /** Indicates wether the input is native or not, set to false if the extra listeners are not desired */
     native?: boolean
@@ -76,8 +79,35 @@ export interface RegisterOptions {
     withDetails?: boolean
 }
 
+/** Gets the initial/default/fallback value for a control */
+export type GetInitValueForControl = (name:string) => any
+
+/** Field initializer */
+export type InitControl = (name:string, options:RegisterOptions) => void
+
 /** Function that allows you to register a control to interact with the form */
 export type Register = (name:string, options?: RegisterOptions) => BaseControlProps
+
+/** Sets dirty state of a control */
+export type SetDirty = (name:string, dirty:boolean) => void
+
+/** Sets touched state of a control */
+export type SetTouched = (name:string, touched:boolean) => void
+
+/** Function to set a value programmatically */
+export type SetValue = (name:string, value:any) => Promise<void>
+
+/** Function to trigger validations programmatically */
+export type TriggerValidation = (name?:string) => Promise<void>
+
+/** Control blur handler */
+export type HandleBlur = (name:string) => void
+
+/** Control change handler */
+export type HandleChange = (name:string, value?:any) => Promise<void>
+
+/** Function to set an error programmatically */
+export type ClearField = (name:string) => Promise<void>
 
 /** Function to reset a control programmatically*/
 export type ResetField = (name:string) => void
@@ -91,35 +121,8 @@ export type SetError = (name:string, error:any, replace?:boolean) => void
 /** Function to clear an error programmatically */
 export type ClearErrors = (name?:string, errors?:string|string[]) => void
 
-/** Function to set an error programmatically */
-export type ClearField = (name:string) => Promise<void>
-
-/** Gets the initial/default/fallback value for a control */
-export type GetInitValueForControl = (name:string) => any
-
-/** Field initializer */
-export type InitControl = (name:string, options:RegisterOptions) => void
-
-/** Function to trigger validations programmatically */
-export type TriggerValidation = (name?:string) => Promise<void>
-
-/** Sets dirty state of a control */
-export type SetDirty = (name:string, dirty:boolean) => void
-
-/** Sets touched state of a control */
-export type SetTouched = (name:string, touched:boolean) => void
-
-/** Function to set a value programmatically */
-export type SetValue = (name:string, value:any) => Promise<void>
-
 /** Function to get the modified values of the form */
 export type ModifiedValues = () => Object
-
-/** Control blur handler */
-export type HandleBlur = (name:string) => void
-
-/** Control change handler */
-export type HandleChange = (name:string, value?:any) => Promise<void>
 
 /** Expected function to be called after a form submitted successfully */
 export type HandleSubmitSuccessFn = (values: Object) => void
@@ -148,7 +151,7 @@ export interface FormHandlerOptions{
 }
 export interface FormHandlerParams {
     /** Values to initialize the form */
-    initialValues?: {[name:string]: string}
+    initialValues?: Record<string,any>
 
     /** Field change interceptor */
     interceptor?:(_:InterceptorParams)=>boolean
@@ -198,4 +201,5 @@ export interface FormHandlerReturn {
     triggerValidation:TriggerValidation
 }
 
+/** Form handler solution as a composable function */
 export type FormHandler = (_?:FormHandlerParams)=>FormHandlerReturn
