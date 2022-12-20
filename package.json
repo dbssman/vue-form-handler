@@ -19,12 +19,11 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --dom",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "path": "^0.12.7",
+    "happy-dom": "^8.1.0",
     "vite-plugin-dts": "^1.7.1",
     "vue": "^3.2.41"
   },
@@ -32,6 +31,9 @@
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
+    "@vue/test-utils": "^2.2.6",
+    "lodash-es": "^4.17.21",
+    "path": "^0.12.7",
     "typescript": "^4.6.4",
     "vite": "^3.2.3",
     "vitest": "^0.26.1",

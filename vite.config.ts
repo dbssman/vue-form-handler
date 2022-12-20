@@ -12,6 +12,7 @@ export default defineConfig({
   },
   test: {
     includeSource: ['test/*'],
+    environment: 'happy-dom'
   },
   build: {
     lib: {
