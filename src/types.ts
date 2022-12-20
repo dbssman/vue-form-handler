@@ -1,14 +1,15 @@
-export interface BaseProps { 
-    /** Name of the field */
+/** Props for a base control */
+export interface BaseControlProps { 
+    /** Name of the control */
     name: string,
 
-    /** Current errors of the field */
+    /** Current errors of the control */
     errors?:string[]
 
-    /** Current dirty state of the field */
+    /** Current dirty state of the control */
     isDirty?:boolean
 
-    /** Current touched state of the field */
+    /** Current touched state of the control */
     isTouched?:boolean
     
     /** Value binding for native inputs */
@@ -30,8 +31,13 @@ export interface BaseProps {
     onClear?:()=>void,
 }
 
-export type BaseEmitOptions = 'update:modelValue' | 'blur' | 'clear'
-export type BaseEmits = BaseEmitOptions[]
+/** Each emit the handler could be expecting */
+export type EmitOption = 'update:modelValue' | 'blur' | 'clear'
+/** Emit collection for a base control */
+export type BaseControlEmits = EmitOption[]
+
+export type ValidationFn = (_:any)=>Promise<boolean|string>|boolean|string
+export type Validations = Record<string,ValidationFn>
 
 export interface FormState {
     /** Boolean holding the dirty state of the form */
@@ -53,8 +59,6 @@ export interface FormState {
     errors: Record<string,any>
 }
 
-export type ValidationFn = (_:any)=>Promise<boolean|string>|boolean|string
-export type Validations = Record<string,ValidationFn>
 export interface RegisterOptions {
     /** Indicates wether the input is native or not, set to false if the extra listeners are not desired */
     native?: boolean
@@ -71,37 +75,70 @@ export interface RegisterOptions {
     /** Set to true if you want to bind also dirty and touched states */
     withDetails?: boolean
 }
-export type Register = (name:string, options?: RegisterOptions) => BaseProps
 
-export type ResetField = (key:string) => void
+/** Function that allows you to register a control to interact with the form */
+export type Register = (name:string, options?: RegisterOptions) => BaseControlProps
+
+/** Function to reset a control programmatically*/
+export type ResetField = (name:string) => void
+
+/** Function to reset the whole form programmatically*/
 export type ResetForm = () => void
-export type SetError = (key:string, error:any, replace?:boolean) => void
-export type ClearErrors = (key?:string, errors?:string|string[]) => void
-export type ClearField = (key:string) => Promise<void>
-export type InitFieldState = (name:string, options:RegisterOptions) => void
 
-export type TriggerValidation = (key?:string) => Promise<void>
+/** Function to set an error programmatically */
+export type SetError = (name:string, error:any, replace?:boolean) => void
 
-export interface HandleSubmitOptions {
-    /** Set to true if just the dirty(modified) fields are desired to be emitted */
-    diff?: boolean
-}
+/** Function to clear an error programmatically */
+export type ClearErrors = (name?:string, errors?:string|string[]) => void
 
-//TODO: remove generics
-export type KeyFn = (key:string) => void
-export type KeyValueFn = (_:string, value:any) => void
+/** Function to set an error programmatically */
+export type ClearField = (name:string) => Promise<void>
 
+/** Gets the initial/default/fallback value for a control */
+export type GetInitValueForControl = (name:string) => any
 
-export type SetValue = (key:string,value:any) => Promise<void>
+/** Field initializer */
+export type InitControl = (name:string, options:RegisterOptions) => void
+
+/** Function to trigger validations programmatically */
+export type TriggerValidation = (name?:string) => Promise<void>
+
+/** Sets dirty state of a control */
+export type SetDirty = (name:string, dirty:boolean) => void
+
+/** Sets touched state of a control */
+export type SetTouched = (name:string, touched:boolean) => void
+
+/** Function to set a value programmatically */
+export type SetValue = (name:string, value:any) => Promise<void>
+
+/** Function to get the modified values of the form */
 export type ModifiedValues = () => Object
+
+/** Control blur handler */
+export type HandleBlur = (name:string) => void
+
+/** Control change handler */
+export type HandleChange = (name:string, value?:any) => Promise<void>
+
+/** Expected function to be called after a form submitted successfully */
 export type HandleSubmitSuccessFn = (values: Object) => void
+
+/** Optional function to be called after a form failed to submit */
 export type HandleSubmitErrorFn = (errors:Object) => void
-export type HandleSubmit = (successFn:HandleSubmitSuccessFn, errorFn?:HandleSubmitErrorFn, options?: HandleSubmitOptions)=>void
+
+/** Submit handler */
+export type HandleSubmit = (successFn:HandleSubmitSuccessFn, errorFn?:HandleSubmitErrorFn)=>void
+
 export interface InterceptorParams {
-    key:string,
+    /** Name of the field that is being modified*/
+    name:string,
+    /** Current value of the field being modified */
     value:any,
+    /** Current formState */
     formState: FormState
 }
+
 export interface FormHandlerOptions{
     /** Set to submit if validations are desired before sending the form */
     validationBehaviour?: 'always' | 'submit'
@@ -111,7 +148,7 @@ export interface FormHandlerOptions{
 }
 export interface FormHandlerParams {
     /** Values to initialize the form */
-    initialValues?: {[key:string]: string}
+    initialValues?: {[name:string]: string}
 
     /** Field change interceptor */
     interceptor?:(_:InterceptorParams)=>boolean

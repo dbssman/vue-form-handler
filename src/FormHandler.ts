@@ -1,21 +1,22 @@
-import { useFormHandler } from './useFormHandler';
+import useFormHandler from './useFormHandler';
 import { FormHandlerParams } from './types';
-import { SetupContext } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-//TODO: Check why types are wrong on this
-export default {
+export default defineComponent({
     name: 'FormHandler',
     props: {
-        initialValues: Object,
-        interceptor: Function,
-        validate: Function
+        initialValues: Object as PropType<FormHandlerParams['initialValues']>,
+        interceptor: Function as PropType<FormHandlerParams['interceptor']>,
+        validate: Function as PropType<FormHandlerParams['validate']>,
+        options: Object as PropType<FormHandlerParams['options']>
     },
-    setup: (props:FormHandlerParams, {slots}: SetupContext) => {
-        const formHandler = useFormHandler({
+    setup: (props, {slots}) => {
+        const {register, ...formHandler} = useFormHandler({
             initialValues: props.initialValues,
             interceptor: props.interceptor,
             validate: props.validate,
+            options: props.options
         })
-        return () => slots.default && slots.default({...formHandler})
+        return () => slots.default && slots.default({register,...formHandler})
     }
-}
+})
