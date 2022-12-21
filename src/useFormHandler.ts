@@ -1,23 +1,27 @@
 import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitControl, SetError, ClearErrors, SetValue, ClearField, SetDirty, SetTouched, HandleBlur, HandleChange, GetInitValueForControl } from './types';
 import { FormState, HandleSubmit, Register } from './types';
 import { reactive, readonly, watch } from 'vue'
-import {isEqual} from 'lodash-es'
+import { isEqual } from 'lodash-es'
+
+export const initialState = () => ({
+  touched: {},
+  dirty: {},
+  errors: {},
+  isDirty: false,
+  isTouched: false,
+  isValid: true,
+})
+
 //TODO: separate synchronous from asynchronous validations
+//TODO: extend validation behaviours
 const useFormHandler:FormHandler = ({ 
   initialValues = {}, 
-  interceptor = async () => true, 
+  interceptor, 
   validate,
   options = { validationBehaviour: 'always', validationErrors: 'first' }
 } = {}) => {
   const values:Record<string,any> = reactive({ ...initialValues })
-  const formState = reactive<FormState>({
-    touched: {},
-    dirty: {},
-    errors: {},
-    isDirty: false,
-    isTouched: false,
-    isValid: true,
-  })
+  const formState = reactive<FormState>({...initialState()})
 
   let validations:Record<string,Validations> = {}
   let defaultValues:Record<string,any> = {}
@@ -34,49 +38,6 @@ const useFormHandler:FormHandler = ({
     }
     if(initialValues[name] === undefined && values[name] === undefined){
       values[name] = options.defaultValue ?? null
-    }
-  }
-
-  const register:Register = (name, options = {}) => {
-    initControl(name,options);
-    return({
-      name,
-      errors: Object.values(formState.errors[name] || {}) || [],
-      onBlur: () => handleBlur(name),
-      ...(options.withDetails && {
-        isDirty: !!formState.dirty[name],
-        isTouched: !!formState.touched[name],
-      }),
-      ...(options.native !== true && {
-        modelValue: values[name],
-        'onUpdate:modelValue': (value:any) => handleChange(name,value),
-      }),
-      ...(options.native !== false && {
-        value: values[name],
-        onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))
-      }),
-      ...(options.clearable && {onClear: () => resetField(name)})
-  })}
-
-  const setDirty:SetDirty = (name, dirty) => {
-    if(formState.dirty[name] !== dirty){
-      formState.dirty[name] = dirty
-      formState.isDirty = dirty || Object.values(formState.dirty).some(Boolean)
-    }
-  }
-
-  const setTouched:SetTouched = (name, touched) => {
-    if(formState.touched[name] !== touched){
-      formState.touched[name] = touched
-      formState.isTouched = touched || Object.values(formState.touched).some(Boolean)
-    }
-  }
-
-  const setValue:SetValue = async (name, value = null) => {
-    const result = await interceptor({name,value,formState});
-      if(!!result) {
-      values[name] = value
-      setDirty(name, !isEqual(value, getInitValueForControl(name)))
     }
   }
 
@@ -110,19 +71,18 @@ const useFormHandler:FormHandler = ({
     }
   }
 
-  const handleBlur:HandleBlur = (name) => {
-    setTouched(name,true)
-    triggerValidation(name)
+  const setDirty:SetDirty = (name, dirty) => {
+    if(formState.dirty[name] !== dirty){
+      formState.dirty[name] = dirty
+      formState.isDirty = dirty || Object.values(formState.dirty).some(Boolean)
+    }
   }
 
-  const handleChange:HandleChange = async (name, value = null) => {
-    await setValue(name, value)
-    setTouched(name,true)
-    triggerValidation(name)
-  }
-
-  const clearField:ClearField = async (name) => {
-    await setValue(name, defaultValues[name] ?? null)
+  const setTouched:SetTouched = (name, touched) => {
+    if(formState.touched[name] !== touched){
+      formState.touched[name] = touched
+      formState.isTouched = touched || Object.values(formState.touched).some(Boolean)
+    }
   }
 
   const resetField:ResetField = (name) => {
@@ -166,6 +126,49 @@ const useFormHandler:FormHandler = ({
       .filter(([name]) => formState.dirty[name]))
   }
 
+  const setValue:SetValue = async (name, value = null) => {
+      if(!interceptor || await interceptor({name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation})) {
+      values[name] = value
+      setDirty(name, !isEqual(value, getInitValueForControl(name)))
+    }
+  }
+
+  const handleBlur:HandleBlur = (name) => {
+    setTouched(name,true)
+    triggerValidation(name)
+  }
+
+  const handleChange:HandleChange = async (name, value = null) => {
+    await setValue(name, value)
+    setTouched(name,true)
+    triggerValidation(name)
+  }
+
+  const clearField:ClearField = async (name) => {
+    await setValue(name, defaultValues[name] ?? null)
+  }
+
+  const register:Register = (name, options = {}) => {
+    initControl(name,options);
+    return({
+      name,
+      errors: Object.values(formState.errors[name] || {}) || [],
+      onBlur: () => handleBlur(name),
+      ...(options.withDetails && {
+        isDirty: !!formState.dirty[name],
+        isTouched: !!formState.touched[name],
+      }),
+      ...(options.native !== true && {
+        modelValue: values[name],
+        'onUpdate:modelValue': (value:any) => handleChange(name,value),
+      }),
+      ...(options.native !== false && {
+        value: values[name],
+        onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))
+      }),
+      ...(options.clearable && {onClear: () => resetField(name)})
+  })}
+
   const handleSubmit:HandleSubmit = async (successFn, errorFn) => {
     let valid = false;
     if(validate){
@@ -185,7 +188,6 @@ const useFormHandler:FormHandler = ({
     }
     throw new Error('One or more errors found during validation')
   }
-
 
   watch(
   ()=> formState.errors,

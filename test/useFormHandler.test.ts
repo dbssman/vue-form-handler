@@ -1,4 +1,4 @@
-import useFormHandler from '../src/useFormHandler';
+import useFormHandler, { initialState } from '../src/useFormHandler';
 import { expect, it, describe } from "vitest"
 
 const sleep = () => new Promise((resolve) => setTimeout(()=> resolve(true),50))
@@ -7,14 +7,7 @@ describe('Form handler testing', () => {
     it('Initial form state and values', () => {
         const {values, formState} = useFormHandler();
         expect(values).toStrictEqual({})
-        expect(formState).toStrictEqual({
-            touched: {},
-            dirty: {},
-            errors: {},
-            isDirty: false,
-            isTouched: false,
-            isValid: true,
-          })
+        expect(formState).toStrictEqual({...initialState()})
     })
     it('Initial values should be applied without', () => {
         const initialValues = {
@@ -93,6 +86,19 @@ describe('Form handler testing', () => {
         await sleep()
         expect(formState.isValid).toBeTruthy()
     })
+    it('Resetting a field it back to its initial values and state', async () => {
+        const {values, formState, resetField, setValue} = useFormHandler({
+            initialValues:{ field: 'value' }
+        });
+        expect(values.field).toBe('value')
+        expect(formState.isDirty).toBeFalsy()
+        await setValue('field', 'some other value')
+        expect(values.field).toBe('some other value')
+        expect(formState.isDirty).toBeTruthy()
+        resetField('field');
+        expect(values.field).toBe('value')
+        expect(formState.isDirty).toBeFalsy()
+    })
     it('Expecting modifiedValues to work', async() => {
         const {modifiedValues, setValue} = useFormHandler({
             initialValues:{
@@ -151,5 +157,31 @@ describe('Register function testing', () => {
         const {values, register} = useFormHandler();
         register('field', {defaultValue: 'something'})
         expect(values.field).toBe('something')
+    })
+    it('Registered validations work on update via handler', async() => {
+        const {values, register, formState} = useFormHandler();
+        const field = register('field', {
+            validations: {
+                error: (val) => val !== 'error' || 'Error with your field' 
+            }
+        })
+        if(field['onUpdate:modelValue']){
+            field['onUpdate:modelValue']('error')
+            await sleep()
+            expect(values.field).toBe('error')
+            expect(formState.isValid).toBeFalsy()
+        }
+    })
+    it('Registered validations work on update via setter', async() => {
+        const {values, register, formState ,setValue, triggerValidation} = useFormHandler();
+        register('field', {
+            validations: {
+                error: (val) => val !== 'error' || 'Error with your field' 
+            }
+        })
+        await setValue('field','error')
+        await triggerValidation('field')
+        expect(values.field).toBe('error')
+        expect(formState.isValid).toBeFalsy()
     })
 })
