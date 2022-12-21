@@ -134,12 +134,35 @@ export type HandleSubmitErrorFn = (errors:Object) => void
 export type HandleSubmit = (successFn:HandleSubmitSuccessFn, errorFn?:HandleSubmitErrorFn)=>void
 
 export interface InterceptorParams {
-    /** Name of the field that is being modified*/
+    /** Name of the field that is currently about to be set*/
     name:string,
-    /** Current value of the field being modified */
+
+    /** Value of the field that is currently about to be set */
     value:any,
-    /** Current formState */
+
+    /** Current form values */
+    values: Record<string,any>
+
+    /** Current form state */
     formState: FormState
+
+    /** Triggers the validation of a field */
+    triggerValidation:TriggerValidation
+
+    /** Function to reset a field */
+    resetField: ResetField
+
+    /** Function to reset the whole form */
+    resetForm: ResetForm
+    
+    /** Function to set an error on a field programmatically */
+    setError: SetError
+
+    /** Function to clear one or more errors on a desired field or the whole form*/
+    clearErrors:ClearErrors
+
+    /** Function that returns the modified values of the form */
+    modifiedValues: ModifiedValues
 }
 
 export interface FormHandlerOptions{
@@ -154,7 +177,7 @@ export interface FormHandlerParams {
     initialValues?: Record<string,any>
 
     /** Field change interceptor */
-    interceptor?:(_:InterceptorParams)=>boolean
+    interceptor?:(_:InterceptorParams)=>Promise<boolean>
 
     /** Validation function to execute before submitting (when using this individual validations are invalidated) */
     validate?:()=>Promise<boolean>|boolean
@@ -170,8 +193,20 @@ export interface FormHandlerReturn {
     /** Current form state */
     formState: FormState
 
-    /** Method to register a field and make it interact with the current form */
-    register: Register
+    /** Triggers the validation of a field */
+    triggerValidation:TriggerValidation
+
+    /** Function to reset a field */
+    resetField: ResetField
+
+    /** Function to reset the whole form */
+    resetForm: ResetForm
+    
+    /** Function to set an error on a field programmatically */
+    setError: SetError
+
+    /** Function to clear one or more errors on a desired field or the whole form*/
+    clearErrors:ClearErrors
 
     /** Function that returns the modified values of the form */
     modifiedValues: ModifiedValues
@@ -179,26 +214,14 @@ export interface FormHandlerReturn {
     /** Function to set the value of a field programmatically */
     setValue: SetValue
 
-    /** Function to set an error on a field programmatically */
-    setError: SetError
-
-    /** Function to clear one or more errors on a desired field or the whole form*/
-    clearErrors:ClearErrors
-
     /** Function to clear a desired field*/
     clearField:ClearField
 
-    /** Function to reset a field */
-    resetField: ResetField
-
-    /** Function to reset the whole form */
-    resetForm: ResetForm
+    /** Method to register a field and make it interact with the current form */
+    register: Register
 
     /** Submit handler */
     handleSubmit: HandleSubmit
-
-    /** Triggers the validation of a field */
-    triggerValidation:TriggerValidation
 }
 
 /** Form handler solution as a composable function */
