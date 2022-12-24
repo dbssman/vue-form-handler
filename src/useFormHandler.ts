@@ -164,7 +164,8 @@ const useFormHandler:FormHandler = ({
       }),
       ...(options.native !== false && {
         value: values[name],
-        onInput: (el:any) => handleChange(name,el && (el.target && el.target.value))
+        onInput: (el:any) => handleChange(name,el && (el.target && el.target.value)),
+        ...(options.required && {required: true})
       }),
       ...(options.clearable && {onClear: () => resetField(name)})
   })}

@@ -72,6 +72,9 @@ export interface RegisterOptions {
     /** Default value for the field */
     defaultValue?: any
 
+    /** Required indicator for the control */
+    required?:boolean
+    
     /** Validations for the field */
     validations?: Validations
 
