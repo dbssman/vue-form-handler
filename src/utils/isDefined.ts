@@ -1,0 +1,1 @@
+export default (element: unknown) => element !== undefined
