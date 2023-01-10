@@ -1,3 +1,4 @@
+import { DEFAULT_FIELD_VALUE } from './constants';
 import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitControl, SetError, ClearErrors, SetValue, ClearField, SetDirty, SetTouched, HandleBlur, HandleChange, GetInitValueForControl } from './types';
 import { FormState, HandleSubmit, Register } from './types';
 import { reactive, readonly, watch } from 'vue'
@@ -146,7 +147,7 @@ const useFormHandler: FormHandler = ({
       .filter(([name]) => formState.dirty[name]))
   }
 
-  const setValue: SetValue = async (name, value = '') => {
+  const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
     if (!interceptor || await interceptor({ name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation })) {
       values[name] = value
       setDirty(name, !isEqual(value, getInitValueForControl(name)))
@@ -158,14 +159,14 @@ const useFormHandler: FormHandler = ({
     triggerValidation(name)
   }
 
-  const handleChange: HandleChange = async (name, value = '') => {
+  const handleChange: HandleChange = async (name, value = DEFAULT_FIELD_VALUE) => {
     await setValue(name, value)
     setTouched(name, true)
     triggerValidation(name)
   }
 
   const clearField: ClearField = async (name) => {
-    await setValue(name, defaultValues[name] ?? '')
+    await setValue(name, getDefaultValueForControl(name))
   }
 
   const register: Register = (name, options = {}) => {
