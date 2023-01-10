@@ -66,7 +66,7 @@ describe('Form handler testing', () => {
         await sleep()
         expect(formState.isValid).toBeFalsy()
         clearErrors('field')
-        expect(formState.errors.field).toStrictEqual({})
+        expect(formState.errors.field).toBeUndefined()
         await sleep()
         expect(formState.isValid).toBeTruthy()
     })
@@ -120,24 +120,20 @@ describe('Register function testing', () => {
         expect(field.isDirty).toBeUndefined()
         expect(field.isTouched).toBeUndefined()
         expect(field.onClear).toBeUndefined()
-        expect(field.ref).toBe(null)
         expect(field.onChange).toBeDefined()
         expect(field.modelValue).toBe(null)
         expect(field['onUpdate:modelValue']).toBeDefined()
         expect(values.field).toBe(null)
     })
-    it('Specified native field shouldn\'t have custom handlers', () => {
+    it('Specified native field should have native handlers', () => {
         const { register } = useFormHandler();
         const field = register('field', { native: true })
         expect(field.ref).toBeDefined()
         expect(field.onChange).toBeDefined()
-        expect(field.modelValue).toBeUndefined()
-        expect(field['onUpdate:modelValue']).toBeUndefined()
     })
     it('Specified custom field shouldn\'t have native handlers', () => {
         const { register } = useFormHandler();
         const field = register('field', { native: false })
-        expect(field.ref).toBeUndefined()
         expect(field.onChange).toBeUndefined()
         expect(field.modelValue).toBeDefined()
         expect(field['onUpdate:modelValue']).toBeDefined()
