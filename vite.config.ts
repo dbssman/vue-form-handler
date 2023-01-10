@@ -2,7 +2,7 @@
 /// <reference types="vitest/globals" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import {resolve} from 'path'
+import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
@@ -12,7 +12,8 @@ export default defineConfig({
   },
   test: {
     includeSource: ['test/*'],
-    environment: 'happy-dom'
+    environment: 'happy-dom',
+    reporters: 'verbose',
   },
   build: {
     lib: {
