@@ -1,4 +1,4 @@
-import { BaseControlEmits } from "./types"
+import { BaseControlEmits } from "../types/formHandler"
 
 export const DEFAULT_FIELD_VALUE = null;
 
