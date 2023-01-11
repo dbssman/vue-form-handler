@@ -17,12 +17,13 @@ import {
   HandleChange,
   FormState,
   HandleSubmit,
-  Register
+  Register,
+  IsValidForm
 } from './types/formHandler';
 import { reactive, readonly, watch } from 'vue'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue } from './logic';
-import refFn from './logic/refFn';
+import { isCheckboxInput, isDefined, isMultipleSelect, isNativeControl, isRadioInput } from './utils';
 
 export const initialState = () => ({
   touched: {},
@@ -63,7 +64,7 @@ const useFormHandler: FormHandler = ({
     }
   }
 
-  const isValid = () => {
+  const updateValidState = () => {
     formState.isValid = !Object.keys(formState.errors).some(field => Object.keys(formState.errors[field]).length)
   }
 
@@ -181,7 +182,50 @@ const useFormHandler: FormHandler = ({
       errors: Object.values(formState.errors[name] || {}) || [],
       'onUpdate:modelValue': (value: any) => handleChange(name, value),
 
-      ref: refFn({ name, refs, values }),
+      ref: (fieldRef: any) => {
+        if (!fieldRef) {
+          delete refs[name]
+          return
+        }
+        if (!fieldRef.nodeName || !isNativeControl(fieldRef)) {
+          refs = {
+            ...refs,
+            [name]: {
+              type: 'custom'
+            }
+          }
+          return
+        }
+        if (!refs[name] || (Array.isArray(refs[name]) && isRadioInput(fieldRef) && !refs[name].some((option: any) => option.value === fieldRef.value))) {
+          refs = {
+            ...refs,
+            [name]: isRadioInput(fieldRef) ? [...(refs[name] || []), fieldRef] : fieldRef
+          }
+        }
+        if (isRadioInput(fieldRef)) {
+          if (fieldRef.checked) {
+            values[name] = fieldRef.value
+            return
+          }
+          fieldRef.checked = (values[name] === fieldRef.value)
+          return
+        }
+        if (isCheckboxInput(fieldRef)) {
+          if (isDefined(fieldRef.checked)) {
+            values[name] = !!fieldRef.checked
+            return
+          }
+          fieldRef.checked = !!values[name]
+          return
+        }
+        if (isMultipleSelect(fieldRef)) {
+          [...fieldRef.options].forEach((option: any, index) => {
+            fieldRef[index].selected = !!values[name]?.includes(option.value)
+          })
+          return
+        }
+        fieldRef.value = values[name]
+      },
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
 
@@ -196,32 +240,35 @@ const useFormHandler: FormHandler = ({
     })
   }
 
-  const handleSubmit: HandleSubmit = async (successFn, errorFn) => {
-    let valid = false;
-    if (validate) {
-      valid = await validate()
-    }
-    else {
-      if (validationMode === 'onSubmit' || validationMode === 'always') {
-        await triggerValidation()
+  const isValidForm: IsValidForm = async () => {
+    if (['always', 'onSubmit'].includes(validationMode)) {
+      if (validate) {
+        return await validate()
       }
-      valid = formState.isValid
+      triggerValidation()
     }
-    if (valid) {
-      successFn(values)
-      return
+    return formState.isValid
+  }
+
+  const handleSubmit: HandleSubmit = async (successFn, errorFn) => {
+    try {
+      if (await isValidForm()) {
+        successFn(values)
+        return
+      }
+      if (errorFn) {
+        errorFn(formState.errors)
+        return
+      }
+    } finally {
+      throw new Error('One or more errors found during validation')
     }
-    if (errorFn) {
-      errorFn(formState.errors)
-      return
-    }
-    throw new Error('One or more errors found during validation')
   }
 
   watch(
     () => formState.errors,
     () => {
-      isValid();
+      updateValidState();
     }, { deep: true, immediate: true })
 
   return {
