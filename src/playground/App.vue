@@ -38,7 +38,6 @@
         <input v-bind="register('dynamic')"> <br>
     </template> <br>
 
-
     <button @click="setValue('gender', 'female')">Set radio to female</button>
     <button @click="setValue('select', ['dog', 'cat'])">Set select to dog & cat</button>
     <button @click="resetField('checkbox')">Reset checkbox</button>

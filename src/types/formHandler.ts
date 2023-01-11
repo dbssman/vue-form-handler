@@ -82,9 +82,6 @@ export interface RegisterOptions {
     withDetails?: boolean
 }
 
-/** Gets the initial/default/fallback value for a control */
-export type GetInitValueForControl = (name: string) => any
-
 /** Field initializer */
 export type InitControl = (name: string, options: RegisterOptions) => void
 
@@ -167,11 +164,6 @@ export interface InterceptorParams {
     /** Function that returns the modified values of the form */
     modifiedValues: ModifiedValues
 }
-
-export interface FormHandlerOptions {
-    /** Set to submit if validations are desired before sending the form */
-    validationBehaviour?: 'always' | 'submit'
-}
 export interface FormHandlerParams {
     /** Values to initialize the form */
     initialValues?: Record<string, any>
@@ -182,8 +174,8 @@ export interface FormHandlerParams {
     /** Validation function to execute before submitting (when using this individual validations are invalidated) */
     validate?: () => Promise<boolean> | boolean
 
-    /** Options for the form handler */
-    options?: FormHandlerOptions
+    /** Validation behavior options */
+    validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
 }
 
 export interface FormHandlerReturn {
