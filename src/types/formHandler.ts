@@ -130,6 +130,9 @@ export type HandleSubmitSuccessFn = (values: Object) => void
 /** Optional function to be called after a form failed to submit */
 export type HandleSubmitErrorFn = (errors: Object) => void
 
+/** Checks for the validity of the form before submitting */
+export type IsValidForm = () => Promise<boolean>
+
 /** Submit handler */
 export type HandleSubmit = (successFn: HandleSubmitSuccessFn, errorFn?: HandleSubmitErrorFn) => void
 

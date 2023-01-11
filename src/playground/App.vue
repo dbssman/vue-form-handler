@@ -2,8 +2,6 @@
     <h2> VSSTS </h2>
     <input v-bind="register('hello')"><br>
     <input type="number" v-bind="register('number')"><br>
-    <input type="radio" value="female" name="test"> Female<br>
-    <input type="radio" value="other" name="test"> Other<br>
     <br>
     <input type="radio" value="male" v-bind="register('gender')"> Male<br>
     <input type="radio" value="female" v-bind="register('gender')"> Female<br>
@@ -12,7 +10,7 @@
     <input type="checkbox" v-bind="register('checkbox')"> Other <br>
     <br>
     <select v-bind="register('select1')" style="min-width:300px">
-        <option value="">--- Please select option ---</option>
+        <option value=null>--- Please select option ---</option>
         <option value="dog">Dog</option>
         <option value="cat">Cat</option>
         <option value="hamster">Hamster</option>
@@ -49,11 +47,7 @@ import useFormHandler from '../useFormHandler';
 import { ref } from 'vue'
 const dynamic = ref(false)
 
-const { register, values, formState, resetField, setValue, modifiedValues } = useFormHandler({
-    initialValues: {
-        gender: 'male'
-    }
-});
+const { register, values, formState, resetField, setValue, modifiedValues } = useFormHandler({});
 
 </script>
 

@@ -11,9 +11,3 @@ export interface ValidateFieldParams extends ValidateFormParams {
 }
 
 export interface TriggerValidationParams extends ValidateFieldParams { }
-
-export interface RefFnParams {
-    refs: Record<string, any>
-    name: string
-    values: Record<string, any>
-} 
