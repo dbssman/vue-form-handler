@@ -4,7 +4,19 @@ export interface BaseControlProps {
     name: string,
 
     /** Current errors of the control */
-    errors?: string[]
+    errors: string[]
+
+    /** Value binding for native inputs */
+    ref: any,
+
+    /** Value binding for custom inputs */
+    modelValue: any,
+
+    /** Handler binding for custom inputs */
+    'onUpdate:modelValue': (value: any) => void,
+
+    /** Disabled state of the field*/
+    disabled?: boolean
 
     /** Current dirty state of the control */
     isDirty?: boolean
@@ -12,17 +24,8 @@ export interface BaseControlProps {
     /** Current touched state of the control */
     isTouched?: boolean
 
-    /** Value binding for native inputs */
-    ref: any,
-
     /** Handler binding for native inputs */
     onChange?: (el: any) => void,
-
-    /** Value binding for custom inputs */
-    modelValue: any,
-
-    /** Handler binding for custom inputs */
-    'onUpdate:modelValue': (value: any) => void,
 
     /** Blur handler */
     onBlur?: () => void,
@@ -72,14 +75,35 @@ export interface RegisterOptions {
     /** Default value for the field */
     defaultValue?: any
 
-    /** Required indicator for the control */
-    required?: boolean
-
     /** Validations for the field */
     validations?: Validations
 
     /** Set to true if you want to bind also dirty and touched states */
     withDetails?: boolean
+
+    /** Set to true if the field should be disabled */
+    disabled?: boolean
+
+    /** Indicates if the control should use the native html validation */
+    useNativeValidation?: boolean
+
+    /** Native required validation */
+    required?: boolean
+
+    /** Native min validation */
+    min?: number
+
+    /** Native max validation */
+    max?: number
+
+    /** Native minLength validation */
+    minLength?: number
+
+    /** Native maxLength validation */
+    maxLength?: number
+
+    /** Native pattern validation */
+    pattern?: string
 }
 
 /** Field initializer */

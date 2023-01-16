@@ -22,8 +22,8 @@ import {
 } from './types/formHandler';
 import { reactive, readonly, watch } from 'vue'
 import { isEqual } from 'lodash-es'
-import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue } from './logic';
-import { isCheckboxInput, isDefined, isMultipleSelect, isNativeControl, isRadioInput } from './utils';
+import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn } from './logic';
+import { isDefined } from './utils';
 
 export const initialState = () => ({
   touched: {},
@@ -34,6 +34,8 @@ export const initialState = () => ({
   isValid: true,
 })
 
+//TODO: add descriptive Error throwing for easier debugging
+//TODO: avoid watcher to update validation state
 const useFormHandler: FormHandler = ({
   initialValues = {},
   interceptor,
@@ -43,28 +45,42 @@ const useFormHandler: FormHandler = ({
   const values: Record<string, any> = reactive({ ...initialValues })
   const formState = reactive<FormState>({ ...initialState() })
 
-  let validations: Record<string, Validations> = {}
-  let defaultValues: Record<string, any> = {}
-  let refs: Record<string, any> = {}
+  let _validations: Record<string, Validations> = {}
+  let _defaultValues: Record<string, any> = {}
+  let _disabledFields: Record<string, boolean> = {}
+  let _refs: Record<string, any> = {}
 
-  const getDefault = (name: string): any => defaultValues[name] ?? getDefaultFieldValue(refs[name])
-  const getInitial = (name: string): any => initialValues[name] ?? getDefault(name)
+  const _getDefault = (name: string): any => _defaultValues[name] ?? getDefaultFieldValue(_refs[name])
+  const _getInitial = (name: string): any => initialValues[name] ?? _getDefault(name)
 
-  const initControl: InitControl = (name, options) => {
-    validations = {
-      ...validations,
+  //TODO: check if validations and defaultValues can be hold up in under _refs object along with the ref information
+  const _initControl: InitControl = (name, options) => {
+    _validations = {
+      ..._validations,
       [name]: options.validations || {}
     }
-    defaultValues = {
-      ...defaultValues,
+    _defaultValues = {
+      ..._defaultValues,
       [name]: options.defaultValue
     }
+    if (isDefined(options.disabled)) {
+      const wasDisabled = _disabledFields[name]
+      _disabledFields = {
+        ..._disabledFields,
+        [name]: !!options.disabled
+      }
+      if (!wasDisabled && options.disabled) {
+        resetField(name)
+        delete formState.errors[name]
+        return
+      }
+    }
     if (initialValues[name] === undefined && values[name] === undefined) {
-      values[name] = getDefault(name)
+      values[name] = _getDefault(name)
     }
   }
 
-  const updateValidState = () => {
+  const _updateValidState = () => {
     formState.isValid = !Object.keys(formState.errors).some(field => Object.keys(formState.errors[field]).length)
   }
 
@@ -89,14 +105,14 @@ const useFormHandler: FormHandler = ({
   }
 
   const triggerValidation: TriggerValidation = async (name) => {
-    if (!Object.keys(validations).length) {
+    if (!Object.keys(_validations).length) {
       return
     }
     if (!name) {
-      validateForm({ formState, values, validations })
+      validateForm({ formState, values, validations: _validations, disabledFields: _disabledFields })
       return
     }
-    validateField({ formState, name, validations, values })
+    validateField({ formState, name, validations: _validations, values, disabledFields: _disabledFields })
   }
 
   const setDirty: SetDirty = (name, dirty) => {
@@ -124,7 +140,7 @@ const useFormHandler: FormHandler = ({
   }
 
   const resetField: ResetField = (name) => {
-    values[name] = getInitial(name)
+    values[name] = _getInitial(name)
     setTouched(name, false)
     setDirty(name, false)
   }
@@ -149,9 +165,9 @@ const useFormHandler: FormHandler = ({
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
-    if (!interceptor || await interceptor({ name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation })) {
+    if (!_disabledFields[name] || !interceptor || await interceptor({ name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation })) {
       values[name] = value
-      setDirty(name, !isEqual(value, getInitial(name)))
+      setDirty(name, !isEqual(value, _getInitial(name)))
     }
   }
 
@@ -171,72 +187,37 @@ const useFormHandler: FormHandler = ({
   }
 
   const clearField: ClearField = async (name) => {
-    await setValue(name, getDefault(name))
+    await setValue(name, _getDefault(name))
   }
 
-  const register: Register = (name, options = {}) => {
-    initControl(name, options);
+  const register: Register = (name, {
+    validations,
+    defaultValue,
+    disabled,
+    withDetails,
+    native,
+    useNativeValidation,
+    ...nativeValidations } = {}) => {
+    _initControl(name, { validations, defaultValue, disabled });
     return ({
       name,
       modelValue: values[name],
       errors: Object.values(formState.errors[name] || {}) || [],
       'onUpdate:modelValue': (value: any) => handleChange(name, value),
-
-      ref: (fieldRef: any) => {
-        if (!fieldRef) {
-          delete refs[name]
-          return
-        }
-        if (!fieldRef.nodeName || !isNativeControl(fieldRef)) {
-          refs = {
-            ...refs,
-            [name]: {
-              type: 'custom'
-            }
-          }
-          return
-        }
-        if (!refs[name] || (Array.isArray(refs[name]) && isRadioInput(fieldRef) && !refs[name].some((option: any) => option.value === fieldRef.value))) {
-          refs = {
-            ...refs,
-            [name]: isRadioInput(fieldRef) ? [...(refs[name] || []), fieldRef] : fieldRef
-          }
-        }
-        if (isRadioInput(fieldRef)) {
-          if (fieldRef.checked) {
-            values[name] = fieldRef.value
-            return
-          }
-          fieldRef.checked = (values[name] === fieldRef.value)
-          return
-        }
-        if (isCheckboxInput(fieldRef)) {
-          if (isDefined(fieldRef.checked)) {
-            values[name] = !!fieldRef.checked
-            return
-          }
-          fieldRef.checked = !!values[name]
-          return
-        }
-        if (isMultipleSelect(fieldRef)) {
-          [...fieldRef.options].forEach((option: any, index) => {
-            fieldRef[index].selected = !!values[name]?.includes(option.value)
-          })
-          return
-        }
-        fieldRef.value = values[name]
-      },
+      ref: refFn(name, _refs, values),
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
-
-      ...(options.withDetails && {
+      ...(disabled && { disabled: true }),
+      ...(withDetails && {
         isDirty: !!formState.dirty[name],
         isTouched: !!formState.touched[name],
       }),
-      ...(options.native !== false && {
-        onChange: () => handleChange(name, getNativeFieldValue(refs[name] as HTMLInputElement)),
-        ...(options.required && { required: true })
+      ...(native !== false && {
+        onChange: () => handleChange(name, getNativeFieldValue(_refs[name] as HTMLInputElement)),
       }),
+      ...(useNativeValidation && {
+        ...nativeValidations
+      })
     })
   }
 
@@ -260,7 +241,7 @@ const useFormHandler: FormHandler = ({
         errorFn(formState.errors)
         return
       }
-    } finally {
+    } catch {
       throw new Error('One or more errors found during validation')
     }
   }
@@ -268,7 +249,7 @@ const useFormHandler: FormHandler = ({
   watch(
     () => formState.errors,
     () => {
-      updateValidState();
+      _updateValidState();
     }, { deep: true, immediate: true })
 
   return {
