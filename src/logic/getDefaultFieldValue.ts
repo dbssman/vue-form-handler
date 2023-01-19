@@ -1,5 +1,5 @@
 import { isCheckboxInput } from "../utils"
-import { DEFAULT_FIELD_VALUE } from "../constants"
+import { DEFAULT_FIELD_VALUE } from "../core/constants"
 
 export default (el: any) => {
     if (!el) {

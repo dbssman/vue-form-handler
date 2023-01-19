@@ -1,11 +1,29 @@
-import { DEFAULT_FIELD_VALUE } from './constants';
-import { ModifiedValues, TriggerValidation, Validations, FormHandler, ResetField, ResetForm, InitControl, SetError, ClearErrors, SetValue, ClearField, SetDirty, SetTouched, HandleBlur, HandleChange, GetInitValueForControl } from './types';
-import { FormState, HandleSubmit, Register } from './types';
+import { DEFAULT_FIELD_VALUE } from './core/constants';
+import {
+  ModifiedValues,
+  TriggerValidation,
+  FormHandler,
+  ResetField,
+  ResetForm,
+  InitControl,
+  SetError,
+  ClearErrors,
+  SetValue,
+  ClearField,
+  SetDirty,
+  SetTouched,
+  HandleBlur,
+  HandleChange,
+  FormState,
+  HandleSubmit,
+  Register,
+  IsValidForm,
+  Refs,
+  ValidationsConfiguration
+} from './types';
 import { reactive, readonly, watch } from 'vue'
 import { isEqual } from 'lodash-es'
-import { getNativeFieldValue } from './logic';
-import { isCheckboxInput, isRadioInput, isMultipleSelect, isNativeControl, isDefined } from './utils';
-import getDefaultFieldValue from './logic/getDefaultFieldValue';
+import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
 
 export const initialState = () => ({
   touched: {},
@@ -16,39 +34,43 @@ export const initialState = () => ({
   isValid: true,
 })
 
-//TODO: separate synchronous from asynchronous validations
-//TODO: extend validation behaviors
+//TODO: add descriptive Error throwing for easier debugging
+//TODO: avoid watcher to update validation state
 const useFormHandler: FormHandler = ({
   initialValues = {},
   interceptor,
   validate,
-  // TODO: if no further options, validation behavior should be considered along with the base params
-  options = { validationBehaviour: 'always' }
+  validationMode = 'onChange'
 } = {}) => {
   const values: Record<string, any> = reactive({ ...initialValues })
   const formState = reactive<FormState>({ ...initialState() })
 
-  let validations: Record<string, Validations> = {}
-  let defaultValues: Record<string, any> = {}
-  let refs: Record<string, any> = {}
+  let _refs: Refs = {}
 
-  const getDefaultValueForControl = (name: string) => defaultValues[name] ?? getDefaultFieldValue(refs[name])
-  const getInitValueForControl: GetInitValueForControl = (name) => initialValues[name] ?? getDefaultValueForControl(name)
-  const initControl: InitControl = (name, options) => {
-    validations = {
-      ...validations,
-      [name]: options.validations || {}
+  const _getDefault = (name: string): any => _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
+  const _getInitial = (name: string): any => initialValues[name] ?? _getDefault(name)
+  const _initControl: InitControl = (name, options) => {
+    const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
+    _refs[name] = {
+      ..._refs[name] || {},
+      _validations: {
+        ...(!options.useNativeValidation
+          && transformValidations(options as ValidationsConfiguration)),
+        ...(options.validations || {})
+      },
+      _defaultValue: options.defaultValue,
+      _disabled: !!options.disabled,
     }
-    defaultValues = {
-      ...defaultValues,
-      [name]: options.defaultValue
+    if (needsReset) {
+      unregister(name)
+      return
     }
     if (initialValues[name] === undefined && values[name] === undefined) {
-      values[name] = getDefaultValueForControl(name)
+      values[name] = _getDefault(name)
     }
   }
 
-  const isValid = () => {
+  const _updateValidState = () => {
     formState.isValid = !Object.keys(formState.errors).some(field => Object.keys(formState.errors[field]).length)
   }
 
@@ -67,35 +89,17 @@ const useFormHandler: FormHandler = ({
         ? !errors.includes(errorName)
         : errors !== errorName))
 
-    if (Object.entries(formState.errors[name]).length < 1) {
+    if (!Object.entries(formState.errors[name]).length) {
       delete formState.errors[name]
     }
   }
 
   const triggerValidation: TriggerValidation = async (name) => {
-    if (!Object.keys(validations).length) {
-      return
-    }
     if (!name) {
-      for (const field of Object.keys(values)) {
-        await triggerValidation(field)
-      }
+      validateForm({ formState, values, _refs })
       return
     }
-    if (!Object.keys(validations[name]).length) {
-      return
-    }
-    for (const [validationName, validation] of Object.entries(validations[name])) {
-      const result = await validation(values[name])
-      formState.errors[name] = {
-        ...(result !== true && { [validationName]: result })
-      }
-      if (result !== true) {
-        break;
-      }
-      //TODO: improve this
-      clearErrors(name)
-    }
+    validateField({ formState, name, _refs, values })
   }
 
   const setDirty: SetDirty = (name, dirty) => {
@@ -123,7 +127,7 @@ const useFormHandler: FormHandler = ({
   }
 
   const resetField: ResetField = (name) => {
-    values[name] = getInitValueForControl(name)
+    values[name] = _getInitial(name)
     setTouched(name, false)
     setDirty(name, false)
   }
@@ -148,111 +152,113 @@ const useFormHandler: FormHandler = ({
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
-    if (!interceptor || await interceptor({ name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation })) {
+    if (!_refs[name]?._disabled
+      && (!interceptor
+        || await interceptor({
+          name,
+          value,
+          values,
+          formState,
+          clearErrors,
+          modifiedValues,
+          resetField,
+          resetForm,
+          setError,
+          triggerValidation
+        }))) {
       values[name] = value
-      setDirty(name, !isEqual(value, getInitValueForControl(name)))
+      setDirty(name, !isEqual(value, _getInitial(name)))
     }
   }
 
   const handleBlur: HandleBlur = (name) => {
     setTouched(name, true)
-    triggerValidation(name)
+    if (validationMode === 'onBlur' || validationMode === 'always') {
+      triggerValidation(name)
+    }
   }
 
   const handleChange: HandleChange = async (name, value = DEFAULT_FIELD_VALUE) => {
     await setValue(name, value)
     setTouched(name, true)
-    triggerValidation(name)
+    if (validationMode === 'onChange' || validationMode === 'always') {
+      triggerValidation(name)
+    }
   }
 
   const clearField: ClearField = async (name) => {
-    await setValue(name, getDefaultValueForControl(name))
+    await setValue(name, _getDefault(name))
+  }
+
+  const unregister = (name: string) => {
+    delete _refs[name]
+    delete values[name]
+    delete formState.errors[name]
+    delete formState.dirty[name]
+    delete formState.touched[name]
   }
 
   const register: Register = (name, options = {}) => {
-    initControl(name, options);
+    const {
+      validations,
+      defaultValue,
+      disabled,
+      withDetails,
+      native,
+      useNativeValidation,
+      ...nativeValidations } = options
+    _initControl(name, options);
     return ({
       name,
+      modelValue: values[name],
       errors: Object.values(formState.errors[name] || {}) || [],
+      'onUpdate:modelValue': (value: any) => handleChange(name, value),
+      ref: refFn(name, _refs, values),
       onBlur: () => handleBlur(name),
-      ...(options.withDetails && {
+      onClear: () => clearField(name),
+      ...(disabled && { disabled: true }),
+      ...(withDetails && {
         isDirty: !!formState.dirty[name],
         isTouched: !!formState.touched[name],
       }),
-      modelValue: values[name],
-      'onUpdate:modelValue': (value: any) => handleChange(name, value),
-      ref: (fieldRef: any) => {
-        if (!fieldRef || !fieldRef.nodeName || !isNativeControl(fieldRef)) {
-          refs = {
-            ...refs,
-            [name]: {
-              type: 'custom'
-            }
-          }
-          return
-        }
-        if (!refs[name] || (isRadioInput(fieldRef) && !refs[name].some((option: any) => option.value === fieldRef.value))) {
-          refs = {
-            ...refs,
-            [name]: isRadioInput(fieldRef) ? [...(refs[name] || []), fieldRef] : fieldRef
-          }
-        }
-        if (isRadioInput(fieldRef)) {
-          if (fieldRef.checked) {
-            values[name] = fieldRef.value
-            return
-          }
-          fieldRef.checked = (values[name] === fieldRef.value)
-          return
-        }
-        if (isCheckboxInput(fieldRef)) {
-          if (isDefined(fieldRef.checked)) {
-            values[name] = !!fieldRef.checked
-            return
-          }
-          fieldRef.checked = !!values[name]
-          return
-        }
-        if (isMultipleSelect(fieldRef)) {
-          [...fieldRef.options].forEach((option: any, index) => {
-            fieldRef[index].selected = !!values[name]?.includes(option.value)
-          })
-          return
-        }
-        fieldRef.value = values[name]
-      },
-      ...(options.native !== false && {
-        onChange: () => handleChange(name, getNativeFieldValue(refs[name] as HTMLInputElement)),
-        ...(options.required && { required: true })
+      ...(native !== false && {
+        onChange: () => handleChange(name, getNativeFieldValue(_refs[name].ref)),
       }),
-      ...(options.clearable && { onClear: () => resetField(name) })
+      ...(useNativeValidation && {
+        ...nativeValidations
+      })
     })
   }
 
+  const isValidForm: IsValidForm = async () => {
+    if (['always', 'onSubmit'].includes(validationMode)) {
+      if (validate) {
+        return await validate()
+      }
+      triggerValidation()
+    }
+    return formState.isValid
+  }
+
   const handleSubmit: HandleSubmit = async (successFn, errorFn) => {
-    let valid = false;
-    if (validate) {
-      valid = await validate()
+    try {
+      if (await isValidForm()) {
+        successFn(values)
+        return
+      }
+      if (errorFn) {
+        errorFn(formState.errors)
+        return
+      }
+    } catch {
+      throw new Error('One or more errors found during validation')
     }
-    else {
-      await triggerValidation()
-      valid = formState.isValid
-    }
-    if (valid) {
-      successFn(values)
-      return
-    }
-    if (errorFn) {
-      errorFn(formState.errors)
-      return
-    }
-    throw new Error('One or more errors found during validation')
   }
 
   watch(
     () => formState.errors,
     () => {
-      isValid();
+      _updateValidState();
     }, { deep: true, immediate: true })
 
   return {
