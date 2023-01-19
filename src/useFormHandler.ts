@@ -2,7 +2,6 @@ import { DEFAULT_FIELD_VALUE } from './core/constants';
 import {
   ModifiedValues,
   TriggerValidation,
-  Validations,
   FormHandler,
   ResetField,
   ResetForm,
@@ -19,11 +18,12 @@ import {
   HandleSubmit,
   Register,
   IsValidForm,
-  Refs
-} from './types/formHandler';
+  Refs,
+  ValidationsConfiguration
+} from './types';
 import { reactive, readonly, watch } from 'vue'
 import { isEqual } from 'lodash-es'
-import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn } from './logic';
+import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
 
 export const initialState = () => ({
   touched: {},
@@ -47,19 +47,22 @@ const useFormHandler: FormHandler = ({
 
   let _refs: Refs = {}
 
-  const _getDefault = (name: string): any => _refs[name]._defaultValue ?? getDefaultFieldValue(_refs[name].ref)
+  const _getDefault = (name: string): any => _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
   const _getInitial = (name: string): any => initialValues[name] ?? _getDefault(name)
   const _initControl: InitControl = (name, options) => {
     const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
     _refs[name] = {
       ..._refs[name] || {},
-      _validations: options.validations || {},
+      _validations: {
+        ...(!options.useNativeValidation
+          && transformValidations(options as ValidationsConfiguration)),
+        ...(options.validations || {})
+      },
       _defaultValue: options.defaultValue,
       _disabled: !!options.disabled,
     }
     if (needsReset) {
-      resetField(name)
-      delete formState.errors[name]
+      unregister(name)
       return
     }
     if (initialValues[name] === undefined && values[name] === undefined) {
@@ -149,7 +152,7 @@ const useFormHandler: FormHandler = ({
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
-    if (!_refs[name]._disabled
+    if (!_refs[name]?._disabled
       && (!interceptor
         || await interceptor({
           name,
@@ -187,15 +190,24 @@ const useFormHandler: FormHandler = ({
     await setValue(name, _getDefault(name))
   }
 
-  const register: Register = (name, {
-    validations,
-    defaultValue,
-    disabled,
-    withDetails,
-    native,
-    useNativeValidation,
-    ...nativeValidations } = {}) => {
-    _initControl(name, { validations, defaultValue, disabled });
+  const unregister = (name: string) => {
+    delete _refs[name]
+    delete values[name]
+    delete formState.errors[name]
+    delete formState.dirty[name]
+    delete formState.touched[name]
+  }
+
+  const register: Register = (name, options = {}) => {
+    const {
+      validations,
+      defaultValue,
+      disabled,
+      withDetails,
+      native,
+      useNativeValidation,
+      ...nativeValidations } = options
+    _initControl(name, options);
     return ({
       name,
       modelValue: values[name],

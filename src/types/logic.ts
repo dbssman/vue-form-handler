@@ -1,4 +1,5 @@
-import { FormState, Refs, Validations } from "./formHandler"
+import { FormState } from "./formHandler"
+import { Refs } from "./refs"
 
 export interface ValidateFormParams {
     _refs: Refs

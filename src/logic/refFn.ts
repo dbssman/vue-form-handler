@@ -1,4 +1,4 @@
-import { Refs, FieldReference } from "../types/formHandler";
+import { Refs, FieldReference } from "../types";
 import { isCheckboxInput, isMultipleSelect, isNativeControl, isRadioInput } from "../utils"
 
 export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
@@ -13,11 +13,11 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
         }
         return
     }
-    const isFirstRegister = !_refs[name].ref
+    const isFirstRegister = _refs[name] && (!_refs[name].ref
         || (Array.isArray(_refs[name].ref)
             && isRadioInput(fieldRef)
             && (!(_refs[name].ref as FieldReference[])
-                .some((option: any) => option.value === fieldRef.value)))
+                .some((option: any) => option.value === fieldRef.value))))
     if (isFirstRegister) {
         _refs[name].ref = isRadioInput(fieldRef)
             ? [...(_refs[name].ref as FieldReference[] || [])
