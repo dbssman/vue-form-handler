@@ -1,16 +1,102 @@
-# Vue 3 + TypeScript + Vite
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+<div align="center">
+	<h1>vue-form-handler</h1>
 
-## Recommended IDE Setup
+The easy way of handling your vue forms
+</div>
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+[![Build Status](https://github.com/mattphillips/deep-object-diff/actions/workflows/ci.yaml/badge.svg)](https://github.com/dbssman/vue-form-handler/actions/workflows/node.js.yml)
+[![version](https://img.shields.io/npm/v/deep-object-diff.svg?style=flat-square)](https://www.npmjs.com/package/deep-object-diff)
+[![downloads](https://img.shields.io/npm/dm/deep-object-diff.svg?style=flat-square)](http://npm-stat.com/charts.html?package=deep-object-diff&from=2016-11-23)
+[![MIT License](https://img.shields.io/npm/l/deep-object-diff.svg?style=flat-square)](https://github.com/dbssman/vue-form-handler/blob/master/License.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-## Type Support For `.vue` Imports in TS
+## 📦 Installation
+---
+``` yarn add vue-form-handler ```
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+``` npm i --save vue-form-handler ```
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+## 🚀 Features
+---
+- 💪 **Type strong**: Written in TypeScript
+- 🔩 **Flexible**: you can wrap the form handler over native inputs or any other like the ones from material libraries or custom inputs.
+- 🪶 **Super light**: Small package size
+- 💻 **DX**: Great development experience
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+## 🦄 Usage
+---
+### Basic usage
+
+```vue
+<template>
+	<form @submit.prevent="handleSubmit(successFn)">
+		<input v-bind="register('firstName')" />
+		<input v-bind="register('lastName')" />
+		<input v-bind="register('age')" type="number"/>
+		<input type="submit"/>
+	</form>
+</template>
+<script setup>
+import { useFormHandler } from 'vue-form-handler';
+const { register, handleSubmit } = useFormHandler();
+const successFn = (form) => {console.log({form})}
+</script>
+```
+
+### Validations
+
+```vue
+<template>
+	<form @submit.prevent="handleSubmit(successFn)">
+		<input v-bind="register('firstName',{
+			required:'This field is required'
+		})" />
+		<p>{{formState.errors.firstName}}</p>
+		<input v-bind="register('lastName')" />
+		<input v-bind="register('age', {
+			min:{
+				value: 18,
+				message: 'Your age is below the accepted range'
+			}
+		})" type="number" />
+		<p>{{formState.errors.age}}</p>
+		<input type="submit"/>
+	</form>
+</template>
+<script setup>
+import { useFormHandler } from 'vue-form-handler';
+const { formState, register, handleSubmit } = useFormHandler();
+const successFn = (form) => {console.log({form})}
+</script>
+```
+
+### Integration with Material frameworks
+
+```vue
+<template>
+	<form @submit.prevent="handleSubmit(successFn)">
+		<q-input v-bind="register('name')" />
+		<q-checkbox v-bind="register('married')"/>
+		<q-select v-bind="register('pet')" :options="['dog','cat','mouse']"/>
+		<input type="submit"/>
+	</form>
+</template>
+<script setup>
+import { useFormHandler } from 'vue-form-handler';
+const { formState, register, handleSubmit } = useFormHandler();
+const successFn = (form) => {console.log({form})}
+</script>
+```
+
+### For a more advanced usage visit the [Docs](https://vue-form-handler.com)
+
+## 💜 Thanks
+---
+This project is heavily inspired by other awesome projects like:
+- [jaredpalmer/formik](https://github.com/jaredpalmer/formik)
+- [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form)
+
+## 📄 License
+---
+[MIT License](https://github.com/dbssman/vue-form-handler/blob/master/License.md) © 2022-PRESENT [Dennis Bosmans](https://github.com/dbssman)
