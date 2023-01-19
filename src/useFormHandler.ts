@@ -18,12 +18,12 @@ import {
   FormState,
   HandleSubmit,
   Register,
-  IsValidForm
+  IsValidForm,
+  Refs
 } from './types/formHandler';
 import { reactive, readonly, watch } from 'vue'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn } from './logic';
-import { isDefined } from './utils';
 
 export const initialState = () => ({
   touched: {},
@@ -45,35 +45,22 @@ const useFormHandler: FormHandler = ({
   const values: Record<string, any> = reactive({ ...initialValues })
   const formState = reactive<FormState>({ ...initialState() })
 
-  let _validations: Record<string, Validations> = {}
-  let _defaultValues: Record<string, any> = {}
-  let _disabledFields: Record<string, boolean> = {}
-  let _refs: Record<string, any> = {}
+  let _refs: Refs = {}
 
-  const _getDefault = (name: string): any => _defaultValues[name] ?? getDefaultFieldValue(_refs[name])
+  const _getDefault = (name: string): any => _refs[name]._defaultValue ?? getDefaultFieldValue(_refs[name].ref)
   const _getInitial = (name: string): any => initialValues[name] ?? _getDefault(name)
-
-  //TODO: check if validations and defaultValues can be hold up in under _refs object along with the ref information
   const _initControl: InitControl = (name, options) => {
-    _validations = {
-      ..._validations,
-      [name]: options.validations || {}
+    const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
+    _refs[name] = {
+      ..._refs[name] || {},
+      _validations: options.validations || {},
+      _defaultValue: options.defaultValue,
+      _disabled: !!options.disabled,
     }
-    _defaultValues = {
-      ..._defaultValues,
-      [name]: options.defaultValue
-    }
-    if (isDefined(options.disabled)) {
-      const wasDisabled = _disabledFields[name]
-      _disabledFields = {
-        ..._disabledFields,
-        [name]: !!options.disabled
-      }
-      if (!wasDisabled && options.disabled) {
-        resetField(name)
-        delete formState.errors[name]
-        return
-      }
+    if (needsReset) {
+      resetField(name)
+      delete formState.errors[name]
+      return
     }
     if (initialValues[name] === undefined && values[name] === undefined) {
       values[name] = _getDefault(name)
@@ -105,14 +92,11 @@ const useFormHandler: FormHandler = ({
   }
 
   const triggerValidation: TriggerValidation = async (name) => {
-    if (!Object.keys(_validations).length) {
-      return
-    }
     if (!name) {
-      validateForm({ formState, values, validations: _validations, disabledFields: _disabledFields })
+      validateForm({ formState, values, _refs })
       return
     }
-    validateField({ formState, name, validations: _validations, values, disabledFields: _disabledFields })
+    validateField({ formState, name, _refs, values })
   }
 
   const setDirty: SetDirty = (name, dirty) => {
@@ -165,7 +149,20 @@ const useFormHandler: FormHandler = ({
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
-    if (!_disabledFields[name] || !interceptor || await interceptor({ name, value, values, formState, clearErrors, modifiedValues, resetField, resetForm, setError, triggerValidation })) {
+    if (!_refs[name]._disabled
+      && (!interceptor
+        || await interceptor({
+          name,
+          value,
+          values,
+          formState,
+          clearErrors,
+          modifiedValues,
+          resetField,
+          resetForm,
+          setError,
+          triggerValidation
+        }))) {
       values[name] = value
       setDirty(name, !isEqual(value, _getInitial(name)))
     }
@@ -213,7 +210,7 @@ const useFormHandler: FormHandler = ({
         isTouched: !!formState.touched[name],
       }),
       ...(native !== false && {
-        onChange: () => handleChange(name, getNativeFieldValue(_refs[name] as HTMLInputElement)),
+        onChange: () => handleChange(name, getNativeFieldValue(_refs[name].ref)),
       }),
       ...(useNativeValidation && {
         ...nativeValidations

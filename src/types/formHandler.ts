@@ -1,3 +1,21 @@
+export interface FieldReference {
+    type: 'custom' | 'select' | 'select-multiple' | 'radio' | 'checkbox' | 'input' | 'textarea' | 'file' | 'range' | 'color' | 'date' | 'datetime-local' | 'email' | 'month' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'week';
+    value?: any;
+    checked?: boolean;
+    selected?: boolean;
+    options?: any;
+    nodeName?: string;
+}
+
+export interface WrappedReference {
+    ref: FieldReference | FieldReference[];
+    _validations: Validations;
+    _disabled: boolean;
+    _defaultValue: any;
+}
+
+export type Refs = Record<string, WrappedReference>;
+
 /** Props for a base control */
 export interface BaseControlProps {
     /** Name of the control */
