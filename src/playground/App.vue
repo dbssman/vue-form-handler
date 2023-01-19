@@ -2,13 +2,21 @@
     <form @submit.prevent="() => handleSubmit(submitForm)">
         <h2> VSSTS </h2>
         <input v-bind="register('hello', {
-            useNativeValidation: true,
-            required: true,
+            required: 'Something is required',
+            pattern: /^[A-Za-z]+$/i
         })"><br>
-        <br>
-        <input type="radio" value="male" v-bind="register('gender')"> Male<br>
-        <input type="radio" value="female" v-bind="register('gender')"> Female<br>
-        <input type="radio" value="other" v-bind="register('gender')"> Other<br>
+        <input type="number" v-bind="register('hello2', {
+            min: 5,
+            max: 10
+        })"><br>
+        <input v-bind="register('hello3', {
+            minLength: {
+                value: 5,
+                message: 'Min length is 5'
+            },
+            maxLength: 20,
+            disabled: values.hello2 > 5
+        })"><br>
         <br>
         <button>Submit</button>
         <pre>{{ values }}</pre>
