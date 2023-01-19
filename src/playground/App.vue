@@ -4,23 +4,22 @@
         <input v-bind="register('hello', {
             useNativeValidation: true,
             required: true,
-            disabled: true,
         })"><br>
         <br>
         <input type="radio" value="male" v-bind="register('gender')"> Male<br>
         <input type="radio" value="female" v-bind="register('gender')"> Female<br>
         <input type="radio" value="other" v-bind="register('gender')"> Other<br>
         <br>
-        <input type="text">
         <button>Submit</button>
+        <pre>{{ values }}</pre>
+        <pre>{{ formState }}</pre>
     </form>
 </template>
 
 <script setup lang="ts">
 import useFormHandler from '../useFormHandler';
-import { ref } from 'vue'
 
-const { register, handleSubmit } = useFormHandler({});
+const { register, handleSubmit, values, formState } = useFormHandler({});
 const submitForm = (values: any) => {
     console.log(values)
 }

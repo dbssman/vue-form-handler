@@ -1,13 +1,13 @@
 import { ValidateFieldParams } from './../types/logic';
 
-export default async ({ name, validations, values, formState, disabledFields }: ValidateFieldParams): Promise<void> => {
-    if (!Object.keys(validations[name]).length) {
+export default async ({ name, values, formState, _refs }: ValidateFieldParams): Promise<void> => {
+    if (!Object.keys(_refs[name]._validations).length) {
         return
     }
-    if (!!disabledFields[name]) {
+    if (_refs[name]._disabled) {
         return
     }
-    for (const [validationName, validation] of Object.entries(validations[name])) {
+    for (const [validationName, validation] of Object.entries(_refs[name]._validations)) {
         const result = await validation(values[name])
         formState.errors[name] = {
             ...(result !== true && { [validationName]: result })
