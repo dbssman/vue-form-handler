@@ -1,4 +1,4 @@
-import { DEFAULT_FIELD_VALUE } from './../constants';
+import { DEFAULT_FIELD_VALUE } from '../core/constants';
 import { isCheckboxInput, isMultipleSelect, isRadioInput } from "../utils"
 
 export default (el: any) => {

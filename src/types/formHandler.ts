@@ -1,40 +1,4 @@
-/** Props for a base control */
-export interface BaseControlProps {
-    /** Name of the control */
-    name: string,
-
-    /** Current errors of the control */
-    errors?: string[]
-
-    /** Current dirty state of the control */
-    isDirty?: boolean
-
-    /** Current touched state of the control */
-    isTouched?: boolean
-
-    /** Value binding for native inputs */
-    ref: any,
-
-    /** Handler binding for native inputs */
-    onChange?: (el: any) => void,
-
-    /** Value binding for custom inputs */
-    modelValue: any,
-
-    /** Handler binding for custom inputs */
-    'onUpdate:modelValue': (value: any) => void,
-
-    /** Blur handler */
-    onBlur?: () => void,
-
-    /** Clear handler */
-    onClear?: () => void,
-}
-
-/** Each emit the handler could be expecting */
-export type EmitOption = 'update:modelValue' | 'blur' | 'clear'
-/** Emit collection for a base control */
-export type BaseControlEmits = EmitOption[]
+import { RegisterOptions, Register } from "./register"
 
 export interface FormState {
     /** Boolean holding the dirty state of the form */
@@ -56,40 +20,8 @@ export interface FormState {
     errors: Record<string, any>
 }
 
-/** Function returning true for correct validation or a string with an error if it's invalid */
-export type ValidationFn = (_: any) => Promise<boolean | string> | boolean | string
-
-/** Validations collection as an object */
-export type Validations = Record<string, ValidationFn>
-
-export interface RegisterOptions {
-    /** Indicates wether the input is native or not, set to false if the extra listeners are not desired */
-    native?: boolean
-
-    /** Indicates wether the input is clearable or not */
-    clearable?: boolean
-
-    /** Default value for the field */
-    defaultValue?: any
-
-    /** Required indicator for the control */
-    required?: boolean
-
-    /** Validations for the field */
-    validations?: Validations
-
-    /** Set to true if you want to bind also dirty and touched states */
-    withDetails?: boolean
-}
-
-/** Gets the initial/default/fallback value for a control */
-export type GetInitValueForControl = (name: string) => any
-
 /** Field initializer */
 export type InitControl = (name: string, options: RegisterOptions) => void
-
-/** Function that allows you to register a control to interact with the form */
-export type Register = (name: string, options?: RegisterOptions) => BaseControlProps
 
 /** Sets dirty state of a control */
 export type SetDirty = (name: string, dirty: boolean) => void
@@ -133,6 +65,9 @@ export type HandleSubmitSuccessFn = (values: Object) => void
 /** Optional function to be called after a form failed to submit */
 export type HandleSubmitErrorFn = (errors: Object) => void
 
+/** Checks for the validity of the form before submitting */
+export type IsValidForm = () => Promise<boolean>
+
 /** Submit handler */
 export type HandleSubmit = (successFn: HandleSubmitSuccessFn, errorFn?: HandleSubmitErrorFn) => void
 
@@ -167,11 +102,6 @@ export interface InterceptorParams {
     /** Function that returns the modified values of the form */
     modifiedValues: ModifiedValues
 }
-
-export interface FormHandlerOptions {
-    /** Set to submit if validations are desired before sending the form */
-    validationBehaviour?: 'always' | 'submit'
-}
 export interface FormHandlerParams {
     /** Values to initialize the form */
     initialValues?: Record<string, any>
@@ -182,10 +112,9 @@ export interface FormHandlerParams {
     /** Validation function to execute before submitting (when using this individual validations are invalidated) */
     validate?: () => Promise<boolean> | boolean
 
-    /** Options for the form handler */
-    options?: FormHandlerOptions
+    /** Validation behavior options */
+    validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
 }
-
 export interface FormHandlerReturn {
     /** Current form values */
     values: Record<string, any>
