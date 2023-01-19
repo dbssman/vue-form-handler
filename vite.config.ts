@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 /// <reference types="vitest/globals" />
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/

@@ -1,5 +1,5 @@
-import FormHandler from '../src/FormHandler'
-import {mount} from '@vue/test-utils'
+import FormHandler from '../FormHandler'
+import { mount } from '@vue/test-utils'
 import { expect, it, describe } from "vitest"
 
 describe('FormHandler component testing', () => {
