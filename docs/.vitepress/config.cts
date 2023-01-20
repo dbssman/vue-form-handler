@@ -1,17 +1,18 @@
 import { defineConfig } from "vitepress"
 
 export default defineConfig({
-  title: 'Vue form handler',
+  title: 'VueFormHandler',
   description: 'Discover the easy way of handling your vue forms',
   themeConfig: {
+    logo: '/favicon.svg',
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Get started', link: '/getting-started' },
+      { text: 'Get started', link: '/get-started' },
     ],
     sidebar: [
       {
         text: 'Documentation', items: [
-          { text: 'Get started', link: '/getting-started' },
+          { text: 'Get started', link: '/get-started' },
           { text: 'Tutorial', link: '/tutorial' },
           {
             text: 'Guides', items: [
