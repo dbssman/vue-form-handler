@@ -54,7 +54,7 @@ export type ResetForm = () => void
 export type SetError = (name: string, error: any, replace?: boolean) => void
 
 /** Function to clear an error programmatically */
-export type ClearErrors = (name?: string, errors?: string | string[]) => void
+export type ClearError = (name?: string, errors?: string | string[]) => void
 
 /** Function to get the modified values of the form */
 export type ModifiedValues = () => Object
@@ -97,7 +97,7 @@ export interface InterceptorParams {
     setError: SetError
 
     /** Function to clear one or more errors on a desired field or the whole form*/
-    clearErrors: ClearErrors
+    clearError: ClearError
 
     /** Function that returns the modified values of the form */
     modifiedValues: ModifiedValues
@@ -116,14 +116,26 @@ export interface FormHandlerParams {
     validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
 }
 export interface FormHandlerReturn {
-    /** Current form values */
-    values: Record<string, any>
-
     /** Current form state */
     formState: FormState
 
-    /** Triggers the validation of a field */
-    triggerValidation: TriggerValidation
+    /** Current form values */
+    values: Record<string, any>
+
+    /** Function to clear one or more errors on a desired field or the whole form*/
+    clearError: ClearError
+
+    /** Function to clear a desired field*/
+    clearField: ClearField
+
+    /** Submit handler */
+    handleSubmit: HandleSubmit
+
+    /** Function that returns the modified values of the form */
+    modifiedValues: ModifiedValues
+
+    /** Method to register a field and make it interact with the current form */
+    register: Register
 
     /** Function to reset a field */
     resetField: ResetField
@@ -134,23 +146,14 @@ export interface FormHandlerReturn {
     /** Function to set an error on a field programmatically */
     setError: SetError
 
-    /** Function to clear one or more errors on a desired field or the whole form*/
-    clearErrors: ClearErrors
-
-    /** Function that returns the modified values of the form */
-    modifiedValues: ModifiedValues
-
     /** Function to set the value of a field programmatically */
     setValue: SetValue
 
-    /** Function to clear a desired field*/
-    clearField: ClearField
+    /** Triggers the validation of a field */
+    triggerValidation: TriggerValidation
 
-    /** Method to register a field and make it interact with the current form */
-    register: Register
-
-    /** Submit handler */
-    handleSubmit: HandleSubmit
+    /** Method to unregister a field and make it stop interacting with the current form */
+    unregister: (name: string) => void
 }
 
 /** Form handler solution as a composable function */

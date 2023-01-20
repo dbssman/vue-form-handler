@@ -7,7 +7,7 @@ import {
   ResetForm,
   InitControl,
   SetError,
-  ClearErrors,
+  ClearError,
   SetValue,
   ClearField,
   SetDirty,
@@ -21,7 +21,7 @@ import {
   Refs,
   ValidationsConfiguration
 } from './types';
-import { reactive, readonly, watch } from 'vue'
+import { reactive, readonly } from 'vue'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
 
@@ -34,8 +34,6 @@ export const initialState = () => ({
   isValid: true,
 })
 
-//TODO: add descriptive Error throwing for easier debugging
-//TODO: avoid watcher to update validation state
 const useFormHandler: FormHandler = ({
   initialValues = {},
   interceptor,
@@ -71,35 +69,51 @@ const useFormHandler: FormHandler = ({
   }
 
   const _updateValidState = () => {
-    formState.isValid = !Object.keys(formState.errors).some(field => Object.keys(formState.errors[field]).length)
+    formState.isValid = !Object.values(formState.errors).some(Boolean)
   }
 
-  const clearErrors: ClearErrors = (name, errors) => {
-    if (!name) {
-      formState.errors = {}
-      return
-    }
-    if (!errors) {
-      delete formState.errors[name]
-      return
-    }
-    formState.errors[name] = Object.fromEntries(Object
-      .entries(formState.errors[name])
-      .filter(([errorName]) => Array.isArray(errors)
-        ? !errors.includes(errorName)
-        : errors !== errorName))
+  const _updateDirtyState = () => {
+    formState.isDirty = Object.values(formState.dirty).some(Boolean)
+  }
 
-    if (!Object.entries(formState.errors[name]).length) {
-      delete formState.errors[name]
+  const _updateTouchedState = () => {
+    formState.isTouched = Object.values(formState.touched).some(Boolean)
+  }
+
+  const clearError: ClearError = (name, errors) => {
+    try {
+      if (!name) {
+        formState.errors = {}
+        return
+      }
+      if (!errors) {
+        delete formState.errors[name]
+        return
+      }
+      formState.errors[name] = Object.fromEntries(Object
+        .entries(formState.errors[name])
+        .filter(([errorName]) => Array.isArray(errors)
+          ? !errors.includes(errorName)
+          : errors !== errorName))
+
+      if (!Object.entries(formState.errors[name]).length) {
+        delete formState.errors[name]
+      }
+    } finally {
+      _updateValidState()
     }
   }
 
   const triggerValidation: TriggerValidation = async (name) => {
-    if (!name) {
-      validateForm({ formState, values, _refs })
-      return
+    try {
+      if (!name) {
+        await validateForm({ formState, values, _refs })
+        return
+      }
+      await validateField({ formState, name, _refs, values })
+    } finally {
+      _updateValidState()
     }
-    validateField({ formState, name, _refs, values })
   }
 
   const setDirty: SetDirty = (name, dirty) => {
@@ -110,7 +124,7 @@ const useFormHandler: FormHandler = ({
         return
       }
       delete formState.dirty[name]
-      formState.isDirty = Object.values(formState.touched).some(Boolean)
+      _updateDirtyState()
     }
   }
 
@@ -122,7 +136,7 @@ const useFormHandler: FormHandler = ({
         return
       }
       delete formState.touched[name]
-      formState.isTouched = Object.values(formState.touched).some(Boolean)
+      _updateTouchedState()
     }
   }
 
@@ -143,6 +157,7 @@ const useFormHandler: FormHandler = ({
       ...(!replace && formState.errors[name]),
       ...error
     }
+    _updateValidState()
   }
 
   const modifiedValues: ModifiedValues = () => {
@@ -159,7 +174,7 @@ const useFormHandler: FormHandler = ({
           value,
           values,
           formState,
-          clearErrors,
+          clearError,
           modifiedValues,
           resetField,
           resetForm,
@@ -196,6 +211,9 @@ const useFormHandler: FormHandler = ({
     delete formState.errors[name]
     delete formState.dirty[name]
     delete formState.touched[name]
+    _updateTouchedState()
+    _updateDirtyState()
+    _updateValidState()
   }
 
   const register: Register = (name, options = {}) => {
@@ -212,7 +230,7 @@ const useFormHandler: FormHandler = ({
       name,
       modelValue: values[name],
       errors: Object.values(formState.errors[name] || {}) || [],
-      'onUpdate:modelValue': (value: any) => handleChange(name, value),
+      'onUpdate:modelValue': async (value: any) => await handleChange(name, value),
       ref: refFn(name, _refs, values),
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
@@ -222,7 +240,7 @@ const useFormHandler: FormHandler = ({
         isTouched: !!formState.touched[name],
       }),
       ...(native !== false && {
-        onChange: () => handleChange(name, getNativeFieldValue(_refs[name].ref)),
+        onChange: async () => await handleChange(name, getNativeFieldValue(_refs[name].ref)),
       }),
       ...(useNativeValidation && {
         ...nativeValidations
@@ -231,12 +249,10 @@ const useFormHandler: FormHandler = ({
   }
 
   const isValidForm: IsValidForm = async () => {
-    if (['always', 'onSubmit'].includes(validationMode)) {
-      if (validate) {
-        return await validate()
-      }
-      triggerValidation()
+    if (validate) {
+      return await validate()
     }
+    await triggerValidation()
     return formState.isValid
   }
 
@@ -255,25 +271,20 @@ const useFormHandler: FormHandler = ({
     }
   }
 
-  watch(
-    () => formState.errors,
-    () => {
-      _updateValidState();
-    }, { deep: true, immediate: true })
-
   return {
-    values: readonly(values),
-    formState,
-    register,
-    setValue,
-    setError,
-    clearErrors,
+    clearError,
     clearField,
-    resetField,
-    resetForm,
+    formState: readonly(formState),
     handleSubmit,
     modifiedValues,
+    register,
+    resetField,
+    resetForm,
+    setError,
+    setValue,
     triggerValidation,
+    unregister,
+    values: readonly(values)
   }
 }
 
