@@ -5,6 +5,10 @@ export default defineConfig({
   description: 'Discover the easy way of handling your vue forms',
   themeConfig: {
     logo: '/favicon.svg',
+    editLink: {
+      pattern: 'https://github.com/dbssman/vue-form-handler/edit/master/docs/:path',
+      text: 'Edit this page on GitHub',
+    },
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Get started', link: '/get-started' },
@@ -37,7 +41,23 @@ export default defineConfig({
       },
       {
         text: 'API Reference', items: [
-          { text: 'useFormHandler()', link: '/api/use-form-handler' },
+          {
+            text: 'useFormHandler', link: '/api/use-form-handler/index', items: [
+              { text: 'clearError', link: '/api/use-form-handler/clear-error' },
+              { text: 'clearField', link: '/api/use-form-handler/clear-field' },
+              { text: 'formState', link: '/api/use-form-handler/form-state' },
+              { text: 'handleSubmit', link: '/api/use-form-handler/handle-submit' },
+              { text: 'modifiedValues', link: '/api/use-form-handler/modified-values' },
+              { text: 'register', link: '/api/use-form-handler/register' },
+              { text: 'resetField', link: '/api/use-form-handler/reset-field' },
+              { text: 'resetForm', link: '/api/use-form-handler/reset-form' },
+              { text: 'setError', link: '/api/use-form-handler/set-error' },
+              { text: 'setValue', link: '/api/use-form-handler/set-value' },
+              { text: 'triggerValidation', link: '/api/use-form-handler/trigger-validation' },
+              { text: 'unregister', link: '/api/use-form-handler/unregister' },
+              { text: 'values', link: '/api/use-form-handler/values' },
+            ]
+          },
           { text: `FormHandler`, link: '/api/form-handler' }
         ]
       }
