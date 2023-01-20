@@ -48,7 +48,7 @@ describe('Register function testing', () => {
     it('Registered validations work on update via handler', async () => {
         const { values, register, formState } = useFormHandler();
         const field = register('field', {
-            validations: {
+            validate: {
                 error: (val) => val !== 'error' || 'Error with your field'
             }
         })
@@ -61,7 +61,7 @@ describe('Register function testing', () => {
     it('Registered validations work on update via setter', async () => {
         const { values, register, formState, setValue, triggerValidation } = useFormHandler();
         register('field', {
-            validations: {
+            validate: {
                 error: (val) => val !== 'error' || 'Error with your field'
             }
         })
