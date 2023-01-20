@@ -13,7 +13,7 @@ export interface BaseControlProps {
     modelValue: any,
 
     /** Handler binding for custom inputs */
-    'onUpdate:modelValue': (value: any) => void,
+    'onUpdate:modelValue': (value: any) => Promise<void>,
 
     /** Disabled state of the field*/
     disabled?: boolean
@@ -25,7 +25,7 @@ export interface BaseControlProps {
     isTouched?: boolean
 
     /** Handler binding for native inputs */
-    onChange?: (el: any) => void,
+    onChange?: (el: any) => Promise<void>,
 
     /** Blur handler */
     onBlur?: () => void,

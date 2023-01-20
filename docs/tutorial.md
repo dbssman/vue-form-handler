@@ -193,7 +193,7 @@ We can also pass a validation function and specify `validationMode: 'onSubmit'` 
     <input type="password" v-bind="register('confirmPassword', {
       required: true,
       pattern: passwordRegExp,
-      validations: {
+      validate: {
         match: (value) => value === values.password || 'Passwords do not match'
       }
     })" />
@@ -244,7 +244,7 @@ If the submission fails it will call the error function we pass with the errors 
     <input type="password" v-bind="register('confirmPassword', {
       required: true,
       pattern: passwordRegExp,
-      validations: {
+      validate: {
         match: (value) => value === values.password || 'Passwords do not match'
       }
     })" />
