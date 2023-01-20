@@ -1,8 +1,6 @@
 import useFormHandler, { initialState } from '../useFormHandler';
 import { expect, it, describe } from "vitest"
 
-const sleep = () => new Promise((resolve) => setTimeout(() => resolve(true), 50))
-
 describe('Form handler testing', () => {
     it('Initial form state and values', () => {
         const { values, formState } = useFormHandler();
@@ -45,45 +43,38 @@ describe('Form handler testing', () => {
         const { formState, setError } = useFormHandler();
         setError('field', { error: 'some error' })
         expect(formState.errors).toStrictEqual({ field: { error: 'some error' } })
-        await sleep()
         expect(formState.isValid).toBeFalsy()
     })
     it('Clearing one error of a control programmatically', async () => {
-        const { formState, setError, clearErrors } = useFormHandler();
+        const { formState, setError, clearError } = useFormHandler();
         const errors = { error: 'some error', error2: 'some other error' }
         setError('field', errors)
-        await sleep()
         expect(formState.isValid).toBeFalsy()
-        clearErrors('field', 'error')
+        clearError('field', 'error')
         expect(formState.errors.field).toStrictEqual({ error2: 'some other error' })
-        await sleep()
         expect(formState.isValid).toBeFalsy()
     })
     it('Clearing all errors of a control programmatically', async () => {
-        const { formState, setError, clearErrors } = useFormHandler();
+        const { formState, setError, clearError } = useFormHandler();
         const errors = { error: 'some error', error2: 'some other error' }
         setError('field', errors)
-        await sleep()
         expect(formState.isValid).toBeFalsy()
-        clearErrors('field')
+        clearError('field')
         expect(formState.errors.field).toBeUndefined()
-        await sleep()
         expect(formState.isValid).toBeTruthy()
     })
     it('Clearing all errors of the form programmatically', async () => {
-        const { formState, setError, clearErrors } = useFormHandler();
+        const { formState, setError, clearError } = useFormHandler();
         const errorField1 = { error1: 'some error' }
         const errorField2 = { error2: 'some error' }
         setError('field1', errorField1)
         setError('field2', errorField2)
         expect(formState.errors.field1).toStrictEqual(errorField1)
         expect(formState.errors.field2).toStrictEqual(errorField2)
-        await sleep()
         expect(formState.isValid).toBeFalsy()
-        clearErrors()
+        clearError()
         expect(formState.errors.field1).toBeUndefined()
         expect(formState.errors.field2).toBeUndefined()
-        await sleep()
         expect(formState.isValid).toBeTruthy()
     })
     it('Resetting a field it back to its initial values and state', async () => {

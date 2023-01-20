@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import useFormHandler from '../useFormHandler'
 
-const sleep = () => new Promise((resolve) => setTimeout(() => resolve(true), 50))
-
 describe('Register function testing', () => {
     it('Registering a field', () => {
         const { values, register } = useFormHandler();
@@ -55,8 +53,7 @@ describe('Register function testing', () => {
             }
         })
         if (field['onUpdate:modelValue']) {
-            field['onUpdate:modelValue']('error')
-            await sleep()
+            await field['onUpdate:modelValue']('error')
             expect(values.field).toBe('error')
             expect(formState.isValid).toBeFalsy()
         }
@@ -71,7 +68,6 @@ describe('Register function testing', () => {
         await setValue('field', 'error')
         await triggerValidation('field')
         expect(values.field).toBe('error')
-        await sleep()
         expect(formState.isValid).toBeFalsy()
     })
 })

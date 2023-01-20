@@ -7,12 +7,10 @@ export default async ({ name, values, formState, _refs }: ValidateFieldParams): 
     if (_refs[name]._disabled) {
         return
     }
-    for (const [validationName, validation] of Object.entries(_refs[name]._validations)) {
+    for (const validation of Object.values(_refs[name]._validations)) {
         const result = await validation(values[name])
-        formState.errors[name] = {
-            ...(result !== true && { [validationName]: result })
-        }
         if (result !== true) {
+            formState.errors[name] = result
             break;
         }
         delete formState.errors[name]
