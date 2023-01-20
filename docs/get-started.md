@@ -12,10 +12,10 @@ Here is a minimal example:
 		<input type="submit"/>
 	</form>
 </template>
-<script setup>
+<script setup lang="ts" >
 import { useFormHandler } from 'vue-form-handler';
 const { register, handleSubmit } = useFormHandler();
-const successFn = (form) => {console.log({form})}
+const successFn = (form: Record<string,any>) => {console.log({form})}
 </script>
 ```
 
