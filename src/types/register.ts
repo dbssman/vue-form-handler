@@ -18,8 +18,8 @@ export interface RegisterOptions extends ValidationsConfiguration {
     /** Default value for the field */
     defaultValue?: any
 
-    /** Validations for the field */
-    validations?: Validations
+    /** Custom validations for the field */
+    validate?: Validations
 
     /** Set to true if you want to bind also dirty and touched states */
     withDetails?: boolean

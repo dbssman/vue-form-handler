@@ -54,7 +54,7 @@ const useFormHandler: FormHandler = ({
       _validations: {
         ...(!options.useNativeValidation
           && transformValidations(options as ValidationsConfiguration)),
-        ...(options.validations || {})
+        ...(options.validate || {})
       },
       _defaultValue: options.defaultValue,
       _disabled: !!options.disabled,
@@ -218,7 +218,7 @@ const useFormHandler: FormHandler = ({
 
   const register: Register = (name, options = {}) => {
     const {
-      validations,
+      validate,
       defaultValue,
       disabled,
       withDetails,
