@@ -1,7 +1,10 @@
 {
+  "author": "Dennis R. Bosmans",
   "name": "vue-form-handler",
-  "private": true,
-  "version": "0.0.0",
+  "description": "Vue 3 form handler, with validation, error handling, and more.",
+  "license": "MIT",
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"
