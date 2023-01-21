@@ -102,12 +102,15 @@ export interface InterceptorParams {
     /** Function that returns the modified values of the form */
     modifiedValues: ModifiedValues
 }
+
+export type Interceptor = (_: InterceptorParams) => Promise<boolean>
+
 export interface FormHandlerParams {
     /** Values to initialize the form */
     initialValues?: Record<string, any>
 
     /** Field change interceptor */
-    interceptor?: (_: InterceptorParams) => Promise<boolean>
+    interceptor?: Interceptor
 
     /** Validation function to execute before submitting (when using this individual validations are invalidated) */
     validate?: () => Promise<boolean> | boolean

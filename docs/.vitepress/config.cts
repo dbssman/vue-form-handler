@@ -3,6 +3,15 @@ import { defineConfig } from "vitepress"
 export default defineConfig({
   title: 'VueFormHandler',
   description: 'Discover the easy way of handling your vue forms',
+  head: [
+    ['meta', { name: 'theme-color', content: '#ffffff' }],
+    ['link', { rel: 'icon', href: '/favicon-32x32.png', type: 'image/png' }],
+    ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    ['meta', { name: 'author', content: 'Dennis R. Bosmans' }],
+    ['meta', { property: 'og:title', content: 'VueFormHandler' }],
+    ['meta', { property: 'og:image', content: 'https://vue-form-handler.com/favicon.png' }],
+    ['meta', { property: 'og:description', content: 'The only handler you\'ll need to easily work with forms in vue' }],
+  ],
   themeConfig: {
     logo: '/favicon.svg',
     editLink: {
