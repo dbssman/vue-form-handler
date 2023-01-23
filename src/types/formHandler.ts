@@ -61,10 +61,10 @@ export type ClearError = (name?: string) => void
 export type ModifiedValues = () => Record<string, any>
 
 /** Expected function to be called after a form submitted successfully */
-export type HandleSubmitSuccessFn = (values: Object) => void
+export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
 
 /** Optional function to be called after a form failed to submit */
-export type HandleSubmitErrorFn = (errors: Object) => void
+export type HandleSubmitErrorFn = (errors: Record<string, string>) => void
 
 /** Checks for the validity of the form before submitting */
 export type IsValidForm = () => Promise<boolean>
