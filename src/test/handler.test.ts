@@ -21,7 +21,8 @@ describe('Form handler testing', () => {
         expect(formState.isDirty).toBeTruthy()
     })
     it('Clearing a field programmatically', async () => {
-        const { values, setValue, formState, clearField } = useFormHandler();
+        const { register, values, setValue, formState, clearField } = useFormHandler();
+        register('field')
         await setValue('field', 'oneTwoThree');
         expect(values.field).toBe('oneTwoThree')
         expect(formState.isDirty).toBeTruthy()
@@ -30,9 +31,10 @@ describe('Form handler testing', () => {
         expect(formState.isDirty).toBeFalsy()
     })
     it('Clearing an initialized field leaves it dirty', async () => {
-        const { values, formState, clearField } = useFormHandler({
+        const { register, values, formState, clearField } = useFormHandler({
             initialValues: { field: 'value' }
         });
+        register('field')
         expect(values.field).toBe('value')
         expect(formState.isDirty).toBeFalsy()
         await clearField('field');
