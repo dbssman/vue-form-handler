@@ -1,4 +1,4 @@
-# useFormHandler: <font size=3>FormHandler</font>
+# useFormHandler
 
 `useFormHandler` is our composable to handle forms, it takes one object as **optional** argument and returns various objects and methods that will allow us to handle our forms.
 
@@ -158,3 +158,47 @@ Using the `always` validationMode will have a more significant impact on perform
 - [triggerValidation](/api/use-form-handler/trigger-validation)
 - [unregister](/api/use-form-handler/unregister)
 - [values](/api/use-form-handler/values)
+
+## Type Declarations
+
+```ts
+
+export type Interceptor = (
+    _: InterceptorParams
+) => Promise<boolean> | boolean
+
+export type FormValidation = (
+    values: Record<string, any>
+) => Promise<boolean> | boolean
+
+export interface FormHandlerParams {
+    initialValues?: Record<string, any> 
+    | Ref<Record<string, any>> 
+    | ComputedRef<Record<string, any>>
+    interceptor?: Interceptor
+    validate?: FormValidation
+    validationMode?: 'onChange' 
+    | 'onBlur' 
+    | 'onSubmit' 
+    | 'always'
+}
+export interface FormHandlerReturn {
+    formState: FormState
+    values: Record<string, any>
+    clearError: ClearError
+    clearField: ClearField
+    handleSubmit: HandleSubmit
+    modifiedValues: ModifiedValues
+    register: Register
+    resetField: ResetField
+    resetForm: ResetForm
+    setError: SetError
+    setValue: SetValue
+    triggerValidation: TriggerValidation
+    unregister: (name: string) => void
+}
+
+export type FormHandler = (
+    _?: FormHandlerParams
+) => FormHandlerReturn
+```

@@ -1,4 +1,4 @@
-# handleSubmit: <font size="3">HandleSubmit</font>
+# handleSubmit
 
 Submits the form on demand, causing it's validation depending on the mode/validation function, and calls the success/error fn consequently based on the outcome.
 
@@ -24,7 +24,7 @@ Coming soon...
     </form>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 
 const { register, handleSubmit, formState } = useFormHandler()
 const successFn = (form: any) => {
@@ -58,7 +58,7 @@ const submitFn = () => {
     </form>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 
 const { register, handleSubmit } = useFormHandler()
 const successFn = (form: any) => {
@@ -72,7 +72,7 @@ const errorFn = (errors:any) => {
 </script>
 ```
 
-## Type Declaration
+## Type Declarations
 
 ```ts
 export type HandleSubmitSuccessFn = (values: Record<string, any>) => void

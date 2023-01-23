@@ -1,4 +1,4 @@
-# clearField: <font size="3">ClearField</font>
+# clearField
 
 Clears a field, this means that the field is set to it's default value or to the fallback value.
 This will also trigger a validation for the field if existing.
@@ -53,7 +53,7 @@ const { register } = useFormHandler({
     <button @click="clearField('clearableField')">X</button>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 
 const { register, clearField } = useFormHandler()
 </script>

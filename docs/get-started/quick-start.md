@@ -1,4 +1,4 @@
-# Tutorial
+# Quick start
 
 ## Before we start
 
@@ -49,7 +49,7 @@ npm install
 npm run dev
 ```
 
-After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started.html#installation). 
+After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started/introduction.html#installation). 
 
 ```bash
 npm i vue-form-handler

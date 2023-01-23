@@ -1,4 +1,4 @@
-# values:  <font size="3">Record<string, any></font>
+# values
 
 Provides you with the reactive state of the form, including validation, dirty and touched state, for the whole form or individual fields.
 
@@ -30,13 +30,13 @@ Provides you with the reactive state of the form, including validation, dirty an
     </section>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 
 const { register, values } = useFormHandler()
 </script>
 ```
 
-## Type Declaration
+## Type Declarations
 
 ```ts
 export type Values = Record<string, any>

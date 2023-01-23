@@ -1,4 +1,4 @@
-# formState: <font size="3">FormState</font>
+# formState
 
 Provides you with the reactive state of the form, including validation, dirty and touched state, for the whole form or individual fields.
 
@@ -35,13 +35,13 @@ Provides you with the reactive state of the form, including validation, dirty an
     </form>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 
 const { register, formState } = useFormHandler()
 </script>
 ```
 
-## Type Declaration
+## Type Declarations
 
 ```ts
 export interface FormState {
