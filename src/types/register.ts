@@ -12,9 +12,6 @@ export interface RegisterOptions extends ValidationsConfiguration {
     /** Indicates wether the input is native or not, set to false if the extra listeners are not desired */
     native?: boolean
 
-    /** Indicates wether the input is clearable or not */
-    clearable?: boolean
-
     /** Default value for the field */
     defaultValue?: any
 

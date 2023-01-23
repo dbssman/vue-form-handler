@@ -35,11 +35,6 @@ describe('Register function testing', () => {
         expect(field.isDirty).toBeDefined()
         expect(field.isTouched).toBeDefined()
     })
-    it('Clearable inputs should have a bound clear handler', () => {
-        const { register } = useFormHandler();
-        const field = register('field', { clearable: true })
-        expect(field.onClear).toBeDefined()
-    })
     it('Registering a field with default value', () => {
         const { values, register } = useFormHandler();
         register('field', { defaultValue: 'something' })

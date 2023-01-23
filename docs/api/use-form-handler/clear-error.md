@@ -1,4 +1,4 @@
-# clearError: <font size="3">ClearError</font>
+# clearError
 
 Clears all the errors from the form or the error from a field programmatically.
 
@@ -20,7 +20,7 @@ Coming soon...
     </form>
 </template>
 <script setup lang="ts" >
-import { useFormHandler, Interceptor } from '../src/index'
+import { useFormHandler, Interceptor } from 'vue-form-handler'
 
 const sleep = (milliseconds: number) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -65,7 +65,7 @@ Notice how we use the combination of [setError](/api/use-form-handler/set-error)
     </form>
 </template>
 <script setup lang="ts" >
-import { useFormHandler } from '../src/index'
+import { useFormHandler } from 'vue-form-handler'
 import { watch } from 'vue'
 
 let hasErrorsAfterSubmit = false;

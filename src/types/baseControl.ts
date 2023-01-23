@@ -15,6 +15,9 @@ export interface BaseControlProps {
     /** Handler binding for custom inputs */
     'onUpdate:modelValue': (value: any) => Promise<void>,
 
+    /** Clear handler */
+    onClear: () => void,
+
     /** Disabled state of the field*/
     disabled?: boolean
 
@@ -29,9 +32,6 @@ export interface BaseControlProps {
 
     /** Blur handler */
     onBlur?: () => void,
-
-    /** Clear handler */
-    onClear?: () => void,
 }
 
 /** Each emit the handler could be expecting */

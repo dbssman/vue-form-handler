@@ -1,4 +1,4 @@
-# \<FormHandler/>: <font size="3">Component</font>
+# \<FormHandler/>
 
 The `FormHandler` component is an utility for people that are still using the options API or, that for some reason want to do the handling on the template side. 
 
