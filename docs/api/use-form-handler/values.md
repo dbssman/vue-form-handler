@@ -6,7 +6,7 @@ Provides you with the reactive state of the form, including validation, dirty an
 
 | attribute | type   | description                                |
 |-----------|--------|--------------------------------------------|
-| &lt;fieldName&gt; | any    | Current value of the specified field |
+| &lt;fieldName&gt; | `any`    | Current value of the specified field |
 ## Rules
 
 `values` is read-only, so no assignments are expected. It is entirely reactive, so you can react on changes of the whole element and/or it's main attributes.
