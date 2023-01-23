@@ -21,7 +21,7 @@ import {
   Refs,
   ValidationsConfiguration
 } from './types';
-import { reactive, readonly } from 'vue'
+import { reactive, readonly, unref, watch } from 'vue'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
 
@@ -40,13 +40,13 @@ const useFormHandler: FormHandler = ({
   validate,
   validationMode = 'onChange'
 } = {}) => {
-  const values: Record<string, any> = reactive({ ...initialValues })
+  const values: Record<string, any> = reactive({ ...unref(initialValues) })
   const formState = reactive<FormState>({ ...initialState() })
 
   let _refs: Refs = {}
 
   const _getDefault = (name: string): any => _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
-  const _getInitial = (name: string): any => initialValues[name] ?? _getDefault(name)
+  const _getInitial = (name: string): any => unref(initialValues)?.[name] ?? _getDefault(name)
   const _initControl: InitControl = (name, options) => {
     const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
     _refs[name] = {
@@ -80,25 +80,13 @@ const useFormHandler: FormHandler = ({
     formState.isTouched = Object.values(formState.touched).some(Boolean)
   }
 
-  const clearError: ClearError = (name, errors) => {
+  const clearError: ClearError = (name) => {
     try {
       if (!name) {
         formState.errors = {}
         return
       }
-      if (!errors) {
-        delete formState.errors[name]
-        return
-      }
-      formState.errors[name] = Object.fromEntries(Object
-        .entries(formState.errors[name])
-        .filter(([errorName]) => Array.isArray(errors)
-          ? !errors.includes(errorName)
-          : errors !== errorName))
-
-      if (!Object.entries(formState.errors[name]).length) {
-        delete formState.errors[name]
-      }
+      delete formState.errors[name]
     } finally {
       _updateValidState()
     }
@@ -144,19 +132,18 @@ const useFormHandler: FormHandler = ({
     values[name] = _getInitial(name)
     setTouched(name, false)
     setDirty(name, false)
+    clearError(name)
   }
 
   const resetForm: ResetForm = () => {
-    Object.keys(values).forEach((key) => {
-      resetField(key)
+    Object.assign(values, {
+      ...Object.fromEntries(Object.keys(values).map((key) => [key, _getInitial(key)])),
     })
+    Object.assign(formState, initialState())
   }
 
-  const setError: SetError = (name, error, replace = false) => {
-    formState.errors[name] = {
-      ...(!replace && formState.errors[name]),
-      ...error
-    }
+  const setError: SetError = (name, error) => {
+    formState.errors[name] = error
     _updateValidState()
   }
 
@@ -170,16 +157,18 @@ const useFormHandler: FormHandler = ({
     if (!_refs[name]?._disabled
       && (!interceptor
         || await interceptor({
-          name,
-          value,
-          values,
-          formState,
           clearError,
+          clearField,
+          formState,
           modifiedValues,
+          name,
           resetField,
           resetForm,
           setError,
-          triggerValidation
+          setValue,
+          triggerValidation,
+          value,
+          values
         }))) {
       values[name] = value
       setDirty(name, !isEqual(value, _getInitial(name)))
@@ -250,7 +239,7 @@ const useFormHandler: FormHandler = ({
 
   const isValidForm: IsValidForm = async () => {
     if (validate) {
-      return await validate()
+      return await validate(values)
     }
     await triggerValidation()
     return formState.isValid
@@ -270,6 +259,10 @@ const useFormHandler: FormHandler = ({
       throw new Error('One or more errors found during validation')
     }
   }
+
+  watch(() => initialValues, () => {
+    resetForm()
+  }, { deep: true })
 
   return {
     clearError,

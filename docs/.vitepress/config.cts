@@ -51,7 +51,8 @@ export default defineConfig({
       {
         text: 'API Reference', items: [
           {
-            text: 'useFormHandler', link: '/api/use-form-handler/index', items: [
+            text: 'useFormHandler', link: '/api/use-form-handler/',
+            items: [
               { text: 'clearError', link: '/api/use-form-handler/clear-error' },
               { text: 'clearField', link: '/api/use-form-handler/clear-field' },
               { text: 'formState', link: '/api/use-form-handler/form-state' },
