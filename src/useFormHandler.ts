@@ -177,7 +177,7 @@ const useFormHandler: FormHandler = ({
 
   const handleBlur: HandleBlur = (name) => {
     setTouched(name, true)
-    if (validationMode === 'onBlur' || validationMode === 'always') {
+    if (['always', 'onBlur'].includes(validationMode)) {
       triggerValidation(name)
     }
   }
@@ -185,13 +185,17 @@ const useFormHandler: FormHandler = ({
   const handleChange: HandleChange = async (name, value = DEFAULT_FIELD_VALUE) => {
     await setValue(name, value)
     setTouched(name, true)
-    if (validationMode === 'onChange' || validationMode === 'always') {
+    if (['always', 'onChange'].includes(validationMode)) {
       triggerValidation(name)
     }
   }
 
   const clearField: ClearField = async (name) => {
-    await setValue(name, _getDefault(name))
+    const defaultValue: any = _getDefault(name);
+    if (defaultValue !== values[name]) {
+      await setValue(name, defaultValue)
+      await triggerValidation(name)
+    }
   }
 
   const unregister = (name: string) => {
