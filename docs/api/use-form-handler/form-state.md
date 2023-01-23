@@ -6,12 +6,12 @@ Provides you with the reactive state of the form, including validation, dirty an
 
 | attribute | type   | description                                |
 |-----------|--------|--------------------------------------------|
-| dirty     | Record<string, boolean> | Object containing all the inputs that have been modified |
-| errors    | Record<string, string>  | Object containing all the current field errors of the form |
-| touched   | Record<string, boolean> | Object containing all the inputs the users has interacted with |
-| isDirty   | boolean | True if there is any modified field on the form |
-| isTouched | boolean | True if there has been any interaction with a form field |
-| isValid   | boolean | True if there are no form errors |
+| dirty     | `Record<string, boolean>` | Object containing all the inputs that have been modified |
+| errors    | `Record<string, string>`  | Object containing all the current field errors of the form |
+| touched   | `Record<string, boolean>` | Object containing all the inputs the users has interacted with |
+| isDirty   | `boolean` | True if there is any modified field on the form |
+| isTouched | `boolean` | True if there has been any interaction with a form field |
+| isValid   | `boolean` | True if there are no form errors |
 
 ## Rules
 

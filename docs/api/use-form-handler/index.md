@@ -41,18 +41,18 @@ The interceptor will be called passing an object as a parameter with the followi
 
 | attribute | type   | description                                |
 |-----------|--------|--------------------------------------------|
-| name      | string    | Name of the field that is about to be set  |
-| value     | any    | Value of the field that is about to be set |
-| clearError | ClearError | [API - clearError](/api/use-form-handler/clear-error) |
-| clearField | ClearField | [API - clearField](/api/use-form-handler/clear-field) |
-| formState | FormState | [API - formState](/api/use-form-handler/form-state) |
-| modifiedValues | ModifiedValues | [API - modifiedValues](/api/use-form-handler/modified-values) |
-| resetField | ResetField | [API - resetField](/api/use-form-handler/reset-field) |
-| resetForm | ResetForm | [API - resetForm](/api/use-form-handler/reset-form) |
-| setError | SetError | [API - setError](/api/use-form-handler/set-error) |
-| setValue | SetValue | [API - setValue](/api/use-form-handler/set-value) |
-| triggerValidation | TriggerValidation | [API - triggerValidation](/api/use-form-handler/trigger-validation) |
-| values    | Record<string,any> | [API - values](/api/use-form-handler/values) |
+| name      | `string`    | Name of the field that is about to be set  |
+| value     | `any`    | Value of the field that is about to be set |
+| clearError | [ClearError](/api/use-form-handler/clear-error#type-declarations) | [API - clearError](/api/use-form-handler/clear-error) |
+| clearField | [ClearField](/api/use-form-handler/clear-field#type-declarations) | [API - clearField](/api/use-form-handler/clear-field) |
+| formState | [FormState](/api/use-form-handler/form-state#type-declarations) | [API - formState](/api/use-form-handler/form-state) |
+| modifiedValues | [ModifiedValues](/api/use-form-handler/modified-values#type-declarations) | [API - modifiedValues](/api/use-form-handler/modified-values) |
+| resetField | [ResetField](/api/use-form-handler/reset-field#type-declarations) | [API - resetField](/api/use-form-handler/reset-field) |
+| resetForm | [ResetForm](/api/use-form-handler/reset-form#type-declarations) | [API - resetForm](/api/use-form-handler/reset-form) |
+| setError | [SetError](/api/use-form-handler/set-error#type-declarations) | [API - setError](/api/use-form-handler/set-error) |
+| setValue | [SetValue](/api/use-form-handler/set-value#type-declarations) | [API - setValue](/api/use-form-handler/set-value) |
+| triggerValidation | [TriggerValidation](/api/use-form-handler/trigger-validation#type-declarations) | [API - triggerValidation](/api/use-form-handler/trigger-validation) |
+| values    | `Record<string,any>` | [API - values](/api/use-form-handler/values) |
 
 ::: info
 As you can see, the interceptor is provided with everything the handler does provide but in a separate context.
@@ -134,10 +134,10 @@ This option allows you to configure the validation mode or strategy the handler 
 
 | name | type   | description                                |
 |-----------|--------|--------------------------------------------|
-| onChange      | string    | Validation will trigger on the change event with each input, and lead to multiple re-renders.  |
-| onBlur     | string    | Validation will trigger on the blur event. |
-| onSubmit    | string | 	Validation will trigger on the submit event. |
-| always    | string | 	Validation will trigger on change and blur events.  |
+| onChange      | `string`    | Validation will trigger on the change event with each input, and lead to multiple re-renders.  |
+| onBlur     | `string`    | Validation will trigger on the blur event. |
+| onSubmit    | `string` | 	Validation will trigger on the submit event. |
+| always    | `string` | 	Validation will trigger on change and blur events.  |
 
 ::: warning
 Using the `always` validationMode will have a more significant impact on performance.
