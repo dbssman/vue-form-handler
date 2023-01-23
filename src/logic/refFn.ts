@@ -25,7 +25,7 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
             : fieldRef
     }
     if (isRadioInput(fieldRef)) {
-        if (isFirstRegister && fieldRef.checked) {
+        if (isFirstRegister && !!fieldRef.checked) {
             values[name] = fieldRef.value
             return
         }
@@ -33,8 +33,8 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
         return
     }
     if (isCheckboxInput(fieldRef)) {
-        if (isFirstRegister) {
-            values[name] = !!fieldRef.checked
+        if (isFirstRegister && !!fieldRef.checked) {
+            values[name] = true
             return
         }
         fieldRef.checked = !!values[name]

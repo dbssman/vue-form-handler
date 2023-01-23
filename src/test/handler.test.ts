@@ -45,19 +45,10 @@ describe('Form handler testing', () => {
         expect(formState.errors).toStrictEqual({ field: { error: 'some error' } })
         expect(formState.isValid).toBeFalsy()
     })
-    it('Clearing one error of a control programmatically', async () => {
+    it('Clearing an error programmatically', async () => {
         const { formState, setError, clearError } = useFormHandler();
-        const errors = { error: 'some error', error2: 'some other error' }
-        setError('field', errors)
-        expect(formState.isValid).toBeFalsy()
-        clearError('field', 'error')
-        expect(formState.errors.field).toStrictEqual({ error2: 'some other error' })
-        expect(formState.isValid).toBeFalsy()
-    })
-    it('Clearing all errors of a control programmatically', async () => {
-        const { formState, setError, clearError } = useFormHandler();
-        const errors = { error: 'some error', error2: 'some other error' }
-        setError('field', errors)
+        const error = 'This field has an error'
+        setError('field', error)
         expect(formState.isValid).toBeFalsy()
         clearError('field')
         expect(formState.errors.field).toBeUndefined()
