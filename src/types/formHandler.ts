@@ -18,7 +18,7 @@ export interface FormState {
     touched: Record<string, boolean>
 
     /** Object holding the fields with errors (one or multiple, check:validationErrors)*/
-    errors: Record<string, any>
+    errors: Record<string, string | undefined>
 }
 
 /** Field initializer */
@@ -52,7 +52,7 @@ export type ResetField = (name: string) => void
 export type ResetForm = () => void
 
 /** Function to set an error programmatically */
-export type SetError = (name: string, error: any) => void
+export type SetError = (name: string, error: string) => void
 
 /** Function to clear an error programmatically */
 export type ClearError = (name?: string) => void
@@ -64,7 +64,7 @@ export type ModifiedValues = () => Record<string, any>
 export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
 
 /** Optional function to be called after a form failed to submit */
-export type HandleSubmitErrorFn = (errors: Record<string, string>) => void
+export type HandleSubmitErrorFn = (errors: Record<string, string | undefined>) => void
 
 /** Checks for the validity of the form before submitting */
 export type IsValidForm = () => Promise<boolean>
