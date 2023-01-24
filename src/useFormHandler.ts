@@ -19,7 +19,8 @@ import {
   Register,
   IsValidForm,
   Refs,
-  ValidationsConfiguration
+  ValidationsConfiguration,
+  Unregister
 } from './types';
 import { reactive, readonly, unref, watch } from 'vue'
 import { isEqual } from 'lodash-es'
@@ -198,7 +199,7 @@ const useFormHandler: FormHandler = ({
     }
   }
 
-  const unregister = (name: string) => {
+  const unregister: Unregister = (name) => {
     delete _refs[name]
     delete values[name]
     delete formState.errors[name]
@@ -222,7 +223,7 @@ const useFormHandler: FormHandler = ({
     return ({
       name,
       modelValue: values[name],
-      errors: Object.values(formState.errors[name] || {}) || [],
+      error: formState.errors[name],
       'onUpdate:modelValue': async (value: any) => await handleChange(name, value),
       ref: refFn(name, _refs, values),
       onBlur: () => handleBlur(name),
