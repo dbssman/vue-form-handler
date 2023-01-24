@@ -5,10 +5,10 @@
 	
 The easy way of handling your vue forms
 
-[![Build Status](https://github.com/mattphillips/deep-object-diff/actions/workflows/ci.yaml/badge.svg)](https://github.com/dbssman/vue-form-handler/actions/workflows/node.js.yml)
-[![version](https://img.shields.io/npm/v/deep-object-diff.svg?style=flat-square)](https://www.npmjs.com/package/vue-form-handler)
-[![downloads](https://img.shields.io/npm/dm/deep-object-diff.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vue-form-handler&from=2023-01-20)
-[![MIT License](https://img.shields.io/npm/l/deep-object-diff.svg?style=flat-square)](https://github.com/dbssman/vue-form-handler/blob/master/License.md)
+[![Build Status](https://github.com/dbssman/vue-form-handler/actions/workflows/node.js.yml/badge.svg)](https://github.com/dbssman/vue-form-handler/actions/workflows/node.js.yml)
+[![version](https://img.shields.io/npm/v/vue-form-handler.svg?style=flat-square)](https://www.npmjs.com/package/vue-form-handler)
+[![downloads](https://img.shields.io/npm/dm/vue-form-handler.svg?style=flat-square)](http://npm-stat.com/charts.html?package=vue-form-handler&from=2023-01-20)
+[![MIT License](https://img.shields.io/npm/l/vue-form-handler.svg?style=flat-square)](https://github.com/dbssman/vue-form-handler/blob/master/License.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <a href="https://www.buymeacoffee.com/dbssman" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
