@@ -4,8 +4,9 @@
   "description": "Vue 3 form handler, with validation, error handling, and more.",
   "license": "MIT",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.0.1",
   "type": "module",
+  "keywords": ["vue", "vue handler", "form handler", "form", "handler"],
   "files": [
     "dist"
   ],
@@ -29,11 +30,11 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "happy-dom": "^8.1.0",
-    "vite-plugin-dts": "^1.7.1",
-    "vue": "^3.2.41"
   },
   "devDependencies": {
+    "vite-plugin-dts": "^1.7.1",
+    "vue": "^3.2.41",
+    "happy-dom": "^8.1.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
