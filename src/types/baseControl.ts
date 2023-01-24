@@ -3,17 +3,23 @@ export interface BaseControlProps {
     /** Name of the control */
     name: string,
 
-    /** Current errors of the control */
-    errors: string[]
+    /** Current error of the control */
+    error: string | undefined
 
     /** Value binding for native inputs */
-    ref: any,
+    ref: (fieldRef: any) => void,
 
     /** Value binding for custom inputs */
     modelValue: any,
 
     /** Handler binding for custom inputs */
     'onUpdate:modelValue': (value: any) => Promise<void>,
+
+    /** Clear handler */
+    onClear: () => void,
+
+    /** Blur handler */
+    onBlur: () => void,
 
     /** Disabled state of the field*/
     disabled?: boolean
@@ -26,12 +32,6 @@ export interface BaseControlProps {
 
     /** Handler binding for native inputs */
     onChange?: (el: any) => Promise<void>,
-
-    /** Blur handler */
-    onBlur?: () => void,
-
-    /** Clear handler */
-    onClear?: () => void,
 }
 
 /** Each emit the handler could be expecting */

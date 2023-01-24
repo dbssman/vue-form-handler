@@ -1,4 +1,4 @@
-# Get started
+# Introduction
 
 VueFormHandler is an abstract and flexible form handling solution. It allows you to easily handle forms in Vue, without forcing you to use specific components. You can use it on along with native HTML, custom components and material libraries (Quasar, Vuetify, Oruga...). It builds on top of Vue using typescript and provides a comfortable and efficient way to handle your forms.
 

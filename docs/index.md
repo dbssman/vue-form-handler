@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /get-started
+      link: /get-started/introduction
     - theme: alt
       text: View on GitHub
       link: https://github.com/dbssman/vue-form-handler

@@ -1,4 +1,4 @@
-# Tutorial
+# Quick start
 
 ## Before we start
 
@@ -49,7 +49,7 @@ npm install
 npm run dev
 ```
 
-After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started.html#installation). 
+After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started/introduction.html#installation). 
 
 ```bash
 npm i vue-form-handler
@@ -129,23 +129,23 @@ Our current form works but it's not complete at all, we might want to add valida
             required: true,
             pattern: emailRegExp
         })" />
-        <p class="error" v-show="formState.errors.email">
-            {{formState.errors.email}}
-        </p>
+    <p class="error" v-show="formState.errors.email">
+        {{formState.errors.email}}
+    </p>
 		<input type="password" v-bind="register('password', {
             required: true,
             pattern: passwordRegExp
         })" />
-        <p class="error" v-show="formState.errors.password">
-            {{formState.errors.password}}
-        </p>
-        <input type="password" v-bind="register('confirmPassword', {
+    <p class="error" v-show="formState.errors.password">
+        {{formState.errors.password}}
+    </p>
+    <input type="password" v-bind="register('confirmPassword', {
             required: true,
             pattern: passwordRegExp
         })" />
-        <p class="error" v-show="formState.errors.confirmPassword">
-            {{formState.errors.confirmPassword}}
-        </p>
+    <p class="error" v-show="formState.errors.confirmPassword">
+        {{formState.errors.confirmPassword}}
+    </p>
 		<input type="submit"/>
 	</form>
 </template>
@@ -173,7 +173,7 @@ We can also pass a validation function and specify `validationMode: 'onSubmit'` 
 
 ## Custom validation
 
-```vue
+```vue{20-22}
 <template>
   <form @submit.prevent="handleSubmit(successFn)">
     <input type="email" v-bind="register('email', {
@@ -224,7 +224,7 @@ Submission is really made easy, we can call the function the handler provides us
 
 If the submission fails it will call the error function we pass with the errors if available, if no error function is provided, then it will throw an error that you can catch from the upper context.
 
-```vue
+```vue{2,37-42}
 <template>
   <form @submit.prevent="handleSubmit(successFn, errorFn)">
     <input type="email" v-bind="register('email', {
