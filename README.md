@@ -95,6 +95,10 @@ const successFn = (form: Record<string,any>) => {console.log({form})}
 
 ### For a more advanced usage visit the [Docs](https://vue-form-handler.com)
 
+## 📈 Project activity
+---
+![Alt](https://repobeats.axiom.co/api/embed/d0da4b79bde282068c5f3da3505091b1447a1f6c.svg "Repobeats analytics image")
+
 ## 💜 Thanks
 ---
 This project is heavily inspired by other awesome projects like:

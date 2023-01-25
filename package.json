@@ -2,6 +2,11 @@
   "author": "Dennis R. Bosmans",
   "name": "vue-form-handler",
   "description": "Vue 3 form handler, with validation, error handling, and more.",
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/dbssman/vue-form-handler"
+  },
+  "homepage": "https://www.vue-form-handler.com/",
   "license": "MIT",
   "private": false,
   "version": "0.0.2",
