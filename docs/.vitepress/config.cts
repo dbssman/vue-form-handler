@@ -18,6 +18,13 @@ export default defineConfig({
       pattern: 'https://github.com/dbssman/vue-form-handler/edit/master/docs/:path',
       text: 'Edit this page on GitHub',
     },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/dbssman/vue-form-handler' }
+    ],
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2022-present Dennis R. Bosmans',
+    },
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Get started', link: '/get-started/introduction' },
