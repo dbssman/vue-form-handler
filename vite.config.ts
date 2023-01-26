@@ -34,6 +34,7 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
+      exclude: ['**/logic', '**/utils'],
     }),
   ]
 })
