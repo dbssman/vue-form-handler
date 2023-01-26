@@ -3,15 +3,21 @@
   "name": "vue-form-handler",
   "description": "Vue 3 form handler, with validation, error handling, and more.",
   "repository": {
-    "type":"git",
-    "url":"https://github.com/dbssman/vue-form-handler"
+    "type": "git",
+    "url": "https://github.com/dbssman/vue-form-handler"
   },
   "homepage": "https://www.vue-form-handler.com/",
   "license": "MIT",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.4",
   "type": "module",
-  "keywords": ["vue", "vue handler", "form handler", "form", "handler"],
+  "keywords": [
+    "vue",
+    "vue handler",
+    "form handler",
+    "form",
+    "handler"
+  ],
   "files": [
     "dist"
   ],
@@ -21,7 +27,8 @@
   "exports": {
     ".": {
       "import": "./dist/vue-form-handler.js",
-      "require": "./dist/vue-form-handler.umd.cjs"
+      "require": "./dist/vue-form-handler.umd.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
@@ -34,22 +41,21 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
-  "dependencies": {
-  },
   "devDependencies": {
-    "vite-plugin-dts": "^1.7.1",
-    "vue": "^3.2.41",
-    "happy-dom": "^8.1.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
+    "@vitest/coverage-c8": "^0.28.2",
     "@vue/test-utils": "^2.2.6",
+    "happy-dom": "^8.1.0",
     "lodash-es": "^4.17.21",
     "path": "^0.12.7",
     "typescript": "^4.6.4",
     "vite": "^3.2.3",
+    "vite-plugin-dts": "^1.7.1",
     "vitepress": "^1.0.0-alpha.33",
     "vitest": "^0.26.1",
+    "vue": "^3.2.41",
     "vue-tsc": "^1.0.9"
   }
 }
