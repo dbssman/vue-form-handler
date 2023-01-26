@@ -38,21 +38,21 @@ export default defineConfig({
       },
       {
         text: 'Guides', collapsible: true, items: [
-          { text: 'Validation', link: '/guides/validation' },
-          { text: 'Typescript', link: '/guides/typescript' },
-          { text: 'Form submission', link: '/guides/form-submission' },
           { text: 'Custom components', link: '/guides/custom-components' },
+          { text: 'Material libraries', link: '/guides/material-libraries' },
           { text: 'Native support', link: '/guides/native-support' },
+          { text: 'Typescript', link: '/guides/typescript' },
+          { text: 'Validation', link: '/guides/validation' },
         ]
       },
       {
         text: 'Examples', collapsible: true, items: [
-          { text: 'Basic', link: '/examples/basic' },
           { text: 'Async validations', link: '/examples/async-validations' },
-          { text: 'Typescript', link: '/examples/typescript' },
-          { text: 'Interceptor', link: '/examples/interceptor' },
+          { text: 'Basic', link: '/examples/basic' },
           { text: 'Dependent fields', link: '/examples/dependent-fields' },
-          { text: 'More examples', link: '/examples/more-examples' }
+          { text: 'Interceptor', link: '/examples/interceptor' },
+          { text: 'More examples', link: '/examples/more-examples' },
+          { text: 'Typescript', link: '/examples/typescript' },
         ]
       },
       {
