@@ -6,6 +6,26 @@ export interface ValidationWithMessage {
     message: string
 }
 
+export interface NativeValidations {
+    /** Required validation */
+    required?: boolean
+
+    /** Min validation */
+    min?: number
+
+    /** Max validation */
+    max?: number
+
+    /** MinLength validation */
+    minLength?: number
+
+    /** MaxLength validation */
+    maxLength?: number
+
+    /** Pattern validation */
+    pattern?: string
+}
+
 export interface ValidationsConfiguration {
     /** Required validation */
     /** If true, the field is required */
@@ -35,5 +55,5 @@ export interface ValidationsConfiguration {
     /** Pattern validation */
     /** If a RegExp, the field must match the RegExp */
     /** If an object, the field must match the object.value and the object.message is the validation message */
-    pattern?: RegExp | ValidationWithMessage
+    pattern?: string | RegExp | ValidationWithMessage
 }
