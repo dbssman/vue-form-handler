@@ -41,12 +41,12 @@ Coming soon...
 | isDirty     | `boolean`          | Dirty state binding for the field. Only returned if `withDetails` is true |
 | isTouched     | `boolean`          | Touched state binding for the field. Only returned if `withDetails` is true |
 | onChange     | `(el: any) => Promise<void>`          | Value update handler for native inputs |
-| required     | `boolean`          | Native required validation. Only returned if `useNativeValidations` is set to true and `required` is set. |
-| min     | `number`          | Native min validation. Only returned if `useNativeValidations` is set to true and `min` is set. |
-| max     | `number`          | Native max validation. Only returned if `useNativeValidations` is set to true and `max` is set. |
-| minLength     | `number`          | Native minLength validation. Only returned if `useNativeValidations` is set to true and `minLength` is set. |
-| maxLength     | `number`          | Native maxLength validation. Only returned if `useNativeValidations` is set to true and `maxLength` is set. |
-| pattern     | `RegExp`          | Native pattern validation. Only returned if `useNativeValidations` is set to true and `pattern` is set. |
+| required     | `boolean \| string`          | Native required validation. Only returned if `useNativeValidations` is set to true and `required` is set. |
+| min     | `number \| Object`          | Native min validation. Only returned if `useNativeValidations` is set to true and `min` is set. |
+| max     | `number \| Object`          | Native max validation. Only returned if `useNativeValidations` is set to true and `max` is set. |
+| minLength     | `number \| Object`          | Native minLength validation. Only returned if `useNativeValidations` is set to true and `minLength` is set. |
+| maxLength     | `number \| Object`          | Native maxLength validation. Only returned if `useNativeValidations` is set to true and `maxLength` is set. |
+| pattern     | `string  \| RegExp \| Object`          | Native pattern validation. Only returned if `useNativeValidations` is set to true and `pattern` is set. |
 
 :::info
 Notice how `modelValue` and `'onUpdate:modelValue'` are used as our two way data binding for non-native inputs following the Vue [approach](https://vuejs.org/guide/components/v-model.html). So that your fields used for complex forms could also be re-used in other parts of your application with v-model.
@@ -254,7 +254,7 @@ export interface ValidationsConfiguration {
     max?: number | ValidationWithMessage
     minLength?: number | ValidationWithMessage
     maxLength?: number | ValidationWithMessage
-    pattern?: RegExp | ValidationWithMessage
+    pattern?: string | RegExp | ValidationWithMessage
 }
 
 export interface RegisterOptions extends ValidationsConfiguration {

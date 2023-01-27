@@ -30,7 +30,7 @@ export default (validations: ValidationsConfiguration = {}): Validations => {
         }),
         ...(validations.pattern && {
             pattern: !(validations.pattern as ValidationWithMessage)?.value
-                ? pattern(validations.pattern as RegExp)
+                ? pattern((typeof validations.pattern === 'string' ? new RegExp(validations.pattern) : validations.pattern) as RegExp)
                 : pattern((validations.pattern as ValidationWithMessage).value as RegExp, (validations.pattern as ValidationWithMessage).message as string)
         })
     }
