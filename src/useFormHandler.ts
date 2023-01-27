@@ -1,3 +1,4 @@
+import { NativeValidations } from './types/validations';
 import { DEFAULT_FIELD_VALUE } from './core/constants';
 import {
   ModifiedValues,
@@ -218,6 +219,7 @@ const useFormHandler: FormHandler = ({
       withDetails,
       native,
       useNativeValidation,
+      pattern,
       ...nativeValidations } = options
     _initControl(name, options);
     return ({
@@ -237,7 +239,10 @@ const useFormHandler: FormHandler = ({
         onChange: async () => await handleChange(name, getNativeFieldValue(_refs[name].ref)),
       }),
       ...(useNativeValidation && {
-        ...nativeValidations
+        ...({
+          ...nativeValidations,
+          ...(pattern && { pattern: pattern instanceof RegExp ? pattern.source : pattern }),
+        } as NativeValidations)
       })
     })
   }
