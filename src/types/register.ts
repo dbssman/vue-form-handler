@@ -1,5 +1,5 @@
 import { BaseControlProps } from "./baseControl";
-import { ValidationsConfiguration } from "./validations";
+import { ValidationsConfiguration, NativeValidations } from "./validations";
 
 /** Function returning true for correct validation or a string with an error if it's invalid */
 export type ValidationFn = (_: any) => Promise<true | string> | true | string
@@ -28,7 +28,7 @@ export interface RegisterOptions extends ValidationsConfiguration {
     useNativeValidation?: boolean
 }
 
-export type RegisterReturn = BaseControlProps & ValidationsConfiguration
+export type RegisterReturn = BaseControlProps & NativeValidations
 
 /** Function that allows you to register a control to interact with the form */
 export type Register = (name: string, options?: RegisterOptions) => RegisterReturn
