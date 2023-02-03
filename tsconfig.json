@@ -5,8 +5,6 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -16,13 +14,8 @@
       "DOM"
     ],
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "noEmit": true,
     "declaration": true,
-    "declarationMap": true,
-    "noUnusedLocals": true,
-    "sourceMap": true,
-    "noImplicitAny": true,
     "types": [
       "vitest/importMeta"
     ]
