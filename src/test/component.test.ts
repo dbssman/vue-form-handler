@@ -1,4 +1,4 @@
-import FormHandler from '../FormHandler'
+import { FormHandler } from '../FormHandler'
 import { mount } from '@vue/test-utils'
 import { expect, it, describe } from "vitest"
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import useFormHandler from '../useFormHandler'
+import { useFormHandler } from '../useFormHandler'
 
 describe('Register function testing', () => {
     it('Registering a field', () => {

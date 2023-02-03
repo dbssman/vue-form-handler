@@ -169,4 +169,4 @@ export interface FormHandlerReturn {
 }
 
 /** Form handler solution as a composable function */
-export type FormHandler = (_?: FormHandlerParams) => FormHandlerReturn
+export type UseFormHandler = (_?: FormHandlerParams) => FormHandlerReturn
