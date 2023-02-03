@@ -1,9 +1,9 @@
 import { NativeValidations } from './types/validations';
-import { DEFAULT_FIELD_VALUE } from './core/constants';
+import { DEFAULT_FIELD_VALUE } from './constants';
 import {
   ModifiedValues,
   TriggerValidation,
-  FormHandler,
+  UseFormHandler,
   ResetField,
   ResetForm,
   InitControl,
@@ -36,7 +36,7 @@ export const initialState = () => ({
   isValid: true,
 })
 
-const useFormHandler: FormHandler = ({
+export const useFormHandler: UseFormHandler = ({
   initialValues = {},
   interceptor,
   validate,
@@ -290,5 +290,3 @@ const useFormHandler: FormHandler = ({
     values: readonly(values)
   }
 }
-
-export default useFormHandler
