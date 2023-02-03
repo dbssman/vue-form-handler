@@ -1,6 +1,6 @@
 import { useFormHandler } from './useFormHandler';
 import { FormHandlerParams, FormHandlerReturn } from './types/formHandler';
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType } from '@vue/runtime-core';
 
 export const FormHandler = defineComponent({
     name: 'FormHandler',

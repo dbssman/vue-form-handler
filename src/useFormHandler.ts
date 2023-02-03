@@ -23,7 +23,7 @@ import {
   ValidationsConfiguration,
   Unregister
 } from './types';
-import { reactive, readonly, unref, watch } from 'vue'
+import { reactive, readonly, unref, watch } from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
 
