@@ -1,8 +1,8 @@
-import useFormHandler from './useFormHandler';
+import { useFormHandler } from './useFormHandler';
 import { FormHandlerParams, FormHandlerReturn } from './types/formHandler';
 import { defineComponent, PropType } from 'vue';
 
-export default defineComponent({
+export const FormHandler = defineComponent({
     name: 'FormHandler',
     props: {
         initialValues: Object as PropType<FormHandlerParams['initialValues']>,

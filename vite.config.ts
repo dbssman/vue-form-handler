@@ -16,17 +16,16 @@ export default defineConfig({
     reporters: 'verbose',
   },
   build: {
+    sourcemap: true,
+    minify: false,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'VueFormHandler',
-      fileName: 'vue-form-handler',
+      name: 'vue-form-handler',
+      fileName: 'index',
     },
     rollupOptions: {
-      external: ['vue'],
       output: {
-        globals: {
-          vue: 'Vue'
-        }
+        sourcemapExcludeSources: true,
       }
     }
   },
