@@ -1,6 +1,6 @@
 {
   "name": "vue-form-handler",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "license": "MIT",
   "author": "Dennis R. Bosmans",
@@ -38,18 +38,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview",
     "test": "vitest --dom",
     "coverage": "vitest run --coverage",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
-  "dependencies": {
-    "lodash-es": "^4.17.21",
-    "vue": "^3.2.41"
-  },
   "devDependencies": {
+    "lodash-es": "^4.17.21",
+    "@vue/runtime-core": "^3.2.41",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.2.0",
