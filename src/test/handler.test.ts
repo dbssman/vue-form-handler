@@ -1,4 +1,4 @@
-import useFormHandler, { initialState } from '../useFormHandler';
+import { initialState, useFormHandler } from '../useFormHandler';
 import { expect, it, describe } from "vitest"
 
 describe('Form handler testing', () => {

@@ -1,5 +1,4 @@
-export { default as FormHandler } from './FormHandler'
-export { default as useFormHandler } from './useFormHandler'
-
-export * from './core/constants'
+export * from './FormHandler'
+export * from './useFormHandler'
 export * from './types'
+export * from './constants'
