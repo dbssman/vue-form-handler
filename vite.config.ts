@@ -24,7 +24,11 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
+      external: ['@vue/runtime-core'],
       output: {
+        globals: {
+          '@vue/runtime-core': 'VueRuntimeCore'
+        },
         sourcemapExcludeSources: true,
       }
     }
