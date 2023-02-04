@@ -78,6 +78,6 @@ export default defineConfig({
           { text: `FormHandler`, link: '/api/form-handler' }
         ]
       }
-    ]
+    ],
   }
 })
