@@ -262,10 +262,10 @@ const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const { values, register, formState, handleSubmit } = useFormHandler({ validationMode: 'always' });
 const successFn = (form: Record<string, any>) => { 
-    console.log('Form correctly submitted:' form) 
+    console.log('Form correctly submitted:', form) 
 }
-const errorFn = (errors: Record<string,string>) => {
-    console.error('There where errors while submitting the form:' errors)
+const errorFn = (errors: Record<string, any>) => {
+    console.error('There where errors while submitting the form:', errors)
 }
 </script>
 ```

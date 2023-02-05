@@ -47,6 +47,7 @@ export default defineConfig({
       },
       {
         text: 'Examples', collapsible: true, items: [
+          { text: 'Async submission', link: '/examples/async-submission' },
           { text: 'Async validations', link: '/examples/async-validations' },
           { text: 'Basic', link: '/examples/basic' },
           { text: 'Dependent fields', link: '/examples/dependent-fields' },
@@ -78,6 +79,6 @@ export default defineConfig({
           { text: `FormHandler`, link: '/api/form-handler' }
         ]
       }
-    ]
+    ],
   }
 })
