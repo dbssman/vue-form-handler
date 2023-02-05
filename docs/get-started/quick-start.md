@@ -6,7 +6,7 @@ Welcome to the VueFormHandler tutorial. This will teach you everything you need 
 
 ### What are we building?
 
-In this tutorial, we'll build a sign up form with Vue and VueFormHandler [Link here](somelink.com). If the code looks strange or you don't fully understand something, don't worry we'll go over this tutorial to help you understand how the handler works.
+In this tutorial, we'll build a sign up form with Vue and VueFormHandler [Link here](https://codesandbox.io/embed/github/dbssman/vue-form-handler/tree/master/examples/tutorial?fontsize=12&hidenavigation=0&theme=dark). If the code looks strange or you don't fully understand something, don't worry we'll go over this tutorial to help you understand how the handler works.
 
 ### Prerequisites
 
