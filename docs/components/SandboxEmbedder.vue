@@ -1,7 +1,7 @@
 <template>
     <iframe
         :src="`https://codesandbox.io/embed/github/dbssman/vue-form-handler/tree/master/examples/${example}?fontsize=12&hidenavigation=1&theme=dark`"
-        style="border:0;borderRadius:4;overflow:hidden" :style="styleObject"
+        style="border:0;borderRadius:4;overflow:hidden;max-height:100vh" :style="styleObject"
         :title="`dbssman/vue-form-handler: ${example}`"
         allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
         sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
