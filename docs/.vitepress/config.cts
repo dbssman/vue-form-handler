@@ -51,9 +51,6 @@ export default defineConfig({
           { text: 'Async validations', link: '/examples/async-validations' },
           { text: 'Basic', link: '/examples/basic' },
           { text: 'Dependent fields', link: '/examples/dependent-fields' },
-          { text: 'Interceptor', link: '/examples/interceptor' },
-          { text: 'More examples', link: '/examples/more-examples' },
-          { text: 'Typescript', link: '/examples/typescript' },
         ]
       },
       {
