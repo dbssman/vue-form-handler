@@ -6,7 +6,7 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
         delete _refs[name]
         return
     }
-    if (!fieldRef.nodeName || !isNativeControl(fieldRef)) {
+    if (fieldRef.$el || !fieldRef.nodeName || !isNativeControl(fieldRef)) {
         //TODO: Correctly type this in order to expect a fixed data structure
         _refs[name].ref = {
             type: 'custom'
