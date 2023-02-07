@@ -21,7 +21,8 @@ import {
   IsValidForm,
   Refs,
   ValidationsConfiguration,
-  Unregister
+  Unregister,
+  FieldReference
 } from './types';
 import { reactive, readonly, unref, watch } from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
@@ -236,7 +237,12 @@ export const useFormHandler: UseFormHandler = ({
         isTouched: !!formState.touched[name],
       }),
       ...(native !== false && {
-        onChange: async () => await handleChange(name, getNativeFieldValue(_refs[name].ref)),
+        onChange: async () => {
+          if (!_refs[name].ref || (_refs[name].ref as FieldReference).type === 'custom') {
+            return
+          }
+          await handleChange(name, getNativeFieldValue(_refs[name].ref))
+        },
       }),
       ...(useNativeValidation && {
         ...({
