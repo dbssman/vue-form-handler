@@ -10,7 +10,8 @@ export default defineConfig({
   define: {
     'import.meta.vitest': false,
   },
-  root: 'playground',
+  root: process.env.NODE_ENV === 'development' ? 'playground' : '',
+  mode: process.env.NODE_ENV,
   test: {
     includeSource: ['test/*'],
     environment: 'happy-dom',
