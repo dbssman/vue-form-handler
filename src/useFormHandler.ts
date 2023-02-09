@@ -27,6 +27,7 @@ import {
 import { reactive, readonly, unref, watch } from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
 import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
+import { isNativeControl } from './utils';
 
 export const initialState = () => ({
   touched: {},
@@ -175,6 +176,14 @@ export const useFormHandler: UseFormHandler = ({
         }))) {
       values[name] = value
       setDirty(name, !isEqual(value, _getInitial(name)))
+      return
+    }
+    if (isNativeControl((Array.isArray(_refs[name].ref)
+      ? (_refs[name].ref as FieldReference[])[0]
+      : _refs[name].ref) as HTMLInputElement)) {
+      const prev = values[name]
+      values[name] = undefined
+      values[name] = prev
     }
   }
 
