@@ -27,15 +27,15 @@ const styleObject = computed(() => ({
 }))
 
 const setDimensions = () => {
-    height.value = Number(document.querySelector('.VPContent')?.clientHeight)
-    width.value = Number(document.querySelector('.VPDoc')?.clientWidth)
+    height.value = Number(document?.querySelector('.VPContent')?.clientHeight)
+    width.value = Number(document?.querySelector('.VPDoc')?.clientWidth)
 }
 
 onMounted(() => {
     setDimensions()
+    window?.addEventListener('resize', setDimensions)
 })
 
-window.addEventListener('resize', setDimensions)
 </script>
 
 <style>
