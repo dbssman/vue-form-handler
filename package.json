@@ -36,8 +36,8 @@
     }
   },
   "scripts": {
-    "dev": "NODE_ENV=development vite",
-    "build": "vue-tsc && NODE_ENV=production vite build",
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
     "test": "vitest --dom",
     "coverage": "vitest run --coverage",
     "docs:dev": "vitepress dev docs",
