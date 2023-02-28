@@ -13,21 +13,23 @@ Changing the initialValues will trigger a form reset, this means the formState a
 Values which we use to initialize the form, this is useful when we get an initial value state for the form from an external call.
 
 #### Example
+
 ```vue
 <template>
-    <input v-bind="register('firstName')"> // Should initially be 'John'
-    <input v-bind="register('lastName')"> // Should initially be 'Doe'
-    <pre>{{values}}</pre> // Should show the initialized values
+  <input v-bind="register('firstName')" /> // Should initially be 'John'
+  <input v-bind="register('lastName')" /> // Should initially be 'Doe'
+  <pre>{{ values }}</pre>
+  // Should show the initialized values
 </template>
 <script setup lang="ts">
-    import { useFormHandler } from 'vue-form-handler'
+import { useFormHandler } from 'vue-form-handler'
 
-    const { register, values } = useFormHandler({
-        initialValues: {
-            firstName: 'John',
-            lastName: 'Doe'
-        }
-    })
+const { register, values } = useFormHandler({
+  initialValues: {
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+})
 </script>
 ```
 
@@ -39,20 +41,20 @@ Function that allows us to intercept any value assignment, accept or deny it and
 
 The interceptor will be called passing an object as a parameter with the following:
 
-| attribute | type   | description                                |
-|-----------|--------|--------------------------------------------|
-| name      | `string`    | Name of the field that is about to be set  |
-| value     | `any`    | Value of the field that is about to be set |
-| clearError | [ClearError](/api/use-form-handler/clear-error#type-declarations) | [API - clearError](/api/use-form-handler/clear-error) |
-| clearField | [ClearField](/api/use-form-handler/clear-field#type-declarations) | [API - clearField](/api/use-form-handler/clear-field) |
-| formState | [FormState](/api/use-form-handler/form-state#type-declarations) | [API - formState](/api/use-form-handler/form-state) |
-| modifiedValues | [ModifiedValues](/api/use-form-handler/modified-values#type-declarations) | [API - modifiedValues](/api/use-form-handler/modified-values) |
-| resetField | [ResetField](/api/use-form-handler/reset-field#type-declarations) | [API - resetField](/api/use-form-handler/reset-field) |
-| resetForm | [ResetForm](/api/use-form-handler/reset-form#type-declarations) | [API - resetForm](/api/use-form-handler/reset-form) |
-| setError | [SetError](/api/use-form-handler/set-error#type-declarations) | [API - setError](/api/use-form-handler/set-error) |
-| setValue | [SetValue](/api/use-form-handler/set-value#type-declarations) | [API - setValue](/api/use-form-handler/set-value) |
+| attribute         | type                                                                            | description                                                         |
+| ----------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| name              | `string`                                                                        | Name of the field that is about to be set                           |
+| value             | `any`                                                                           | Value of the field that is about to be set                          |
+| clearError        | [ClearError](/api/use-form-handler/clear-error#type-declarations)               | [API - clearError](/api/use-form-handler/clear-error)               |
+| clearField        | [ClearField](/api/use-form-handler/clear-field#type-declarations)               | [API - clearField](/api/use-form-handler/clear-field)               |
+| formState         | [FormState](/api/use-form-handler/form-state#type-declarations)                 | [API - formState](/api/use-form-handler/form-state)                 |
+| modifiedValues    | [ModifiedValues](/api/use-form-handler/modified-values#type-declarations)       | [API - modifiedValues](/api/use-form-handler/modified-values)       |
+| resetField        | [ResetField](/api/use-form-handler/reset-field#type-declarations)               | [API - resetField](/api/use-form-handler/reset-field)               |
+| resetForm         | [ResetForm](/api/use-form-handler/reset-form#type-declarations)                 | [API - resetForm](/api/use-form-handler/reset-form)                 |
+| setError          | [SetError](/api/use-form-handler/set-error#type-declarations)                   | [API - setError](/api/use-form-handler/set-error)                   |
+| setValue          | [SetValue](/api/use-form-handler/set-value#type-declarations)                   | [API - setValue](/api/use-form-handler/set-value)                   |
 | triggerValidation | [TriggerValidation](/api/use-form-handler/trigger-validation#type-declarations) | [API - triggerValidation](/api/use-form-handler/trigger-validation) |
-| values    | `Record<string,any>` | [API - values](/api/use-form-handler/values) |
+| values            | `Record<string,any>`                                                            | [API - values](/api/use-form-handler/values)                        |
 
 ::: info
 As you can see, the interceptor is provided with everything the handler does provide but in a separate context.
@@ -67,34 +69,34 @@ return true to proceed setting the value and false if the value should not be se
 
 ```vue
 <template>
-    <select v-bind="register('continent')" placeholder="Choose your country">
-        <option disabled value=null>Choose your continent</option>
-        <option value="AM">America</option>
-        <option value="AS">Asia</option>
-        <option value="EU">Europe</option>
-    </select>
-    <select v-bind="register('country')" placeholder="Choose your country">
-        <option disabled value=null>Choose your country</option>
-        <option value="CAN">Canada</option>
-        <option value="USA">United States</option>
-        <option value="JAP">Japan</option>
-        <option value="CHN">China</option>
-        <option value="ESP">Spain</option>
-        <option value="DEU">Germany</option>
-    </select>
+  <select v-bind="register('continent')" placeholder="Choose your country">
+    <option disabled value="null">Choose your continent</option>
+    <option value="AM">America</option>
+    <option value="AS">Asia</option>
+    <option value="EU">Europe</option>
+  </select>
+  <select v-bind="register('country')" placeholder="Choose your country">
+    <option disabled value="null">Choose your country</option>
+    <option value="CAN">Canada</option>
+    <option value="USA">United States</option>
+    <option value="JAP">Japan</option>
+    <option value="CHN">China</option>
+    <option value="ESP">Spain</option>
+    <option value="DEU">Germany</option>
+  </select>
 </template>
 <script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const interceptor = ({ name, clearField }) => {
-    if (name === 'continent') {
-        clearField('country')
-    }
-    return true
+  if (name === 'continent') {
+    clearField('country')
+  }
+  return true
 }
 
 const { register } = useFormHandler({
-    interceptor
+  interceptor,
 })
 </script>
 ```
@@ -107,24 +109,24 @@ Use this function in the case you'd rather perform a custom/different validation
 
 ```vue
 <template @submit.prevent="handleSubmit(successFn)">
-    <form>
-        <input v-bind="register('firstName')">
-        <input v-bind="register('lastName')">
-        <input type="number" v-bind="register('age')">
-        <input type="submit">
-    </form>
+  <form>
+    <input v-bind="register('firstName')" />
+    <input v-bind="register('lastName')" />
+    <input type="number" v-bind="register('age')" />
+    <input type="submit" />
+  </form>
 </template>
 <script setup lang="ts">
-    import { useFormHandler } from 'vue-form-handler'
-    
-    const validation = (values) => values.age && Number(values.age)>=18
-    const successFn = (form:Record<string,any>) => {
-        console.log({form})
-    }
+import { useFormHandler } from 'vue-form-handler'
 
-    const { register, handleSubmit } = useFormHandler({
-        validation
-    })
+const validation = (values) => values.age && Number(values.age) >= 18
+const successFn = (form: Record<string, any>) => {
+  console.log({ form })
+}
+
+const { register, handleSubmit } = useFormHandler({
+  validation,
+})
 </script>
 ```
 
@@ -132,12 +134,12 @@ Use this function in the case you'd rather perform a custom/different validation
 
 This option allows you to configure the validation mode or strategy the handler will follow.
 
-| name | type   | description                                |
-|-----------|--------|--------------------------------------------|
-| onChange      | `string`    | Validation will trigger on the change event with each input, and lead to multiple re-renders.  |
-| onBlur     | `string`    | Validation will trigger on the blur event. |
-| onSubmit    | `string` | 	Validation will trigger on the submit event. |
-| always    | `string` | 	Validation will trigger on change and blur events.  |
+| name     | type     | description                                                                                   |
+| -------- | -------- | --------------------------------------------------------------------------------------------- |
+| onChange | `string` | Validation will trigger on the change event with each input, and lead to multiple re-renders. |
+| onBlur   | `string` | Validation will trigger on the blur event.                                                    |
+| onSubmit | `string` | Validation will trigger on the submit event.                                                  |
+| always   | `string` | Validation will trigger on change and blur events.                                            |
 
 ::: warning
 Using the `always` validationMode will have a more significant impact on performance.
@@ -162,43 +164,36 @@ Using the `always` validationMode will have a more significant impact on perform
 ## Type Declarations
 
 ```ts
-
-export type Interceptor = (
-    _: InterceptorParams
-) => Promise<boolean> | boolean
+export type Interceptor = (_: InterceptorParams) => Promise<boolean> | boolean
 
 export type FormValidation = (
-    values: Record<string, any>
+  values: Record<string, any>
 ) => Promise<boolean> | boolean
 
 export interface FormHandlerParams {
-    initialValues?: Record<string, any> 
-    | Ref<Record<string, any>> 
+  initialValues?:
+    | Record<string, any>
+    | Ref<Record<string, any>>
     | ComputedRef<Record<string, any>>
-    interceptor?: Interceptor
-    validate?: FormValidation
-    validationMode?: 'onChange' 
-    | 'onBlur' 
-    | 'onSubmit' 
-    | 'always'
+  interceptor?: Interceptor
+  validate?: FormValidation
+  validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
 }
 export interface FormHandlerReturn {
-    formState: FormState
-    values: Record<string, any>
-    clearError: ClearError
-    clearField: ClearField
-    handleSubmit: HandleSubmit
-    modifiedValues: ModifiedValues
-    register: Register
-    resetField: ResetField
-    resetForm: ResetForm
-    setError: SetError
-    setValue: SetValue
-    triggerValidation: TriggerValidation
-    unregister: (name: string) => void
+  formState: FormState
+  values: Record<string, any>
+  clearError: ClearError
+  clearField: ClearField
+  handleSubmit: HandleSubmit
+  modifiedValues: ModifiedValues
+  register: Register
+  resetField: ResetField
+  resetForm: ResetForm
+  setError: SetError
+  setValue: SetValue
+  triggerValidation: TriggerValidation
+  unregister: (name: string) => void
 }
 
-export type FormHandler = (
-    _?: FormHandlerParams
-) => FormHandlerReturn
+export type FormHandler = (_?: FormHandlerParams) => FormHandlerReturn
 ```

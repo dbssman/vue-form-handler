@@ -1,5 +1,5 @@
 # Typescript
 
-## Type support 
+## Type support
 
 ## Examples

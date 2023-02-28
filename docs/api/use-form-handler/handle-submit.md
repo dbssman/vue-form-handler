@@ -12,32 +12,42 @@ Coming soon...
 
 ```vue
 <template>
-    <form @submit.prevent="submitFn">
-        <input type="text" v-bind="register('name', {
-            required: true
-        })" />
-        <input type="text" v-bind="register('email', {
-            required: true
-        })" />
-        <input type="text" v-bind="register('summary')">
-        <button type="submit">Submit</button>
-    </form>
+  <form @submit.prevent="submitFn">
+    <input
+      type="text"
+      v-bind="
+        register('name', {
+          required: true,
+        })
+      "
+    />
+    <input
+      type="text"
+      v-bind="
+        register('email', {
+          required: true,
+        })
+      "
+    />
+    <input type="text" v-bind="register('summary')" />
+    <button type="submit">Submit</button>
+  </form>
 </template>
-<script setup lang="ts" >
+<script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const { register, handleSubmit, formState } = useFormHandler()
 const successFn = (form: any) => {
-    //do anything with form
-    console.log(form)
+  //do anything with form
+  console.log(form)
 }
 const submitFn = () => {
-    try {
-        handleSubmit(successFn)
-    } catch {
-        //do anything with errors
-        console.log(formState.errors)
-    }
+  try {
+    handleSubmit(successFn)
+  } catch {
+    //do anything with errors
+    console.log(formState.errors)
+  }
 }
 </script>
 ```
@@ -46,28 +56,38 @@ const submitFn = () => {
 
 ```vue
 <template>
-    <form @submit.prevent="handleSubmit(successFn,errorFn)">
-        <input type="text" v-bind="register('name', {
-            required: true
-        })" />
-        <input type="text" v-bind="register('email', {
-            required: true
-        })" />
-        <input type="text" v-bind="register('summary')">
-        <button type="submit">Submit</button>
-    </form>
+  <form @submit.prevent="handleSubmit(successFn, errorFn)">
+    <input
+      type="text"
+      v-bind="
+        register('name', {
+          required: true,
+        })
+      "
+    />
+    <input
+      type="text"
+      v-bind="
+        register('email', {
+          required: true,
+        })
+      "
+    />
+    <input type="text" v-bind="register('summary')" />
+    <button type="submit">Submit</button>
+  </form>
 </template>
-<script setup lang="ts" >
+<script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const { register, handleSubmit } = useFormHandler()
 const successFn = (form: any) => {
-    //do anything with form
-    console.log(form)
+  //do anything with form
+  console.log(form)
 }
-const errorFn = (errors:any) => {
-    //do anything with errors
-    console.log(errors)
+const errorFn = (errors: any) => {
+  //do anything with errors
+  console.log(errors)
 }
 </script>
 ```
@@ -79,7 +99,7 @@ export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
 export type HandleSubmitErrorFn = (errors: Record<string, string>) => void
 
 export type HandleSubmit = (
-    successFn: HandleSubmitSuccessFn, 
-    errorFn?: HandleSubmitErrorFn
+  successFn: HandleSubmitSuccessFn,
+  errorFn?: HandleSubmitErrorFn
 ) => void
 ```
