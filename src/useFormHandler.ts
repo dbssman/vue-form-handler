@@ -1,5 +1,5 @@
-import { NativeValidations } from './types/validations';
-import { DEFAULT_FIELD_VALUE } from './constants';
+import { NativeValidations } from './types/validations'
+import { DEFAULT_FIELD_VALUE } from './constants'
 import {
   ModifiedValues,
   TriggerValidation,
@@ -22,12 +22,19 @@ import {
   Refs,
   ValidationsConfiguration,
   Unregister,
-  FieldReference
-} from './types';
+  FieldReference,
+} from './types'
 import { reactive, readonly, unref, watch } from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
-import { getNativeFieldValue, validateField, validateForm, getDefaultFieldValue, refFn, transformValidations } from './logic';
-import { isNativeControl } from './utils';
+import {
+  getNativeFieldValue,
+  validateField,
+  validateForm,
+  getDefaultFieldValue,
+  refFn,
+  transformValidations,
+} from './logic'
+import { isNativeControl } from './utils'
 
 export const initialState = () => ({
   touched: {},
@@ -42,23 +49,25 @@ export const useFormHandler: UseFormHandler = ({
   initialValues = {},
   interceptor,
   validate,
-  validationMode = 'onChange'
+  validationMode = 'onChange',
 } = {}) => {
   const values: Record<string, any> = reactive({ ...unref(initialValues) })
   const formState = reactive<FormState>({ ...initialState() })
 
   let _refs: Refs = {}
 
-  const _getDefault = (name: string): any => _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
-  const _getInitial = (name: string): any => unref(initialValues)?.[name] ?? _getDefault(name)
+  const _getDefault = (name: string): any =>
+    _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
+  const _getInitial = (name: string): any =>
+    unref(initialValues)?.[name] ?? _getDefault(name)
   const _initControl: InitControl = (name, options) => {
     const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
     _refs[name] = {
-      ..._refs[name] || {},
+      ...(_refs[name] || {}),
       _validations: {
-        ...(!options.useNativeValidation
-          && transformValidations(options as ValidationsConfiguration)),
-        ...(options.validate || {})
+        ...(!options.useNativeValidation &&
+          transformValidations(options as ValidationsConfiguration)),
+        ...(options.validate || {}),
       },
       _defaultValue: options.defaultValue,
       _disabled: !!options.disabled,
@@ -141,7 +150,9 @@ export const useFormHandler: UseFormHandler = ({
 
   const resetForm: ResetForm = () => {
     Object.assign(values, {
-      ...Object.fromEntries(Object.keys(values).map((key) => [key, _getInitial(key)])),
+      ...Object.fromEntries(
+        Object.keys(values).map((key) => [key, _getInitial(key)])
+      ),
     })
     Object.assign(formState, initialState())
   }
@@ -152,15 +163,16 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const modifiedValues: ModifiedValues = () => {
-    return Object.fromEntries(Object
-      .entries(values)
-      .filter(([name]) => formState.dirty[name]))
+    return Object.fromEntries(
+      Object.entries(values).filter(([name]) => formState.dirty[name])
+    )
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
-    if (!_refs[name]?._disabled
-      && (!interceptor
-        || await interceptor({
+    if (
+      !_refs[name]?._disabled &&
+      (!interceptor ||
+        (await interceptor({
           clearError,
           clearField,
           formState,
@@ -172,15 +184,20 @@ export const useFormHandler: UseFormHandler = ({
           setValue,
           triggerValidation,
           value,
-          values
-        }))) {
+          values,
+        })))
+    ) {
       values[name] = value
       setDirty(name, !isEqual(value, _getInitial(name)))
       return
     }
-    if (isNativeControl((Array.isArray(_refs[name].ref)
-      ? (_refs[name].ref as FieldReference[])[0]
-      : _refs[name].ref) as HTMLInputElement)) {
+    if (
+      isNativeControl(
+        (Array.isArray(_refs[name].ref)
+          ? (_refs[name].ref as FieldReference[])[0]
+          : _refs[name].ref) as HTMLInputElement
+      )
+    ) {
       const prev = values[name]
       values[name] = undefined
       values[name] = prev
@@ -194,7 +211,10 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const handleChange: HandleChange = async (name, value = DEFAULT_FIELD_VALUE) => {
+  const handleChange: HandleChange = async (
+    name,
+    value = DEFAULT_FIELD_VALUE
+  ) => {
     await setValue(name, value)
     setTouched(name, true)
     if (['always', 'onChange'].includes(validationMode)) {
@@ -203,7 +223,7 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const clearField: ClearField = async (name) => {
-    const defaultValue: any = _getDefault(name);
+    const defaultValue: any = _getDefault(name)
     if (defaultValue !== values[name]) {
       await setValue(name, defaultValue)
       await triggerValidation(name)
@@ -230,13 +250,15 @@ export const useFormHandler: UseFormHandler = ({
       native,
       useNativeValidation,
       pattern,
-      ...nativeValidations } = options
-    _initControl(name, options);
-    return ({
+      ...nativeValidations
+    } = options
+    _initControl(name, options)
+    return {
       name,
       modelValue: values[name],
       error: formState.errors[name],
-      'onUpdate:modelValue': async (value: any) => await handleChange(name, value),
+      'onUpdate:modelValue': async (value: any) =>
+        await handleChange(name, value),
       ref: refFn(name, _refs, values),
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
@@ -247,7 +269,10 @@ export const useFormHandler: UseFormHandler = ({
       }),
       ...(native !== false && {
         onChange: async () => {
-          if (!_refs[name].ref || (_refs[name].ref as FieldReference).type === 'custom') {
+          if (
+            !_refs[name].ref ||
+            (_refs[name].ref as FieldReference).type === 'custom'
+          ) {
             return
           }
           await handleChange(name, getNativeFieldValue(_refs[name].ref))
@@ -256,10 +281,12 @@ export const useFormHandler: UseFormHandler = ({
       ...(useNativeValidation && {
         ...({
           ...nativeValidations,
-          ...(pattern && { pattern: pattern instanceof RegExp ? pattern.source : pattern }),
-        } as NativeValidations)
-      })
-    })
+          ...(pattern && {
+            pattern: pattern instanceof RegExp ? pattern.source : pattern,
+          }),
+        } as NativeValidations),
+      }),
+    }
   }
 
   const isValidForm: IsValidForm = async () => {
@@ -271,23 +298,22 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const handleSubmit: HandleSubmit = async (successFn, errorFn) => {
-    try {
-      if (await isValidForm()) {
-        successFn(values)
-        return
-      }
-      if (errorFn) {
-        errorFn(formState.errors)
-        return
-      }
-    } catch {
-      throw new Error('One or more errors found during validation')
+    if (await isValidForm()) {
+      successFn(values)
+      return
+    }
+    if (errorFn) {
+      errorFn(formState.errors)
     }
   }
 
-  watch(() => initialValues, () => {
-    resetForm()
-  }, { deep: true })
+  watch(
+    () => initialValues,
+    () => {
+      resetForm()
+    },
+    { deep: true }
+  )
 
   return {
     clearError,
@@ -302,6 +328,6 @@ export const useFormHandler: UseFormHandler = ({
     setValue,
     triggerValidation,
     unregister,
-    values: readonly(values)
+    values: readonly(values),
   }
 }

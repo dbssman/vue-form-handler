@@ -16,28 +16,27 @@ Coming soon...
 
 ```vue
 <template>
-    <form>
-        <input type="text" v-bind="register('name')" />
-        <input type="email" v-bind="register('email')" />
-        <button type="submit">Submit</button>
-    </form>
+  <form>
+    <input type="text" v-bind="register('name')" />
+    <input type="email" v-bind="register('email')" />
+    <button type="submit">Submit</button>
+  </form>
 </template>
-<script setup lang="ts" >
+<script setup lang="ts">
 import { watch } from 'vue'
 import { useFormHandler } from 'vue-form-handler'
 
 const { register, setValue, values } = useFormHandler()
 
 watch(
-    () => values.name,
-    (curr: string|null) => {
-        setValue('email', curr
-            ? `${curr.toLowerCase().trim()}@mail.com`
-            : '')
-    }
+  () => values.name,
+  (curr: string | null) => {
+    setValue('email', curr ? `${curr.toLowerCase().trim()}@mail.com` : '')
+  }
 )
 </script>
 ```
+
 Simple and easy assignments to any field, with no extra overhead or issues.
 
 ### `setValue` with validation trigger
@@ -72,14 +71,11 @@ watch(
 )
 </script>
 ```
-Just calling `triggerValidation` after a value is set ensures the validations are fired, remember to use `await` on setValue if you're expecting to intercept the value change so that it does trigger the validation when it should.
 
+Just calling `triggerValidation` after a value is set ensures the validations are fired, remember to use `await` on setValue if you're expecting to intercept the value change so that it does trigger the validation when it should.
 
 ## Type Declarations
 
 ```ts
-export type SetValue = (
-    name: string, 
-    value: any
-) => Promise<void>
+export type SetValue = (name: string, value: any) => Promise<void>
 ```

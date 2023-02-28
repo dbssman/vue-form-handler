@@ -49,7 +49,7 @@ npm install
 npm run dev
 ```
 
-After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started/introduction.html#installation). 
+After looking into it, let's now add our form handler using one of the [Installation Methods](/get-started/introduction.html#installation).
 
 ```bash
 npm i vue-form-handler
@@ -72,7 +72,7 @@ Congratulations! You're all set to start the tutorial. Nevertheless it's recomme
 
 ## Overview
 
-VueFormHandler consists mainly of one composable, that can be used directly as is with Composition API or also available as a component for people using Options API. This piece handles and helps with: 
+VueFormHandler consists mainly of one composable, that can be used directly as is with Composition API or also available as a component for people using Options API. This piece handles and helps with:
 
 - Initializing a form
 - Getting and setting values
@@ -96,19 +96,22 @@ To set up a basic sign up form is very easy with our solution, we just have to r
 
 ```vue
 <template>
-	<form @submit.prevent="handleSubmit(successFn)">
-		<input type="email" v-bind="register('email')" />
-		<input type="password" v-bind="register('password')" />
-        <input type="password" v-bind="register('confirmPassword')" />
-		<input type="submit"/>
-	</form>
+  <form @submit.prevent="handleSubmit(successFn)">
+    <input type="email" v-bind="register('email')" />
+    <input type="password" v-bind="register('password')" />
+    <input type="password" v-bind="register('confirmPassword')" />
+    <input type="submit" />
+  </form>
 </template>
-<script setup lang="ts" >
-import { useFormHandler } from 'vue-form-handler';
-const { register, handleSubmit } = useFormHandler();
-const successFn = (form: Record<string,any>) => {console.log({form})}
+<script setup lang="ts">
+import { useFormHandler } from 'vue-form-handler'
+const { register, handleSubmit } = useFormHandler()
+const successFn = (form: Record<string, any>) => {
+  console.log({ form })
+}
 </script>
 ```
+
 Let's analyze what we've done above:
 
 On the script side of things we call the composable and for now we just make use of 2 functions returned by it:
@@ -124,41 +127,58 @@ Our current form works but it's not complete at all, we might want to add valida
 
 ```vue
 <template>
-	<form @submit.prevent="handleSubmit(successFn)">
-		<input type="email" v-bind="register('email', {
-            required: true,
-            pattern: emailRegExp
-        })" />
+  <form @submit.prevent="handleSubmit(successFn)">
+    <input
+      type="email"
+      v-bind="
+        register('email', {
+          required: true,
+          pattern: emailRegExp,
+        })
+      "
+    />
     <p class="error" v-show="formState.errors.email">
-        {{formState.errors.email}}
+      {{ formState.errors.email }}
     </p>
-		<input type="password" v-bind="register('password', {
-            required: true,
-            pattern: passwordRegExp
-        })" />
+    <input
+      type="password"
+      v-bind="
+        register('password', {
+          required: true,
+          pattern: passwordRegExp,
+        })
+      "
+    />
     <p class="error" v-show="formState.errors.password">
-        {{formState.errors.password}}
+      {{ formState.errors.password }}
     </p>
-    <input type="password" v-bind="register('confirmPassword', {
-            required: true,
-            pattern: passwordRegExp
-        })" />
+    <input
+      type="password"
+      v-bind="
+        register('confirmPassword', {
+          required: true,
+          pattern: passwordRegExp,
+        })
+      "
+    />
     <p class="error" v-show="formState.errors.confirmPassword">
-        {{formState.errors.confirmPassword}}
+      {{ formState.errors.confirmPassword }}
     </p>
-		<input type="submit"/>
-	</form>
+    <input type="submit" />
+  </form>
 </template>
-<script setup lang="ts" >
-import { useFormHandler } from 'vue-form-handler';
+<script setup lang="ts">
+import { useFormHandler } from 'vue-form-handler'
 
 const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
 const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const { register, formState, handleSubmit } = useFormHandler({
-    validationMode: 'always'
-});
-const successFn = (form: Record<string,any>) => {console.log({form})}
+  validationMode: 'always',
+})
+const successFn = (form: Record<string, any>) => {
+  console.log({ form })
+}
 </script>
 ```
 
@@ -167,7 +187,7 @@ As you can see, adding validations for a field is as easy as just using the `opt
 Our `formState` will be updated according to those validations and therefore we can obtain our field errors from `formState.errors.<fieldName>`
 and display them as we prefer.
 
-But with our in-built validations for instance, we cannot make the form invalid whenever the `confirmPassword` field does not match the `password`. That's the reason we have **Custom validation**. 
+But with our in-built validations for instance, we cannot make the form invalid whenever the `confirmPassword` field does not match the `password`. That's the reason we have **Custom validation**.
 
 We can also pass a validation function and specify `validationMode: 'onSubmit'` in order to just validate when the user submits the form.
 
@@ -261,8 +281,8 @@ const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
 const emailRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const { values, register, formState, handleSubmit } = useFormHandler({ validationMode: 'always' });
-const successFn = (form: Record<string, any>) => { 
-    console.log('Form correctly submitted:', form) 
+const successFn = (form: Record<string, any>) => {
+    console.log('Form correctly submitted:', form)
 }
 const errorFn = (errors: Record<string, any>) => {
     console.error('There where errors while submitting the form:', errors)

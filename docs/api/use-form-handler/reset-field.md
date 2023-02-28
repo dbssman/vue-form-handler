@@ -13,21 +13,24 @@ Coming soon...
 ### Reset a field on demand
 
 Choose any option of the select and then reset the field
+
 ```vue
 <template>
-    <select v-bind="register('continent')" placeholder="Choose your country">
-        <option value="AM">America</option>
-        <option value="AS">Asia</option>
-        <option value="EU">Europe</option>
-    </select>
-    <button @click="() => resetField('continent')">Reset a field on demand</button>
+  <select v-bind="register('continent')" placeholder="Choose your country">
+    <option value="AM">America</option>
+    <option value="AS">Asia</option>
+    <option value="EU">Europe</option>
+  </select>
+  <button @click="() => resetField('continent')">
+    Reset a field on demand
+  </button>
 </template>
 <script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 const { register, resetField } = useFormHandler({
-    initialValues: {
-        continent: 'AM'
-    }
+  initialValues: {
+    continent: 'AM',
+  },
 })
 </script>
 ```
@@ -35,7 +38,5 @@ const { register, resetField } = useFormHandler({
 ## Type Declarations
 
 ```ts
-export type ResetField = (
-    name: string
-) => void
+export type ResetField = (name: string) => void
 ```

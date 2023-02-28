@@ -1,2 +1,1 @@
-export default (element: HTMLInputElement) =>
-    element.type === 'radio';
+export default (element: HTMLInputElement) => element.type === 'radio'

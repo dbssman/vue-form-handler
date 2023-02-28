@@ -10,26 +10,28 @@ Coming soon...
 
 ```vue
 <template>
-    <form>
-        <input type="text" v-bind="register('name')" />
-        <input type="text" v-bind="register('email')" />
-        <input type="text" v-bind="register('summary')">
-        <pre>
+  <form>
+    <input type="text" v-bind="register('name')" />
+    <input type="text" v-bind="register('email')" />
+    <input type="text" v-bind="register('summary')" />
+    <pre>
             {{ modifiedValues() }} //should be initially
-        </pre>
-        <pre>
+        </pre
+    >
+    <pre>
             {{ values }} //should be filled with the initial values
-        </pre>
-    </form>
+        </pre
+    >
+  </form>
 </template>
-<script setup lang="ts" >
+<script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const { register, values, modifiedValues } = useFormHandler({
-    initialValues: {
-        name: 'My name',
-        email: 'myemail@mail.com'
-    }
+  initialValues: {
+    name: 'My name',
+    email: 'myemail@mail.com',
+  },
 })
 </script>
 ```

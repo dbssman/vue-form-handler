@@ -1,14 +1,14 @@
-import { FormState } from "./formHandler"
-import { Refs } from "./refs"
+import { FormState } from './formHandler'
+import { Refs } from './refs'
 
 export interface ValidateFormParams {
-    _refs: Refs
-    formState: FormState
-    values: Record<string, any>
+  _refs: Refs
+  formState: FormState
+  values: Record<string, any>
 }
 
 export interface ValidateFieldParams extends ValidateFormParams {
-    name: string
+  name: string
 }
 
-export interface TriggerValidationParams extends ValidateFieldParams { }
+export interface TriggerValidationParams extends ValidateFieldParams {}

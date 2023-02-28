@@ -11,10 +11,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "noEmit": true,
@@ -23,14 +20,9 @@
     "noUnusedLocals": true,
     "sourceMap": true,
     "noImplicitAny": true,
-    "types": [
-      "vitest/importMeta"
-    ]
+    "types": ["vitest/importMeta"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"
