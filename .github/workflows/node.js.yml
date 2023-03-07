@@ -5,9 +5,9 @@ name: CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ['master']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master']
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Package build test
         run: npm run build --if-present
-    
+
   unit-test:
     name: Unit testing
     runs-on: ubuntu-latest
@@ -46,8 +46,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+
       - run: npm ci
-      
+
       - name: Unit tests
         run: npm run test

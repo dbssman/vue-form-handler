@@ -1,51 +1,62 @@
 <template>
   <section>
     <form @submit.prevent="handleSubmit(successFn)">
-      <label>Name:
+      <label
+        >Name:
         <input v-bind="register('name')" />
       </label>
-      <label>Email:
+      <label
+        >Email:
         <input type="email" v-bind="register('email')" />
       </label>
-      <label> Password:
+      <label>
+        Password:
         <input type="password" v-bind="register('password')" />
       </label>
-      <label> Confirm Password:
+      <label>
+        Confirm Password:
         <input type="password" v-bind="register('confirmPassword')" />
       </label>
       <button>Submit</button>
     </form>
   </section>
 </template>
-<script lang="ts" >
-import { watch } from 'vue';
-import { useFormHandler } from 'vue-form-handler';
+<script lang="ts">
+import { watch } from 'vue'
+import { useFormHandler } from 'vue-form-handler'
 
 export default {
   setup: () => {
-    const { register, handleSubmit, values, clearField, setValue } = useFormHandler({ validationMode: 'always' });
+    const { register, handleSubmit, values, clearField, setValue } =
+      useFormHandler({ validationMode: 'always' })
     const successFn = (form: Record<string, any>) => {
       console.log('Form correctly submitted:', form)
     }
 
-    watch(() => values.name,
+    watch(
+      () => values.name,
       (curr) => {
-        setValue('email', curr ? `${curr?.toLowerCase().replace(' ', '')}@example.com` : '')
-      })
+        setValue(
+          'email',
+          curr ? `${curr?.toLowerCase().replace(' ', '')}@example.com` : ''
+        )
+      }
+    )
 
-    watch(() => values.password,
+    watch(
+      () => values.password,
       () => {
         clearField('confirmPassword')
-      })
+      }
+    )
 
     return {
       register,
       handleSubmit,
       successFn,
     }
-  }
+  },
 }
-
 </script>
 
 <style>
@@ -63,7 +74,7 @@ body {
   background-color: #242424;
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;
-  color: #42B883;
+  color: #42b883;
   min-height: 100vh;
 }
 
@@ -75,10 +86,8 @@ form {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 1rem
+  gap: 1rem;
 }
-
-
 
 input,
 select,
@@ -88,13 +97,13 @@ button {
   border-radius: 5px;
   width: 300px;
   min-height: 40px;
-  background-color: #35495E;
-  color: #42B883;
+  background-color: #35495e;
+  color: #42b883;
 }
 
 button {
-  background-color: #42B883;
-  color: #35495E;
+  background-color: #42b883;
+  color: #35495e;
   cursor: pointer;
   text-transform: uppercase;
   font-weight: bold;

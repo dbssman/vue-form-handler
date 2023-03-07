@@ -28,16 +28,16 @@ export default defineConfig(({ mode }) => ({
       external: ['@vue/runtime-core'],
       output: {
         globals: {
-          '@vue/runtime-core': 'VueRuntimeCore'
+          '@vue/runtime-core': 'VueRuntimeCore',
         },
         sourcemapExcludeSources: true,
-      }
-    }
+      },
+    },
   },
   plugins: [
     vue(),
     dts({
       insertTypesEntry: true,
     }),
-  ]
+  ],
 }))

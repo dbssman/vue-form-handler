@@ -1,24 +1,24 @@
-import { ComputedRef, Ref } from "vue"
-import { RegisterOptions, Register } from "./register"
+import { ComputedRef, Ref } from 'vue'
+import { RegisterOptions, Register } from './register'
 
 export interface FormState {
-    /** Boolean holding the dirty state of the form */
-    isDirty: boolean
+  /** Boolean holding the dirty state of the form */
+  isDirty: boolean
 
-    /** Boolean holding the touched state of the form */
-    isTouched: boolean
+  /** Boolean holding the touched state of the form */
+  isTouched: boolean
 
-    /** Boolean holding the valid state of the form */
-    isValid: boolean
+  /** Boolean holding the valid state of the form */
+  isValid: boolean
 
-    /** Object holding the dirty fields of the form */
-    dirty: Record<string, boolean>
+  /** Object holding the dirty fields of the form */
+  dirty: Record<string, boolean>
 
-    /** Object holding the touched fields of the form */
-    touched: Record<string, boolean>
+  /** Object holding the touched fields of the form */
+  touched: Record<string, boolean>
 
-    /** Object holding the fields with errors (one or multiple, check:validationErrors)*/
-    errors: Record<string, string | undefined>
+  /** Object holding the fields with errors (one or multiple, check:validationErrors)*/
+  errors: Record<string, string | undefined>
 }
 
 /** Field initializer */
@@ -64,108 +64,118 @@ export type ModifiedValues = () => Record<string, any>
 export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
 
 /** Optional function to be called after a form failed to submit */
-export type HandleSubmitErrorFn = (errors: Record<string, string | undefined>) => void
+export type HandleSubmitErrorFn = (
+  errors: Record<string, string | undefined>
+) => void
 
 /** Checks for the validity of the form before submitting */
 export type IsValidForm = () => Promise<boolean>
 
 /** Submit handler */
-export type HandleSubmit = (successFn: HandleSubmitSuccessFn, errorFn?: HandleSubmitErrorFn) => void
+export type HandleSubmit = (
+  successFn: HandleSubmitSuccessFn,
+  errorFn?: HandleSubmitErrorFn
+) => void
 
 export interface InterceptorParams {
-    /** Name of the field that is currently about to be set*/
-    name: string,
+  /** Name of the field that is currently about to be set*/
+  name: string
 
-    /** Value of the field that is currently about to be set */
-    value: any,
+  /** Value of the field that is currently about to be set */
+  value: any
 
-    /** Current form values */
-    values: Record<string, any>
+  /** Current form values */
+  values: Record<string, any>
 
-    /** Current form state */
-    formState: FormState
+  /** Current form state */
+  formState: FormState
 
-    /** Triggers the validation of a field */
-    triggerValidation: TriggerValidation
+  /** Triggers the validation of a field */
+  triggerValidation: TriggerValidation
 
-    /** Function to reset a field */
-    resetField: ResetField
+  /** Function to reset a field */
+  resetField: ResetField
 
-    /** Function to reset the whole form */
-    resetForm: ResetForm
+  /** Function to reset the whole form */
+  resetForm: ResetForm
 
-    /** Function to set an error on a field programmatically */
-    setError: SetError
+  /** Function to set an error on a field programmatically */
+  setError: SetError
 
-    /** Function to set the value of a field programmatically */
-    setValue: SetValue
+  /** Function to set the value of a field programmatically */
+  setValue: SetValue
 
-    /** Function to clear one or more errors on a desired field or the whole form*/
-    clearError: ClearError
+  /** Function to clear one or more errors on a desired field or the whole form*/
+  clearError: ClearError
 
-    /** Function to clear a desired field*/
-    clearField: ClearField
+  /** Function to clear a desired field*/
+  clearField: ClearField
 
-    /** Function that returns the modified values of the form */
-    modifiedValues: ModifiedValues
+  /** Function that returns the modified values of the form */
+  modifiedValues: ModifiedValues
 }
 
 export type Interceptor = (_: InterceptorParams) => Promise<boolean> | boolean
 
-export type FormValidation = (values: Record<string, any>) => Promise<boolean> | boolean
+export type FormValidation = (
+  values: Record<string, any>
+) => Promise<boolean> | boolean
 
 export interface FormHandlerParams {
-    /** Values to initialize the form */
-    initialValues?: Record<string, any> | Ref<Record<string, any>> | ComputedRef<Record<string, any>>
+  /** Values to initialize the form */
+  initialValues?:
+    | Record<string, any>
+    | Ref<Record<string, any>>
+    | ComputedRef<Record<string, any>>
 
-    /** Field change interceptor */
-    interceptor?: Interceptor
+  /** Field change interceptor */
+  interceptor?: Interceptor
 
-    /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-    validate?: FormValidation
+  /** Validation function to execute before submitting (when using this individual validations are invalidated) */
+  validate?: FormValidation
 
-    /** Validation behavior options */
-    validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
+  /** Validation behavior options */
+  validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
 }
 export interface FormHandlerReturn {
-    /** Current form state */
-    formState: FormState
+  /** Current form state */
+  formState: FormState
 
-    /** Current form values */
-    values: Record<string, any>
+  /** Current form values */
+  values: Record<string, any>
 
-    /** Function to clear one or more errors on a desired field or the whole form*/
-    clearError: ClearError
+  /** Function to clear one or more errors on a desired field or the whole form*/
+  clearError: ClearError
 
-    /** Function to clear a desired field*/
-    clearField: ClearField
+  /** Function to clear a desired field*/
+  clearField: ClearField
 
-    /** Submit handler */
-    handleSubmit: HandleSubmit
+  /** Submit handler */
+  handleSubmit: HandleSubmit
 
-    /** Function that returns the modified values of the form */
-    modifiedValues: ModifiedValues
+  /** Function that returns the modified values of the form */
+  modifiedValues: ModifiedValues
 
-    /** Method to register a field and make it interact with the current form */
-    register: Register
+  /** Method to register a field and make it interact with the current form */
+  register: Register
 
-    /** Function to reset a field */
-    resetField: ResetField
+  /** Function to reset a field */
+  resetField: ResetField
 
-    /** Function to reset the whole form */
-    resetForm: ResetForm
+  /** Function to reset the whole form */
+  resetForm: ResetForm
 
-    /** Function to set an error on a field programmatically */
-    setError: SetError
+  /** Function to set an error on a field programmatically */
+  setError: SetError
 
-    /** Function to set the value of a field programmatically */
-    setValue: SetValue
+  /** Function to set the value of a field programmatically */
+  setValue: SetValue
 
-    /** Triggers the validation of a field */
-    triggerValidation: TriggerValidation
+  /** Triggers the validation of a field */
+  triggerValidation: TriggerValidation
 
-    /** Method to unregister a field and make it stop interacting with the current form */
-    unregister: (name: string) => void
+  /** Method to unregister a field and make it stop interacting with the current form */
+  unregister: (name: string) => void
 }
 
 /** Form handler solution as a composable function */
