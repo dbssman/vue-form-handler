@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Async validations</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Async validations</title>
-</head>
+  <body>
+    <div id="app"></div>
+  </body>
+  <script type="module">
+    import { createApp } from 'vue'
+    import App from './App.vue'
 
-<body>
-  <div id="app"></div>
-</body>
-<script type="module">
-  import { createApp } from 'vue'
-  import App from './App.vue'
-
-  createApp(App).mount('#app')
-
-</script>
-
+    createApp(App).mount('#app')
+  </script>
 </html>

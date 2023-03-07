@@ -1,2 +1,1 @@
-export default (element: HTMLInputElement) =>
-    element.type === 'checkbox';
+export default (element: HTMLInputElement) => element.type === 'checkbox'

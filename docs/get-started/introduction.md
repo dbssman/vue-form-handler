@@ -6,16 +6,18 @@ Here is a minimal example:
 
 ```vue
 <template>
-	<form @submit.prevent="handleSubmit(successFn)">
-		<input v-bind="register('firstName')" />
-		<input v-bind="register('lastName')" />
-		<input type="submit"/>
-	</form>
+  <form @submit.prevent="handleSubmit(successFn)">
+    <input v-bind="register('firstName')" />
+    <input v-bind="register('lastName')" />
+    <input type="submit" />
+  </form>
 </template>
-<script setup lang="ts" >
-import { useFormHandler } from 'vue-form-handler';
-const { register, handleSubmit } = useFormHandler();
-const successFn = (form: Record<string,any>) => {console.log({form})}
+<script setup lang="ts">
+import { useFormHandler } from 'vue-form-handler'
+const { register, handleSubmit } = useFormHandler()
+const successFn = (form: Record<string, any>) => {
+  console.log({ form })
+}
 </script>
 ```
 
@@ -33,21 +35,21 @@ I [@dbssman](https://github.com/dbssman) wrote VueFormHandler due to the need of
 
 You can install VueFormHandler
 
-```bash 
-yarn add vue-form-handler 
+```bash
+yarn add vue-form-handler
 ```
 
-```bash 
-npm i --save vue-form-handler 
+```bash
+npm i --save vue-form-handler
 ```
 
 ## Why not... ?
 
 There are some form solutions for vue 3 ([VueForm](https://vueform.com/), [FormKit](https://formkit.com/)), but you're forced to use the built-in components they provide, and you don't have enough control over the form itself that, for some approaches would be interesting.
 
-
 ## Influences
 
 This project is heavily inspired by other awesome projects like:
+
 - [jaredpalmer/formik](https://github.com/jaredpalmer/formik)
 - [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form)

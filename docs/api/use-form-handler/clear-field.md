@@ -13,34 +13,34 @@ Coming soon...
 
 ```vue
 <template>
-    <select v-bind="register('continent')" placeholder="Choose your country">
-        <option disabled value=null>Choose your continent</option>
-        <option value="AM">America</option>
-        <option value="AS">Asia</option>
-        <option value="EU">Europe</option>
-    </select>
-    <select v-bind="register('country')" placeholder="Choose your country">
-        <option disabled value=null>Choose your country</option>
-        <option value="CAN">Canada</option>
-        <option value="USA">United States</option>
-        <option value="JAP">Japan</option>
-        <option value="CHN">China</option>
-        <option value="ESP">Spain</option>
-        <option value="DEU">Germany</option>
-    </select>
+  <select v-bind="register('continent')" placeholder="Choose your country">
+    <option disabled value="null">Choose your continent</option>
+    <option value="AM">America</option>
+    <option value="AS">Asia</option>
+    <option value="EU">Europe</option>
+  </select>
+  <select v-bind="register('country')" placeholder="Choose your country">
+    <option disabled value="null">Choose your country</option>
+    <option value="CAN">Canada</option>
+    <option value="USA">United States</option>
+    <option value="JAP">Japan</option>
+    <option value="CHN">China</option>
+    <option value="ESP">Spain</option>
+    <option value="DEU">Germany</option>
+  </select>
 </template>
 <script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const interceptor = ({ name, clearField }) => {
-    if (name === 'continent') {
-        clearField('country')
-    }
-    return true
+  if (name === 'continent') {
+    clearField('country')
+  }
+  return true
 }
 
 const { register } = useFormHandler({
-    interceptor
+  interceptor,
 })
 </script>
 ```
@@ -49,10 +49,10 @@ const { register } = useFormHandler({
 
 ```vue
 <template>
-    <input type="text" v-bind="register('clearableField')">
-    <button @click="clearField('clearableField')">X</button>
+  <input type="text" v-bind="register('clearableField')" />
+  <button @click="clearField('clearableField')">X</button>
 </template>
-<script setup lang="ts" >
+<script setup lang="ts">
 import { useFormHandler } from 'vue-form-handler'
 
 const { register, clearField } = useFormHandler()
@@ -62,7 +62,5 @@ const { register, clearField } = useFormHandler()
 ## Type Declarations
 
 ```ts
-export type ClearField = (
-    name: string
-) => Promise<void>
+export type ClearField = (name: string) => Promise<void>
 ```

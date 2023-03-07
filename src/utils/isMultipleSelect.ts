@@ -1,2 +1,2 @@
 export default (element: HTMLSelectElement) =>
-    element.type === `select-multiple`;
+  element.type === `select-multiple`
