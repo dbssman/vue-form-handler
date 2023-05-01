@@ -2,14 +2,14 @@ import { FormHandler } from '../FormHandler'
 import { mount } from '@vue/test-utils'
 import { expect, it, describe } from 'vitest'
 
-describe('FormHandler component testing', () => {
-  it('Form handler gets mounted', () => {
+describe('FormHandler', () => {
+  it('should mount', () => {
     expect(FormHandler).toBeTruthy()
 
     const wrapper = mount(FormHandler)
     expect(wrapper.exists()).toBeTruthy()
   })
-  it('Form handler scoped slot provides values and form state', () => {
+  it('should provide values and formState', () => {
     expect(FormHandler).toBeTruthy()
 
     const wrapper = mount(FormHandler, {
@@ -23,7 +23,7 @@ describe('FormHandler component testing', () => {
     expect(wrapper.html()).toContain('values')
     expect(wrapper.html()).toContain('formState')
   })
-  it('Form handler is correctly initialized', () => {
+  it('should be properly initialized', () => {
     const initialValues = {
       field1: 'something',
       field2: 'some other thing',
