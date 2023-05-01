@@ -1,3 +1,4 @@
+import { Build } from './types/formHandler'
 import { NativeValidations } from './types/validations'
 import { DEFAULT_FIELD_VALUE } from './constants'
 import {
@@ -23,8 +24,10 @@ import {
   ValidationsConfiguration,
   Unregister,
   FieldReference,
+  RegisterOptions,
+  RegisterReturn,
 } from './types'
-import { reactive, readonly, unref, watch } from '@vue/runtime-core'
+import { computed, reactive, readonly, unref, watch } from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
 import {
   getNativeFieldValue,
@@ -59,7 +62,7 @@ export const useFormHandler: UseFormHandler = ({
   const _getDefault = (name: string): any =>
     _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
   const _getInitial = (name: string): any =>
-    unref(initialValues)?.[name] ?? _getDefault(name)
+    (unref(initialValues) as Record<string, any>)?.[name] ?? _getDefault(name)
   const _initControl: InitControl = (name, options) => {
     const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
     _refs[name] = {
@@ -76,7 +79,11 @@ export const useFormHandler: UseFormHandler = ({
       unregister(name)
       return
     }
-    if (initialValues[name] === undefined && values[name] === undefined) {
+    if (
+      (!initialValues ||
+        (unref(initialValues) as Record<string, any>)?.[name] === undefined) &&
+      values[name] === undefined
+    ) {
       values[name] = _getDefault(name)
     }
   }
@@ -289,6 +296,16 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
+  const build: Build = (configuration) => {
+    const staticConfig = unref(configuration) as Record<string, RegisterOptions>
+    return computed(() =>
+      Object.keys(staticConfig).reduce((acc, key) => {
+        acc[key] = register(key, staticConfig[key])
+        return acc
+      }, {} as Record<string, RegisterReturn>)
+    )
+  }
+
   const isValidForm: IsValidForm = async () => {
     if (validate) {
       return await validate(values)
@@ -322,6 +339,7 @@ export const useFormHandler: UseFormHandler = ({
     handleSubmit,
     modifiedValues,
     register,
+    build,
     resetField,
     resetForm,
     setError,

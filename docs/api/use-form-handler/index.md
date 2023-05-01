@@ -153,6 +153,7 @@ Using the `always` validationMode will have a more significant impact on perform
 - [handleSubmit](/api/use-form-handler/handle-submit)
 - [modifiedValues](/api/use-form-handler/modified-values)
 - [register](/api/use-form-handler/register)
+- [build](/api/use-form-handler/build)
 - [resetField](/api/use-form-handler/reset-field)
 - [resetForm](/api/use-form-handler/reset-form)
 - [setError](/api/use-form-handler/set-error)
@@ -187,6 +188,7 @@ export interface FormHandlerReturn {
   handleSubmit: HandleSubmit
   modifiedValues: ModifiedValues
   register: Register
+  register: Build
   resetField: ResetField
   resetForm: ResetForm
   setError: SetError
