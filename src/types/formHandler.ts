@@ -1,5 +1,5 @@
 import { ComputedRef, Ref } from 'vue'
-import { RegisterOptions, Register } from './register'
+import { RegisterOptions, Register, RegisterReturn } from './register'
 
 export interface FormState {
   /** Boolean holding the dirty state of the form */
@@ -76,6 +76,12 @@ export type HandleSubmit = (
   successFn: HandleSubmitSuccessFn,
   errorFn?: HandleSubmitErrorFn
 ) => void
+
+export interface Build<T = Record<string, RegisterOptions>> {
+  (configuration: T | Ref<T> | ComputedRef<T>): ComputedRef<
+    Record<keyof T, RegisterReturn>
+  >
+}
 
 export interface InterceptorParams {
   /** Name of the field that is currently about to be set*/
@@ -158,6 +164,9 @@ export interface FormHandlerReturn {
 
   /** Method to register a field and make it interact with the current form */
   register: Register
+
+  /** Method to build a form configuration */
+  build: Build
 
   /** Function to reset a field */
   resetField: ResetField
