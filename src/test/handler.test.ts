@@ -1,26 +1,26 @@
 import { initialState, useFormHandler } from '../useFormHandler'
 import { expect, it, describe } from 'vitest'
 
-describe('Form handler testing', () => {
-  it('Initial form state and values', () => {
+describe('useFormHandler()', () => {
+  it('should have correct initial state and values', () => {
     const { values, formState } = useFormHandler()
     expect(values).toStrictEqual({})
     expect(formState).toStrictEqual({ ...initialState() })
   })
-  it('Initial values should be applied without', () => {
+  it('should apply initialValues when specified', () => {
     const initialValues = {
       field: 'test',
     }
     const { values } = useFormHandler({ initialValues })
     expect(values).toStrictEqual(initialValues)
   })
-  it('Setting a value programmatically', async () => {
+  it('should set a value programmatically', async () => {
     const { values, setValue, formState } = useFormHandler()
     await setValue('field', 'oneTwoThree')
     expect(values.field).toBe('oneTwoThree')
     expect(formState.isDirty).toBeTruthy()
   })
-  it('Clearing a field programmatically', async () => {
+  it('should clear a field', async () => {
     const { register, values, setValue, formState, clearField } =
       useFormHandler()
     register('field')
@@ -31,7 +31,7 @@ describe('Form handler testing', () => {
     expect(values.field).toBe(null)
     expect(formState.isDirty).toBeFalsy()
   })
-  it('Clearing an initialized field leaves it dirty', async () => {
+  it('should leave an initialized field dirty when clearing', async () => {
     const { register, values, formState, clearField } = useFormHandler({
       initialValues: { field: 'value' },
     })
@@ -42,13 +42,13 @@ describe('Form handler testing', () => {
     expect(values.field).toBe(null)
     expect(formState.isDirty).toBeTruthy()
   })
-  it('Setting an error programmatically', async () => {
+  it('should set an error programmatically', async () => {
     const { formState, setError } = useFormHandler()
     setError('field', 'some error')
     expect(formState.errors).toStrictEqual({ field: 'some error' })
     expect(formState.isValid).toBeFalsy()
   })
-  it('Clearing an error programmatically', async () => {
+  it('should clear an error programmatically', async () => {
     const { formState, setError, clearError } = useFormHandler()
     const error = 'This field has an error'
     setError('field', error)
@@ -57,7 +57,7 @@ describe('Form handler testing', () => {
     expect(formState.errors.field).toBeUndefined()
     expect(formState.isValid).toBeTruthy()
   })
-  it('Clearing all errors of the form programmatically', async () => {
+  it('should clear all form errors programmatically', async () => {
     const { formState, setError, clearError } = useFormHandler()
     const error = 'some error'
     setError('field1', error)
@@ -70,7 +70,7 @@ describe('Form handler testing', () => {
     expect(formState.errors.field2).toBeUndefined()
     expect(formState.isValid).toBeTruthy()
   })
-  it('Resetting a field it back to its initial values and state', async () => {
+  it('should correctly reset a field', async () => {
     const { values, formState, resetField, setValue } = useFormHandler({
       initialValues: { field: 'value' },
     })
@@ -83,7 +83,7 @@ describe('Form handler testing', () => {
     expect(values.field).toBe('value')
     expect(formState.isDirty).toBeFalsy()
   })
-  it('Expecting modifiedValues to work', async () => {
+  it('should return correct modifiedValues', async () => {
     const { modifiedValues, setValue } = useFormHandler({
       initialValues: {
         field: 'something',
@@ -91,5 +91,22 @@ describe('Form handler testing', () => {
     })
     await setValue('field2', 'another thing')
     expect(modifiedValues()).toStrictEqual({ field2: 'another thing' })
+  })
+  it('should register field properly via build', () => {
+    const { build, values } = useFormHandler()
+    const form = build({
+      field: {},
+    })
+
+    expect(form.value.field.name).toBe('field')
+    expect(form.value.field.error).toBeUndefined()
+    expect(form.value.field.onBlur).toBeDefined()
+    expect(form.value.field.isDirty).toBeUndefined()
+    expect(form.value.field.isTouched).toBeUndefined()
+    expect(form.value.field.onClear).toBeDefined()
+    expect(form.value.field.onChange).toBeDefined()
+    expect(form.value.field.modelValue).toBe(null)
+    expect(form.value.field['onUpdate:modelValue']).toBeDefined()
+    expect(values.field).toBe(null)
   })
 })
