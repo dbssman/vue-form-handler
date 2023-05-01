@@ -127,6 +127,8 @@ export type FormValidation = (
   values: Record<string, any>
 ) => Promise<boolean> | boolean
 
+export type InjectionKey = string | Symbol
+
 export interface FormHandlerParams {
   /** Values to initialize the form */
   initialValues?:
@@ -142,6 +144,9 @@ export interface FormHandlerParams {
 
   /** Validation behavior options */
   validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
+
+  /** Injection key to override the default */
+  injectionKey?: InjectionKey
 }
 export interface FormHandlerReturn {
   /** Current form state */

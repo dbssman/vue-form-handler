@@ -1,6 +1,6 @@
-import { Build } from './types/formHandler'
+import { Build, FormHandlerReturn } from './types/formHandler'
 import { NativeValidations } from './types/validations'
-import { DEFAULT_FIELD_VALUE } from './constants'
+import { DEFAULT_FIELD_VALUE, defaultInjectionKey } from './constants'
 import {
   ModifiedValues,
   TriggerValidation,
@@ -27,7 +27,14 @@ import {
   RegisterOptions,
   RegisterReturn,
 } from './types'
-import { computed, reactive, readonly, unref, watch } from '@vue/runtime-core'
+import {
+  computed,
+  provide,
+  reactive,
+  readonly,
+  unref,
+  watch,
+} from '@vue/runtime-core'
 import { isEqual } from 'lodash-es'
 import {
   getNativeFieldValue,
@@ -53,6 +60,7 @@ export const useFormHandler: UseFormHandler = ({
   interceptor,
   validate,
   validationMode = 'onChange',
+  injectionKey = defaultInjectionKey,
 } = {}) => {
   const values: Record<string, any> = reactive({ ...unref(initialValues) })
   const formState = reactive<FormState>({ ...initialState() })
@@ -332,7 +340,7 @@ export const useFormHandler: UseFormHandler = ({
     { deep: true }
   )
 
-  return {
+  const toExpose: FormHandlerReturn = {
     clearError,
     clearField,
     formState: readonly(formState),
@@ -348,4 +356,8 @@ export const useFormHandler: UseFormHandler = ({
     unregister,
     values: readonly(values),
   }
+
+  provide(injectionKey, toExpose)
+
+  return toExpose
 }
