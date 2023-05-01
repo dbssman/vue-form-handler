@@ -92,6 +92,7 @@ export default defineConfig({
                 link: '/api/use-form-handler/modified-values',
               },
               { text: 'register', link: '/api/use-form-handler/register' },
+              { text: 'build', link: '/api/use-form-handler/build' },
               { text: 'resetField', link: '/api/use-form-handler/reset-field' },
               { text: 'resetForm', link: '/api/use-form-handler/reset-form' },
               { text: 'setError', link: '/api/use-form-handler/set-error' },

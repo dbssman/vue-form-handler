@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { useFormHandler } from '../useFormHandler'
 
-describe('Register function testing', () => {
-  it('Registering a field', () => {
+describe('register()', () => {
+  it('should register a field', () => {
     const { values, register } = useFormHandler()
     const field = register('field')
     expect(field.name).toBe('field')
@@ -16,31 +16,37 @@ describe('Register function testing', () => {
     expect(field['onUpdate:modelValue']).toBeDefined()
     expect(values.field).toBe(null)
   })
-  it('Specified native field should have native handlers', () => {
+  it('should apply native handlers by default', () => {
+    const { register } = useFormHandler()
+    const field = register('field')
+    expect(field.ref).toBeDefined()
+    expect(field.onChange).toBeDefined()
+  })
+  it('should apply native handlers when native is specified', () => {
     const { register } = useFormHandler()
     const field = register('field', { native: true })
     expect(field.ref).toBeDefined()
     expect(field.onChange).toBeDefined()
   })
-  it("Specified custom field shouldn't have native handlers", () => {
+  it('should not apply native handlers when native is set false', () => {
     const { register } = useFormHandler()
     const field = register('field', { native: false })
     expect(field.onChange).toBeUndefined()
     expect(field.modelValue).toBeDefined()
     expect(field['onUpdate:modelValue']).toBeDefined()
   })
-  it('Input registered with details receives dirty and touched states', () => {
+  it('should apply dirty and touched states when withDetails is specified', () => {
     const { register } = useFormHandler()
     const field = register('field', { withDetails: true })
     expect(field.isDirty).toBeDefined()
     expect(field.isTouched).toBeDefined()
   })
-  it('Registering a field with default value', () => {
+  it('should apply default value', () => {
     const { values, register } = useFormHandler()
     register('field', { defaultValue: 'something' })
     expect(values.field).toBe('something')
   })
-  it('Registered validations work on update via handler', async () => {
+  it('should trigger validation via handler', async () => {
     const { values, register, formState } = useFormHandler()
     const field = register('field', {
       validate: {
@@ -53,7 +59,7 @@ describe('Register function testing', () => {
       expect(formState.isValid).toBeFalsy()
     }
   })
-  it('Registered validations work on update via setter', async () => {
+  it('should trigger validation via setter', async () => {
     const { values, register, formState, setValue, triggerValidation } =
       useFormHandler()
     register('field', {
