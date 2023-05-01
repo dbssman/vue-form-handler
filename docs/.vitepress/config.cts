@@ -105,6 +105,7 @@ export default defineConfig({
               { text: 'values', link: '/api/use-form-handler/values' },
             ],
           },
+          { text: `useFormContext`, link: '/api/use-form-context' },
           { text: `FormHandler`, link: '/api/form-handler' },
         ],
       },
