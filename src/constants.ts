@@ -22,3 +22,5 @@ export const BaseInputEmits: BaseControlEmits = [
   'blur',
   'clear',
 ]
+
+export const defaultInjectionKey = Symbol('formHandler')
