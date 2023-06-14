@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: VueFormHandler
-  text: Vue & TS powered form handler.
+  name: DEVELOPMENT
+  text: DEVELOPMENT Vue & TS powered form handler.
   tagline: The only handler you'll need to easily work with forms in vue
   image:
     src: /favicon.svg
