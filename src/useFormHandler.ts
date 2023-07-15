@@ -43,7 +43,7 @@ import {
   refFn,
   transformValidations,
 } from './logic'
-import { isNativeControl } from './utils'
+import { isNativeControl, objectKeys } from './utils'
 
 export const initialState = () => ({
   touched: {},
@@ -306,13 +306,10 @@ export const useFormHandler: UseFormHandler = ({
   const build: Build = (configuration) => {
     const staticConfig = unref(configuration)
     return computed(() =>
-      (Object.keys(staticConfig) as (keyof typeof staticConfig)[]).reduce(
-        (acc, key) => {
-          acc[key] = register(key as string, staticConfig[key])
-          return acc
-        },
-        {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>
-      )
+      objectKeys(staticConfig).reduce((acc, key) => {
+        acc[key] = register(String(key), staticConfig[key])
+        return acc
+      }, {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>)
     )
   }
 
