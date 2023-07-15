@@ -270,7 +270,6 @@ export const useFormHandler: UseFormHandler = ({
     return {
       name,
       modelValue: values[name],
-      error: formState.errors[name],
       'onUpdate:modelValue': async (value: any) =>
         await handleChange(name, value),
       ref: refFn(name, _refs, values),
