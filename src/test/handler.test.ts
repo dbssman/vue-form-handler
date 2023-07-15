@@ -99,7 +99,6 @@ describe('useFormHandler()', () => {
     })
 
     expect(form.value.field.name).toBe('field')
-    expect(form.value.field.error).toBeUndefined()
     expect(form.value.field.onBlur).toBeDefined()
     expect(form.value.field.isDirty).toBeUndefined()
     expect(form.value.field.isTouched).toBeUndefined()

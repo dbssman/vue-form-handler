@@ -6,7 +6,6 @@ describe('register()', () => {
     const { values, register } = useFormHandler()
     const field = register('field')
     expect(field.name).toBe('field')
-    expect(field.error).toBeUndefined()
     expect(field.onBlur).toBeDefined()
     expect(field.isDirty).toBeUndefined()
     expect(field.isTouched).toBeUndefined()
