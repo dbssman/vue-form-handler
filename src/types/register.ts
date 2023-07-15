@@ -25,6 +25,9 @@ export interface RegisterOptions extends ValidationsConfiguration {
 
   /** Indicates if the control should use the native html validation */
   useNativeValidation?: boolean
+
+  /** Array of dependent fields */
+  dependentFields?: string[]
 }
 
 export type RegisterReturn = BaseControlProps & NativeValidations

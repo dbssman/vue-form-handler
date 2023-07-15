@@ -36,6 +36,7 @@ export interface WrappedReference {
   _validations: Validations
   _disabled: boolean
   _defaultValue: any
+  _dependentFields?: string[]
 }
 
 export type Refs = Record<string, WrappedReference>

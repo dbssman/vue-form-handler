@@ -23,6 +23,7 @@ Coming soon...
 | withDetails         | `boolean`                                                            | Explicitly indicates if you want to bind dirty and and touched state for the registered field                                                                                                   |
 | disabled            | `boolean`                                                            | Disables the field. When a field is disabled it gets reset, and is not able to validate, or set new values until it is enabled again. The field is also not considered for the form validation. |
 | useNativeValidation | `boolean`                                                            | Set to true if you want to use native HTML validation                                                                                                                                           |
+| dependentFields     | `string[]`                                                           | Array of names from fields that depend on this one validation                                                                                                                                   |
 
 ## Return
 
