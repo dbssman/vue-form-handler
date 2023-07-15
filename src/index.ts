@@ -1,4 +1,5 @@
 export * from './FormHandler'
+export * from './ErrorMessage'
 export * from './useFormHandler'
 export * from './useFormContext'
 export * from './types'
