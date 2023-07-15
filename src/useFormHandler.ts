@@ -24,7 +24,6 @@ import {
   ValidationsConfiguration,
   Unregister,
   FieldReference,
-  RegisterOptions,
   RegisterReturn,
 } from './types'
 import {
@@ -305,12 +304,15 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const build: Build = (configuration) => {
-    const staticConfig = unref(configuration) as Record<string, RegisterOptions>
+    const staticConfig = unref(configuration)
     return computed(() =>
-      Object.keys(staticConfig).reduce((acc, key) => {
-        acc[key] = register(key, staticConfig[key])
-        return acc
-      }, {} as Record<string, RegisterReturn>)
+      (Object.keys(staticConfig) as (keyof typeof staticConfig)[]).reduce(
+        (acc, key) => {
+          acc[key] = register(key as string, staticConfig[key])
+          return acc
+        },
+        {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>
+      )
     )
   }
 

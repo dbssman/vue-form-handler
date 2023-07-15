@@ -22,7 +22,7 @@
     "noImplicitAny": true,
     "types": ["vitest/importMeta"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "./*d.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"
