@@ -27,6 +27,9 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: '/favicon.svg',
+    search: {
+      provider: 'local',
+    },
     editLink: {
       pattern:
         'https://github.com/dbssman/vue-form-handler/edit/master/docs/:path',
@@ -53,7 +56,7 @@ export default defineConfig({
       },
       {
         text: 'Guides',
-        collapsible: true,
+        collapsed: false,
         items: [
           { text: 'Custom components', link: '/guides/custom-components' },
           { text: 'Material libraries', link: '/guides/material-libraries' },
@@ -64,7 +67,7 @@ export default defineConfig({
       },
       {
         text: 'Examples',
-        collapsible: true,
+        collapsed: false,
         items: [
           { text: 'Async submission', link: '/examples/async-submission' },
           { text: 'Async validations', link: '/examples/async-validations' },
@@ -74,7 +77,7 @@ export default defineConfig({
       },
       {
         text: 'API Reference',
-        collapsible: true,
+        collapsed: false,
         items: [
           {
             text: 'useFormHandler',
