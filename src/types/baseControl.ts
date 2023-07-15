@@ -3,9 +3,6 @@ export interface BaseControlProps {
   /** Name of the control */
   name: string
 
-  /** Current error of the control */
-  error: string | undefined
-
   /** Value binding for native inputs */
   ref: (fieldRef: any) => void
 

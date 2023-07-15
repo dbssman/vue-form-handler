@@ -24,7 +24,6 @@ import {
   ValidationsConfiguration,
   Unregister,
   FieldReference,
-  RegisterOptions,
   RegisterReturn,
 } from './types'
 import {
@@ -44,7 +43,7 @@ import {
   refFn,
   transformValidations,
 } from './logic'
-import { isNativeControl } from './utils'
+import { isNativeControl, objectKeys } from './utils'
 
 export const initialState = () => ({
   touched: {},
@@ -271,7 +270,6 @@ export const useFormHandler: UseFormHandler = ({
     return {
       name,
       modelValue: values[name],
-      error: formState.errors[name],
       'onUpdate:modelValue': async (value: any) =>
         await handleChange(name, value),
       ref: refFn(name, _refs, values),
@@ -305,12 +303,12 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const build: Build = (configuration) => {
-    const staticConfig = unref(configuration) as Record<string, RegisterOptions>
+    const staticConfig = unref(configuration)
     return computed(() =>
-      Object.keys(staticConfig).reduce((acc, key) => {
-        acc[key] = register(key, staticConfig[key])
+      objectKeys(staticConfig).reduce((acc, key) => {
+        acc[key] = register(String(key), staticConfig[key])
         return acc
-      }, {} as Record<string, RegisterReturn>)
+      }, {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>)
     )
   }
 

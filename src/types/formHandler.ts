@@ -77,11 +77,9 @@ export type HandleSubmit = (
   errorFn?: HandleSubmitErrorFn
 ) => void
 
-export interface Build<T = Record<string, RegisterOptions>> {
-  (configuration: T | Ref<T> | ComputedRef<T>): ComputedRef<
-    Record<keyof T, RegisterReturn>
-  >
-}
+export type Build = <T extends Record<string, RegisterOptions>>(
+  configuration: T | Ref<T> | ComputedRef<T>
+) => ComputedRef<Record<keyof T, Readonly<RegisterReturn>>>
 
 export interface InterceptorParams {
   /** Name of the field that is currently about to be set*/
