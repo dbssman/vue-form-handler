@@ -110,6 +110,7 @@ export default defineConfig({
           },
           { text: `useFormContext`, link: '/api/use-form-context' },
           { text: `FormHandler`, link: '/api/form-handler' },
+          { text: `ErrorMessage`, link: '/api/error-message' },
         ],
       },
     ],
