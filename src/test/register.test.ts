@@ -71,4 +71,30 @@ describe('register()', () => {
     expect(values.field).toBe('error')
     expect(formState.isValid).toBeFalsy()
   })
+  it('should trigger validation on dependent field', async () => {
+    const { register, formState, setValue } = useFormHandler()
+    register('field1', {
+      dependentFields: ['field2'],
+    })
+    register('field2', {
+      required: true,
+    })
+    await setValue('field1', 'error')
+    expect(formState.isValid).toBeFalsy()
+  })
+  it('should trigger validation on multiple dependent fields', async () => {
+    const { register, formState, setValue } = useFormHandler()
+    register('field1', {
+      dependentFields: ['field2', 'field3'],
+    })
+    register('field2', {
+      required: true,
+    })
+    register('field3', {
+      required: true,
+    })
+    await setValue('field1', 'error')
+    expect(formState.errors.field2).toBeDefined()
+    expect(formState.errors.field3).toBeDefined()
+  })
 })

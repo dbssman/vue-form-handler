@@ -81,6 +81,7 @@ export const useFormHandler: UseFormHandler = ({
       },
       _defaultValue: options.defaultValue,
       _disabled: !!options.disabled,
+      _dependentFields: options.dependentFields,
     }
     if (needsReset) {
       unregister(name)
@@ -183,8 +184,9 @@ export const useFormHandler: UseFormHandler = ({
   }
 
   const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
+    const field = _refs[name]
     if (
-      !_refs[name]?._disabled &&
+      !field?._disabled &&
       (!interceptor ||
         (await interceptor({
           clearError,
@@ -203,6 +205,13 @@ export const useFormHandler: UseFormHandler = ({
     ) {
       values[name] = value
       setDirty(name, !isEqual(value, _getInitial(name)))
+      if (field && field._dependentFields) {
+        for (const dependentField of field._dependentFields) {
+          if (_refs[dependentField]) {
+            await triggerValidation(dependentField)
+          }
+        }
+      }
       return
     }
     if (
