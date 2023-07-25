@@ -207,7 +207,9 @@ export const useFormHandler: UseFormHandler = ({
       setDirty(name, !isEqual(value, _getInitial(name)))
       if (field && field._dependentFields) {
         for (const dependentField of field._dependentFields) {
-          await triggerValidation(dependentField)
+          if (_refs[dependentField]) {
+            await triggerValidation(dependentField)
+          }
         }
       }
       return
