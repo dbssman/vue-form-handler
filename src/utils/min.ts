@@ -1,3 +1,4 @@
+import isNil from "./isNil"
 /**
  * @param min - The minimum value
  * @param message - The validation message
@@ -10,7 +11,7 @@
  */
 export default (min: number, message = `This field must be at least ${min}`) =>
   (value: any) => {
-    if (value && value < min) {
+    if (!isNil(value) && Number(value) < min) {
       return message
     }
     return true

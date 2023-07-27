@@ -1,5 +1,5 @@
-export * from './FormHandler'
-export * from './ErrorMessage'
+export {default as FormHandler} from './FormHandler.vue'
+export {default as ErrorMessage} from './ErrorMessage.vue'
 export * from './useFormHandler'
 export * from './useFormContext'
 export * from './types'

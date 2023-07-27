@@ -1,5 +1,5 @@
 import { defineComponent } from '@vue/runtime-core'
-import { ErrorMessage } from '../ErrorMessage'
+import ErrorMessage from '../ErrorMessage.vue'
 import { useFormHandler } from '../useFormHandler'
 import { mount } from '@vue/test-utils'
 import { expect, it, describe } from 'vitest'
@@ -26,7 +26,7 @@ describe('ErrorMessage', () => {
         formState,
       },
     })
-    expect(wrapper.html()).toBe('')
+    expect(wrapper.html()).toBe('<!--v-if-->')
   })
   it('should render error when error', async () => {
     const { register, formState, setError } = useFormHandler()
@@ -53,7 +53,7 @@ describe('ErrorMessage', () => {
       },
     })
     const wrapper = mount(TestComponent)
-    expect(wrapper.html()).toBe('')
+    expect(wrapper.html()).toBe('<!--v-if-->')
   })
   it('should work with context and error', async () => {
     const TestComponent = defineComponent({
@@ -90,7 +90,7 @@ describe('ErrorMessage', () => {
       },
     })
     const wrapper = mount(TestComponent)
-    expect(wrapper.html()).toBe('')
+    expect(wrapper.html()).toBe('<!--v-if-->')
   })
   it('should work with injection key and error', async () => {
     const TestComponent = defineComponent({

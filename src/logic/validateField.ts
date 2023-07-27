@@ -1,11 +1,19 @@
-import { ValidateFieldParams } from './../types/logic'
+import { FormState } from "../types"
 
-export default async ({
+export interface ValidateField<T>{
+  name: keyof T
+  values: T
+  formState: FormState<T>
+  _refs: any
+} 
+
+//TODO: review this
+export default async <T>({
   name,
   values,
   formState,
   _refs,
-}: ValidateFieldParams): Promise<void> => {
+}:ValidateField<T>): Promise<void> => {
   if (!Object.keys(_refs[name]?._validations ?? {}).length) {
     return
   }
@@ -13,7 +21,7 @@ export default async ({
     return
   }
   for (const validation of Object.values(_refs[name]._validations)) {
-    const result = await validation(values[name])
+    const result = await (validation as any)(values[name])
     if (result !== true) {
       formState.errors[name] = result
       break

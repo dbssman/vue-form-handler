@@ -6,7 +6,7 @@ import {
   isRadioInput,
 } from '../utils'
 
-export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
+export default <T>(name: keyof T, _refs: Refs<T>, values: T) => (fieldRef: any) => {
   if (!fieldRef) {
     delete _refs[name]
     return
@@ -41,7 +41,7 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
   }
   if (isCheckboxInput(fieldRef)) {
     if (isFirstRegister && !!fieldRef.checked) {
-      values[name] = true
+      values[name] = true as any
       return
     }
     fieldRef.checked = !!values[name]
@@ -49,7 +49,7 @@ export default (name: string, _refs: Refs, values: any) => (fieldRef: any) => {
   }
   if (isMultipleSelect(fieldRef)) {
     ;[...fieldRef.options].forEach((option: any, index) => {
-      fieldRef[index].selected = !!values[name]?.includes(option.value)
+      fieldRef[index].selected = !!((values[name] as any)?.includes(option.value))
     })
     return
   }

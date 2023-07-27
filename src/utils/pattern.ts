@@ -1,3 +1,5 @@
+import isNil from "./isNil"
+
 /**
  * @param pattern - RegExp pattern
  * @param message - The validation message
@@ -10,7 +12,7 @@
  */
 export default (pattern: RegExp, message = 'This field is invalid') =>
   (value: any) => {
-    if (value && !pattern.test(value)) {
+    if (!isNil(value) && !pattern.test(value)) {
       return message
     }
     return true
