@@ -113,6 +113,63 @@ const successFn = (form: Record<string, any>) => {
 </script>
 ```
 
+### Typescript support
+
+```vue
+<template>
+  <form @submit.prevent="handleSubmit(successFn)">
+    <q-input v-bind="register('name')" />
+    <q-checkbox v-bind="register('married')" />
+    <q-select v-bind="register('pet')" :options="['dog', 'cat', 'mouse']" />
+    <input type="submit" />
+  </form>
+</template>
+<script setup lang="ts">
+import { useFormHandler } from 'vue-form-handler'
+interface MyFormInterface {
+  name: string
+  married: boolean
+  pet: string
+}
+const { register, handleSubmit } = useFormHandler<MyFormInterface>()
+const successFn = (form: MyFormInterface) => {
+  console.log({ form })
+}
+</script>
+```
+
+By doing this you will get full type support on all the interactions with any formhandler resource.
+
+### Centralized and declarative form building
+
+```vue
+<template>
+  <form @submit.prevent="handleSubmit(successFn)">
+    <q-input v-bind="form.name" />
+    <q-checkbox v-bind="form.married" />
+    <q-select v-bind="form.pet" :options="['dog', 'cat', 'mouse']" />
+    <input type="submit" />
+  </form>
+</template>
+<script setup lang="ts">
+import { useFormHandler } from 'vue-form-handler'
+interface MyFormInterface {
+  name: string,
+  married: boolean,
+  pet: string,
+}
+const { build, handleSubmit } = useFormHandler<MyFormInterface>()
+const form = build({
+  name: {}
+  married: {}
+  pet: {}
+})
+const successFn = (form: MyFormInterface) => {
+  console.log({ form })
+}
+</script>
+```
+
 ### For a more advanced usage visit the [Docs](https://vue-form-handler.com)
 
 ## 📈 Project activity
