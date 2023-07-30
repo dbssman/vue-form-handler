@@ -20,9 +20,14 @@
     "noUnusedLocals": true,
     "sourceMap": true,
     "noImplicitAny": true,
-    "types": ["vitest/importMeta"]
+    "types": ["vitest/importMeta"],
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./src/*"]
+    },
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "./*d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "./*d.ts", "test/**/*.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

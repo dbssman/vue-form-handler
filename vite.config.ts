@@ -16,11 +16,17 @@ export default defineConfig(({ mode }) => ({
     environment: 'happy-dom',
     reporters: 'verbose',
   },
+  resolve: {
+    alias: {
+      '~': resolve(__dirname),
+      '@': resolve(__dirname, './src'),
+    },
+  },
   build: {
     sourcemap: true,
     minify: false,
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, './src/index.ts'),
       name: 'vue-form-handler',
       fileName: 'index',
     },
