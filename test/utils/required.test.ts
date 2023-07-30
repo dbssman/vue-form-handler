@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import required from '../required'
+import required from '@/utils/required'
 
 describe('required', () => {
   it('should return a function that returns a message if the value is empty', () => {

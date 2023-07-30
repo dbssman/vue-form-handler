@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import isRadioInput from '../isRadioInput'
+import isRadioInput from '@/utils/isRadioInput'
 
 describe('isRadioInput', () => {
   it('should return true for radio inputs', () => {

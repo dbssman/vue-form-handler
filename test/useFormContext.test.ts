@@ -6,7 +6,7 @@ import {
   useFormHandler,
   FormHandler,
   InjectionKey,
-} from '../index'
+} from '@/index'
 
 describe('useFormContext', () => {
   const registerComponents = (injectionKey?: InjectionKey) => {

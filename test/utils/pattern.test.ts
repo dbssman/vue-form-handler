@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import pattern from '../pattern'
+import pattern from '@/utils/pattern'
 
 describe('pattern', () => {
   it('should work if value is nullish', () => {
     const message = 'This field must be smaller than -10'
-    const patternA = pattern(
-      /a/,
-      message
-    )
+    const patternA = pattern(/a/, message)
     expect(patternA(null)).toBe(true)
     expect(patternA(undefined)).toBe(true)
     expect(patternA('')).toBe(message)

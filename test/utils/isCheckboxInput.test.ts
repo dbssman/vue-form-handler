@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import isCheckboxInput from '../isCheckboxInput'
+import isCheckboxInput from '@/utils/isCheckboxInput'
 
 describe('isCheckboxInput', () => {
   it('should return true for checkbox inputs', () => {

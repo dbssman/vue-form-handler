@@ -1,6 +1,6 @@
 import { defineComponent } from '@vue/runtime-core'
-import ErrorMessage from '../ErrorMessage.vue'
-import { useFormHandler } from '../useFormHandler'
+import ErrorMessage from '@/ErrorMessage.vue'
+import { useFormHandler } from '@/useFormHandler'
 import { mount } from '@vue/test-utils'
 import { expect, it, describe } from 'vitest'
 

@@ -1,5 +1,7 @@
-import { initialState, useFormHandler } from '../useFormHandler'
+import { ref } from '@vue/runtime-core'
+import { initialState, useFormHandler } from '@/useFormHandler'
 import { expect, it, describe } from 'vitest'
+import { retry } from './testing-utils'
 
 describe('useFormHandler()', () => {
   describe('register()', () => {
@@ -99,7 +101,7 @@ describe('useFormHandler()', () => {
       expect(formState.errors.field3).toBeDefined()
     })
   })
-  describe('handler functionality',() => {
+  describe('handler functionality', () => {
     it('should have correct initial state and values', () => {
       const { values, formState } = useFormHandler()
       expect(values).toStrictEqual({})
@@ -195,7 +197,7 @@ describe('useFormHandler()', () => {
       const form = build({
         field: {},
       })
-  
+
       expect(form.value.field.name).toBe('field')
       expect(form.value.field.onBlur).toBeDefined()
       expect(form.value.field.isDirty).toBeUndefined()
@@ -205,6 +207,97 @@ describe('useFormHandler()', () => {
       expect(form.value.field.modelValue).toBe(null)
       expect(form.value.field['onUpdate:modelValue']).toBeDefined()
       expect(values.field).toBe(null)
+    })
+    it('should call success fn if no validation errors', async () => {
+      const { build, handleSubmit, formState } = useFormHandler()
+      build({
+        field: {},
+      })
+      const successFn = (form: any) => {
+        expect(form).toBeDefined()
+      }
+
+      await handleSubmit(successFn)
+      expect(formState.isValid).toBe(true)
+    })
+    it('should call error fn if present and validation errors', async () => {
+      let success = false
+      const { build, handleSubmit, formState, setError } = useFormHandler({
+        validationMode: 'onSubmit',
+      })
+      build({
+        field: {
+          required: true,
+        },
+      })
+      setError('field', 'this is an error')
+      const successFn = () => {
+        success = true
+      }
+      const errorFn = (errors: any) => {
+        success = false
+      }
+      await handleSubmit(successFn, errorFn)
+      expect(success).toBe(false)
+      expect(formState.isValid).toBe(false)
+    })
+    it('should use validate function if present', async () => {
+      let success = false
+      const { build, handleSubmit } = useFormHandler<{
+        field: string
+      }>({
+        validate: (values) => {
+          if (!values.field) {
+            return false
+          }
+          return true
+        },
+      })
+      build({
+        field: {},
+      })
+      const successFn = () => {
+        success = true
+      }
+      const errorFn = (errors: any) => {
+        success = false
+      }
+      await handleSubmit(successFn, errorFn)
+      expect(success).toBe(false)
+    })
+    it('should reset the form when initialValues are modified', async () => {
+      interface FormInterface {
+        field1: string | null
+        field2: string | null
+      }
+      const initialValues = ref<FormInterface>({
+        field1: null,
+        field2: null,
+      })
+      const { build, values, setValue } = useFormHandler<FormInterface>({
+        initialValues,
+      })
+      build({
+        field1: {},
+        field2: {},
+      })
+
+      expect(values).toEqual(initialValues.value)
+      setValue('field1', 'test')
+
+      expect(values.field1).toBe('test')
+
+      initialValues.value = {
+        ...initialValues.value,
+        field2: 'test4',
+      }
+
+      retry(() =>
+        expect(values).toEqual({
+          ...initialValues.value,
+          field2: 'test4',
+        })
+      )
     })
   })
 })

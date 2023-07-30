@@ -1,4 +1,4 @@
-import { ComputedRef, Ref } from 'vue'
+import { ComputedRef, Ref } from '@vue/runtime-core'
 import { RegisterOptions, RegisterReturn } from './register'
 
 /** Expected function to be called after a form submitted successfully */
@@ -23,7 +23,7 @@ export interface FormState<T> {
 }
 
 export interface PartialReturn<T> {
-/** Current form values */
+  /** Current form values */
   values: T
 
   /** Current form state */
@@ -70,7 +70,9 @@ export interface FormHandlerReturn<T> extends PartialReturn<T> {
   register: (name: keyof T, options?: RegisterOptions) => RegisterReturn
 }
 
-export type Interceptor<T> = (_: InterceptorParams<T>) => Promise<boolean> | boolean
+export type Interceptor<T> = (
+  _: InterceptorParams<T>
+) => Promise<boolean> | boolean
 
 export type SubmitValidation = (
   values: Record<string, any>
@@ -78,18 +80,18 @@ export type SubmitValidation = (
 
 export type InjectionKey = string | Symbol
 
-export interface FormHandlerParams<TValues extends Record<string,any>, TInitial extends TValues = TValues> {
+export interface FormHandlerParams<
+  TValues extends Record<string, any>,
+  TInitial extends TValues = TValues,
+> {
   /** Values to initialize the form */
-  initialValues?:
-    | TInitial
-    | Ref<TInitial>
-    | ComputedRef<TInitial>
+  initialValues?: TInitial | Ref<TInitial> | ComputedRef<TInitial>
 
   /** Field change interceptor */
   interceptor?: Interceptor<TValues>
 
   /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-  validate?: SubmitValidation
+  validate?: (values: TValues) => Promise<boolean> | boolean
 
   /** Validation behavior options */
   validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'

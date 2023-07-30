@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import minLength from '../minLength'
+import minLength from '@/utils/minLength'
 
 describe('minLength', () => {
   it('should work if value is nullish', () => {
     const message = 'This field must be greater than 10 characters'
-    const minLength10 = minLength(
-      10,
-      message
-    )
+    const minLength10 = minLength(10, message)
     expect(minLength10(null)).toBe(true)
     expect(minLength10(undefined)).toBe(true)
     expect(minLength10('')).toBe(message)

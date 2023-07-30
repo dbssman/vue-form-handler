@@ -4,10 +4,8 @@ import {
   HandleSubmitErrorFn,
   HandleSubmitSuccessFn,
 } from './types/formHandler'
-import { NativeValidations } from './types/validations'
 import { DEFAULT_FIELD_VALUE, defaultInjectionKey } from './constants'
 import {
-  ValidationsConfiguration,
   FieldReference,
   RegisterReturn,
   WrappedReference,
@@ -46,7 +44,7 @@ type Refs<T> = Record<keyof T, WrappedReference>
 
 export const useFormHandler = <
   T extends Record<string, any> = Record<string, any>,
-  R extends T = T
+  R extends T = T,
 >({
   initialValues = {} as R,
   interceptor,
@@ -71,8 +69,7 @@ export const useFormHandler = <
     _refs[name] = {
       ...(_refs[name] || {}),
       _validations: {
-        ...(!options.useNativeValidation &&
-          transformValidations(options as ValidationsConfiguration)),
+        ...(!options.useNativeValidation && transformValidations(options)),
         ...(options.validate || {}),
       },
       _defaultValue: options.defaultValue,
@@ -293,12 +290,12 @@ export const useFormHandler = <
         },
       }),
       ...(useNativeValidation && {
-        ...({
+        ...{
           ...nativeValidations,
           ...(pattern && {
             pattern: pattern instanceof RegExp ? pattern.source : pattern,
           }),
-        } as NativeValidations),
+        },
       }),
     } as RegisterReturn
   }
@@ -306,10 +303,13 @@ export const useFormHandler = <
   const build: Build<T> = (configuration) => {
     const staticConfig = unref(configuration)
     return computed(() =>
-      objectKeys(staticConfig).reduce((acc, key) => {
-        acc[key] = register(String(key), staticConfig[key])
-        return acc
-      }, {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>)
+      objectKeys(staticConfig).reduce(
+        (acc, key) => {
+          acc[key] = register(String(key), staticConfig[key])
+          return acc
+        },
+        {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>
+      )
     )
   }
 

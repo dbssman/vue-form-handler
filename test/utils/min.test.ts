@@ -1,22 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import min from '../min'
+import min from '@/utils/min'
 
 describe('min', () => {
   it('should work if value is nullish', () => {
     const message = 'This field must be greater than 10'
-    const min10 = min(
-      10,
-      message
-    )
+    const min10 = min(10, message)
     expect(min10(null)).toBe(true)
     expect(min10(undefined)).toBe(true)
     expect(min10(0)).toBe(message)
   })
   it('should work if min is 0', () => {
-    const min0 = min(
-      0,
-      'This field must be greater than 0'
-    )
+    const min0 = min(0, 'This field must be greater than 0')
     expect(min0(0)).toBe(true)
     expect(min0(1)).toBe(true)
   })
