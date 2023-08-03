@@ -51,8 +51,5 @@ Notice how we use the combination of [clearError](/api/use-form-handler/clear-er
 ## Type Declarations
 
 ```ts
-export type SetError = (
-    name:string
-    error:string
-) => void
+export type SetError = (name: keyof T, error: string) => void
 ```

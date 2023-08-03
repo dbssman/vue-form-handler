@@ -1,18 +1,6 @@
 import { ComputedRef, Ref } from '@vue/runtime-core'
 import { RegisterOptions, RegisterReturn } from './register'
 
-/** Expected function to be called after a form submitted successfully */
-export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
-
-/** Optional function to be called after a form failed to submit */
-export type HandleSubmitErrorFn = (
-  errors: Record<string, string | undefined>
-) => void
-
-export type Build<T> = <TBuild extends Record<keyof T, RegisterOptions>>(
-  configuration: TBuild | Ref<TBuild> | ComputedRef<TBuild>
-) => ComputedRef<Record<keyof TBuild, Readonly<RegisterReturn>>>
-
 export interface FormState<T> {
   isDirty: boolean
   isTouched: boolean
@@ -21,6 +9,18 @@ export interface FormState<T> {
   touched: Record<keyof T, boolean>
   errors: Record<keyof T, string | undefined>
 }
+
+/** Optional function to be called after a form failed to submit */
+export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
+
+/** Expected function to be called after a form submitted successfully */
+export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
+
+export type Build<T extends Record<string, any> = Record<string, any>> = <
+  TBuild extends Record<keyof T, RegisterOptions>,
+>(
+  configuration: TBuild | Ref<TBuild> | ComputedRef<TBuild>
+) => ComputedRef<Record<keyof TBuild, Readonly<RegisterReturn<TBuild>>>>
 
 export interface PartialReturn<T> {
   /** Current form values */
@@ -62,12 +62,19 @@ export interface InterceptorParams<T> extends PartialReturn<T> {
   value: T[keyof T]
 }
 
-export interface FormHandlerReturn<T> extends PartialReturn<T> {
+export interface FormHandlerReturn<T extends Record<string, any>>
+  extends PartialReturn<T> {
   /** Function to build the form */
   build: Build<T>
 
   /** Function to check the validity of the form */
   register: (name: keyof T, options?: RegisterOptions) => RegisterReturn
+
+  /** Function to submit the form */
+  handleSubmit: (
+    successFn: HandleSubmitSuccessFn<T>,
+    errorFn?: HandleSubmitErrorFn<T>
+  ) => void
 }
 
 export type Interceptor<T> = (

@@ -1,7 +1,9 @@
 /** Props for a base control */
-export interface BaseControlProps {
+export interface BaseControlProps<
+  T extends Record<string, any> = Record<string, any>,
+> {
   /** Name of the control */
-  name: string
+  name: keyof T
 
   /** Value binding for native inputs */
   ref: (fieldRef: any) => void

@@ -106,5 +106,5 @@ watch(
 ## Type Declarations
 
 ```ts
-export type ClearError = (name?: string) => void
+export type ClearError = (name?: keyof T | undefined) => void
 ```

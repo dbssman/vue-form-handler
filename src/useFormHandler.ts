@@ -11,6 +11,7 @@ import {
   WrappedReference,
   RegisterOptions,
   FormState,
+  NativeValidations,
 } from './types'
 import {
   computed,
@@ -185,7 +186,7 @@ export const useFormHandler = <
           clearField,
           formState,
           modifiedValues,
-          name: name as string,
+          name,
           resetField,
           resetForm,
           setError,
@@ -291,26 +292,33 @@ export const useFormHandler = <
       }),
       ...(useNativeValidation && {
         ...{
-          ...nativeValidations,
+          ...(nativeValidations as NativeValidations),
           ...(pattern && {
-            pattern: pattern instanceof RegExp ? pattern.source : pattern,
+            pattern:
+              pattern instanceof RegExp
+                ? pattern.source
+                : (pattern as NativeValidations['pattern']),
           }),
         },
       }),
-    } as RegisterReturn
+    }
   }
 
   const build: Build<T> = (configuration) => {
-    const staticConfig = unref(configuration)
-    return computed(() =>
-      objectKeys(staticConfig).reduce(
+    const plainConfig = unref(configuration)
+    const built = computed(() =>
+      objectKeys(plainConfig).reduce(
         (acc, key) => {
-          acc[key] = register(String(key), staticConfig[key])
+          acc[key] = register(key as unknown as keyof T, plainConfig[key])
           return acc
         },
-        {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>
+        {} as Record<
+          keyof typeof plainConfig,
+          Readonly<RegisterReturn<typeof plainConfig>>
+        >
       )
     )
+    return built
   }
 
   const isValidForm = async () => {
@@ -322,8 +330,8 @@ export const useFormHandler = <
   }
 
   const handleSubmit = async (
-    successFn: HandleSubmitSuccessFn,
-    errorFn?: HandleSubmitErrorFn
+    successFn: HandleSubmitSuccessFn<T>,
+    errorFn?: HandleSubmitErrorFn<T>
   ) => {
     if (await isValidForm()) {
       successFn(values)

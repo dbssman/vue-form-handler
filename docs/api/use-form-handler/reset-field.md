@@ -38,5 +38,5 @@ const { register, resetField } = useFormHandler({
 ## Type Declarations
 
 ```ts
-export type ResetField = (name: string) => void
+export type ResetField = (name: keyof T) => void
 ```

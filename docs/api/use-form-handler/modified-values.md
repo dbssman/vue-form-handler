@@ -41,5 +41,5 @@ Let's say your form is initialized as above, because you're editing an existing 
 ## Type Declarations
 
 ```ts
-export type ModifiedValues = () => Record<string, any>
+export type ModifiedValues = <TModified extends T>() => TModified
 ```

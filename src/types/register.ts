@@ -30,7 +30,9 @@ export interface RegisterOptions extends ValidationsConfiguration {
   dependentFields?: string[]
 }
 
-export type RegisterReturn = BaseControlProps & NativeValidations
+export type RegisterReturn<
+  T extends Record<string, any> = Record<string, any>,
+> = BaseControlProps<T> & NativeValidations
 
 /** Function that allows you to register a control to interact with the form */
 export type Register = (

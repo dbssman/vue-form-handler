@@ -46,5 +46,5 @@ The field value or state is not recovered after un-registering it. It starts eve
 ## Type Declarations
 
 ```ts
-export type Unregister = (name: string) => void
+export type Unregister = (name: keyof T) => void
 ```
