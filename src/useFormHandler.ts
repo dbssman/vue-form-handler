@@ -274,7 +274,7 @@ export const useFormHandler = <
       ref: refFn<T>(name, _refs, values),
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
-      ...(disabled && { disabled: true }),
+      ...(disabled ? { disabled: true } : { disabled: undefined }),
       ...(withDetails && {
         isDirty: !!formState.dirty[name],
         isTouched: !!formState.touched[name],
