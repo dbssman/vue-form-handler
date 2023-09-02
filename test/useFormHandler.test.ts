@@ -189,8 +189,8 @@ describe('useFormHandler()', () => {
           field: 'something',
         },
       })
-      await setValue('field2', 'another thing')
-      expect(modifiedValues()).toStrictEqual({ field2: 'another thing' })
+      await setValue('field', 'another thing')
+      expect(modifiedValues.value).toStrictEqual({ field: 'another thing' })
     })
     it('should register field properly via build', () => {
       const { build, values } = useFormHandler()

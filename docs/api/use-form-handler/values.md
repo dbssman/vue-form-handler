@@ -40,5 +40,5 @@ const { register, values } = useFormHandler()
 ## Type Declarations
 
 ```ts
-export type Values = T
+export type Values = Partial<T>
 ```

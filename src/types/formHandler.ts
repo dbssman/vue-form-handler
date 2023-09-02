@@ -17,14 +17,14 @@ export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
 export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
 
 export type Build<T extends Record<string, any> = Record<string, any>> = <
-  TBuild extends Record<keyof T, RegisterOptions>,
+  TBuild extends Partial<Record<keyof T, RegisterOptions>>,
 >(
   configuration: TBuild | Ref<TBuild> | ComputedRef<TBuild>
 ) => ComputedRef<Record<keyof TBuild, Readonly<RegisterReturn<TBuild>>>>
 
 export interface PartialReturn<T> {
   /** Current form values */
-  values: T
+  values: Partial<T>
 
   /** Current form state */
   formState: FormState<T>
@@ -51,7 +51,7 @@ export interface PartialReturn<T> {
   clearField: (name: keyof T) => void
 
   /** Function that returns the modified values of the form */
-  modifiedValues: <TModified extends T>() => TModified
+  modifiedValues: ComputedRef<Partial<T>>
 }
 
 export interface InterceptorParams<T> extends PartialReturn<T> {
@@ -87,18 +87,15 @@ export type SubmitValidation = (
 
 export type InjectionKey = string | Symbol
 
-export interface FormHandlerParams<
-  TValues extends Record<string, any>,
-  TInitial extends TValues = TValues,
-> {
+export interface FormHandlerParams<TForm, TInitial> {
   /** Values to initialize the form */
   initialValues?: TInitial | Ref<TInitial> | ComputedRef<TInitial>
 
   /** Field change interceptor */
-  interceptor?: Interceptor<TValues>
+  interceptor?: Interceptor<TForm>
 
   /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-  validate?: (values: TValues) => Promise<boolean> | boolean
+  validate?: (values: Partial<TForm>) => Promise<boolean> | boolean
 
   /** Validation behavior options */
   validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'

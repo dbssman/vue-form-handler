@@ -1,6 +1,6 @@
 # modifiedValues
 
-Returns the current modified fields of the form.
+Computed property that holds the current modified values of the form e.g values that are different from initial value if any initial value was indicated or different than the default value for the field if no initial values were given.
 
 ## Demo
 
@@ -15,7 +15,7 @@ Coming soon...
     <input type="text" v-bind="register('email')" />
     <input type="text" v-bind="register('summary')" />
     <pre>
-            {{ modifiedValues() }} //should be initially
+            {{ modifiedValues }} //should initially be an empty object
         </pre
     >
     <pre>
@@ -41,5 +41,6 @@ Let's say your form is initialized as above, because you're editing an existing 
 ## Type Declarations
 
 ```ts
-export type ModifiedValues = <TModified extends T>() => TModified
+type ModifiedValues = ComputedRef<Partial<T>>// T being the form interface
+
 ```

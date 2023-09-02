@@ -1,6 +1,6 @@
-export interface ValidationWithMessage {
+export interface ValidationWithMessage<T = any> {
   /** Validation value */
-  value: number | string | RegExp
+  value: T
 
   /** Validation message */
   message: string
@@ -35,25 +35,25 @@ export interface ValidationsConfiguration {
   /** Min validation */
   /** If a number, the field must be greater than or equal to the number */
   /** If an object, the field must be greater than or equal to the object.value and the object.message is the validation message */
-  min?: number | ValidationWithMessage
+  min?: number | ValidationWithMessage<number>
 
   /** Max validation */
   /** If a number, the field must be less than or equal to the number */
   /** If an object, the field must be less than or equal to the object.value and the object.message is the validation message */
-  max?: number | ValidationWithMessage
+  max?: number | ValidationWithMessage<number>
 
   /** MinLength validation */
   /** If a number, the field must be greater than or equal to the number */
   /** If an object, the field must be greater than or equal to the object.value and the object.message is the validation message */
-  minLength?: number | ValidationWithMessage
+  minLength?: number | ValidationWithMessage<number>
 
   /** MaxLength validation */
   /** If a number, the field must be less than or equal to the number */
   /** If an object, the field must be less than or equal to the object.value and the object.message is the validation message */
-  maxLength?: number | ValidationWithMessage
+  maxLength?: number | ValidationWithMessage<number>
 
   /** Pattern validation */
   /** If a RegExp, the field must match the RegExp */
   /** If an object, the field must match the object.value and the object.message is the validation message */
-  pattern?: string | RegExp | ValidationWithMessage
+  pattern?: string | RegExp | ValidationWithMessage<string | RegExp>
 }

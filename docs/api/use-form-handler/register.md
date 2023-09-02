@@ -243,6 +243,31 @@ Custom validations are kept very simple, can be synchronous or asynchronous. We 
 ## Type Declarations
 
 ```ts
+
+interface ValidationWithMessage {
+  value: number | string | RegExp
+  message: string
+}
+
+interface ValidationsConfiguration {
+  required?: boolean | string
+  min?: number | ValidationWithMessage<number>
+  max?: number | ValidationWithMessage<number>
+  minLength?: number | ValidationWithMessage<number>
+  maxLength?: number | ValidationWithMessage<number>
+  pattern?: string | RegExp | ValidationWithMessage<string | RegExp>
+}
+
+export interface RegisterOptions extends ValidationsConfiguration {
+  native?: boolean
+  defaultValue?: any
+  validate?: Validations
+  withDetails?: boolean
+  disabled?: boolean
+  useNativeValidation?: boolean
+  dependentFields?: string[]
+}
+
 export type Register = (
   name: keyof T,
   options?: RegisterOptions
