@@ -95,11 +95,12 @@ const errorFn = (errors: any) => {
 ## Type Declarations
 
 ```ts
-export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
-export type HandleSubmitErrorFn = (errors: Record<string, string>) => void
+export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
 
-export type HandleSubmit = (
-  successFn: HandleSubmitSuccessFn,
-  errorFn?: HandleSubmitErrorFn
+export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
+
+export type HandleSubmit<T> = (
+  successFn: HandleSubmitSuccessFn<T>,
+  errorFn?: HandleSubmitErrorFn<T>
 ) => void
 ```

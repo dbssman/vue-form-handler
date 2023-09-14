@@ -62,5 +62,5 @@ const { register, clearField } = useFormHandler()
 ## Type Declarations
 
 ```ts
-export type ClearField = (name: string) => Promise<void>
+export type ClearField = (name: keyof T) => Promise<void>
 ```

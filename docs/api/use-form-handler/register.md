@@ -243,38 +243,19 @@ Custom validations are kept very simple, can be synchronous or asynchronous. We 
 ## Type Declarations
 
 ```ts
-export interface BaseControlProps {
-  name: string
-  error: string
-  ref: any
-  modelValue: any
-  'onUpdate:modelValue': (value: any) => Promise<void>
-  onBlur: () => void
-  onClear: () => void
-  disabled?: boolean
-  isDirty?: boolean
-  isTouched?: boolean
-  onChange?: (el: any) => Promise<void>
-}
 
-export type ValidationFn = (
-  value: any
-) => Promise<boolean | string> | boolean | string
-
-export type Validations = Record<string, ValidationFn>
-
-export interface ValidationWithMessage {
+interface ValidationWithMessage {
   value: number | string | RegExp
   message: string
 }
 
-export interface ValidationsConfiguration {
+interface ValidationsConfiguration {
   required?: boolean | string
-  min?: number | ValidationWithMessage
-  max?: number | ValidationWithMessage
-  minLength?: number | ValidationWithMessage
-  maxLength?: number | ValidationWithMessage
-  pattern?: string | RegExp | ValidationWithMessage
+  min?: number | ValidationWithMessage<number>
+  max?: number | ValidationWithMessage<number>
+  minLength?: number | ValidationWithMessage<number>
+  maxLength?: number | ValidationWithMessage<number>
+  pattern?: string | RegExp | ValidationWithMessage<string | RegExp>
 }
 
 export interface RegisterOptions extends ValidationsConfiguration {
@@ -284,12 +265,28 @@ export interface RegisterOptions extends ValidationsConfiguration {
   withDetails?: boolean
   disabled?: boolean
   useNativeValidation?: boolean
+  dependentFields?: string[]
 }
 
-export type RegisterReturn = BaseControlProps & ValidationsConfiguration
-
 export type Register = (
-  name: string,
+  name: keyof T,
   options?: RegisterOptions
-) => RegisterReturn
+) => {
+  pattern?: string | undefined
+  required?: boolean | undefined
+  min?: number | undefined
+  max?: number | undefined
+  minLength?: number | undefined
+  maxLength?: number | undefined
+  onChange?: (() => Promise<void>) | undefined
+  isDirty?: boolean | undefined
+  isTouched?: boolean | undefined
+  disabled?: boolean | undefined
+  name: keyof T
+  modelValue: T[keyof T]
+  'onUpdate:modelValue': (value: any) => Promise<void>
+  ref: (fieldRef: any) => void
+  onBlur: () => void
+  onClear: () => Promise<void>
+}
 ```

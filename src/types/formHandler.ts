@@ -1,144 +1,114 @@
-import { ComputedRef, Ref } from 'vue'
-import { RegisterOptions, Register, RegisterReturn } from './register'
+import { ComputedRef, Ref } from '@vue/runtime-core'
+import { RegisterOptions, RegisterReturn } from './register'
 
-export interface FormState {
-  /** Boolean holding the dirty state of the form */
+type ComputableUnion<T> = T | Ref<T> | ComputedRef<T>
+
+type ConfigType<T> = Partial<Record<keyof T, RegisterOptions>>
+
+type PossiblePromise<T> = T | Promise<T>
+
+export interface FormState<T> {
   isDirty: boolean
-
-  /** Boolean holding the touched state of the form */
   isTouched: boolean
-
-  /** Boolean holding the valid state of the form */
   isValid: boolean
-
-  /** Object holding the dirty fields of the form */
-  dirty: Record<string, boolean>
-
-  /** Object holding the touched fields of the form */
-  touched: Record<string, boolean>
-
-  /** Object holding the fields with errors (one or multiple, check:validationErrors)*/
-  errors: Record<string, string | undefined>
+  dirty: Record<keyof T, boolean>
+  touched: Record<keyof T, boolean>
+  errors: Record<keyof T, string | undefined>
 }
-
-/** Field initializer */
-export type InitControl = (name: string, options: RegisterOptions) => void
-
-/** Sets dirty state of a control */
-export type SetDirty = (name: string, dirty: boolean) => void
-
-/** Sets touched state of a control */
-export type SetTouched = (name: string, touched: boolean) => void
-
-/** Function to set a value programmatically */
-export type SetValue = (name: string, value: any) => Promise<void>
-
-/** Function to trigger validations programmatically */
-export type TriggerValidation = (name?: string) => Promise<void>
-
-/** Control blur handler */
-export type HandleBlur = (name: string) => void
-
-/** Control change handler */
-export type HandleChange = (name: string, value?: any) => Promise<void>
-
-/** Function to set an error programmatically */
-export type ClearField = (name: string) => Promise<void>
-
-/** Function to reset a control programmatically*/
-export type ResetField = (name: string) => void
-
-/** Function to reset the whole form programmatically*/
-export type ResetForm = () => void
-
-/** Function to set an error programmatically */
-export type SetError = (name: string, error: string) => void
-
-/** Function to clear an error programmatically */
-export type ClearError = (name?: string) => void
-
-/** Function to get the modified values of the form */
-export type ModifiedValues = () => Record<string, any>
-
-/** Expected function to be called after a form submitted successfully */
-export type HandleSubmitSuccessFn = (values: Record<string, any>) => void
 
 /** Optional function to be called after a form failed to submit */
-export type HandleSubmitErrorFn = (
-  errors: Record<string, string | undefined>
-) => void
+export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
 
-/** Checks for the validity of the form before submitting */
-export type IsValidForm = () => Promise<boolean>
+/** Expected function to be called after a form submitted successfully */
+export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
 
-/** Submit handler */
-export type HandleSubmit = (
-  successFn: HandleSubmitSuccessFn,
-  errorFn?: HandleSubmitErrorFn
-) => void
-
-export type Build = <T extends Record<string, RegisterOptions>>(
-  configuration: T | Ref<T> | ComputedRef<T>
-) => ComputedRef<Record<keyof T, Readonly<RegisterReturn>>>
-
-export interface InterceptorParams {
-  /** Name of the field that is currently about to be set*/
-  name: string
-
-  /** Value of the field that is currently about to be set */
-  value: any
-
+export type Build<T extends Record<string, any> = Record<string, any>> = <
+  TBuild extends Partial<T>,
+>(
+  configuration: ComputableUnion<ConfigType<TBuild>>
+) => ComputedRef<
+  Record<
+    keyof TBuild,
+    Readonly<RegisterReturn<Partial<Record<keyof TBuild, RegisterOptions>>>>
+  >
+>
+export interface PartialReturn<T> {
   /** Current form values */
-  values: Record<string, any>
+  values: Partial<T>
 
   /** Current form state */
-  formState: FormState
+  formState: FormState<T>
 
   /** Triggers the validation of a field */
-  triggerValidation: TriggerValidation
+  triggerValidation: (name?: keyof T | undefined) => Promise<void>
 
   /** Function to reset a field */
-  resetField: ResetField
+  resetField: (name: keyof T) => void
 
   /** Function to reset the whole form */
-  resetForm: ResetForm
+  resetForm: () => void
 
   /** Function to set an error on a field programmatically */
-  setError: SetError
+  setError: (name: keyof T, error: string) => void
 
   /** Function to set the value of a field programmatically */
-  setValue: SetValue
+  setValue: (name: keyof Omit<T, keyof T>, value?: any) => Promise<void>
 
   /** Function to clear one or more errors on a desired field or the whole form*/
-  clearError: ClearError
+  clearError: (name: keyof T) => void
 
   /** Function to clear a desired field*/
-  clearField: ClearField
+  clearField: (name: keyof T) => void
 
   /** Function that returns the modified values of the form */
-  modifiedValues: ModifiedValues
+  modifiedValues: ComputedRef<Partial<T>>
 }
 
-export type Interceptor = (_: InterceptorParams) => Promise<boolean> | boolean
+export interface InterceptorParams<T> extends PartialReturn<T> {
+  /** Name of the field that is currently about to be set*/
+  name: keyof T
 
-export type FormValidation = (
+  /** Value of the field that is currently about to be set */
+  value: T[keyof T]
+}
+
+export interface FormHandlerReturn<T extends Record<string, any>>
+  extends PartialReturn<T> {
+  /** Function to build the form */
+  build: Build<T>
+
+  /** Function to check the validity of the form */
+  register: (name: keyof T, options?: RegisterOptions) => RegisterReturn
+
+  /** Function to submit the form */
+  handleSubmit: (
+    successFn: HandleSubmitSuccessFn<T>,
+    errorFn?: HandleSubmitErrorFn<T>
+  ) => void
+}
+
+export type Interceptor<T> = (
+  _: InterceptorParams<T>
+) => PossiblePromise<boolean>
+
+export type SubmitValidation = (
   values: Record<string, any>
-) => Promise<boolean> | boolean
+) => PossiblePromise<boolean>
 
 export type InjectionKey = string | Symbol
 
-export interface FormHandlerParams {
+export interface FormHandlerParams<
+  TForm extends Record<string, any> = Record<string, any>,
+  TInitial extends Record<string, any> = Record<string, any>,
+> {
   /** Values to initialize the form */
-  initialValues?:
-    | Record<string, any>
-    | Ref<Record<string, any>>
-    | ComputedRef<Record<string, any>>
+  initialValues?: ComputableUnion<TInitial>
 
   /** Field change interceptor */
-  interceptor?: Interceptor
+  interceptor?: Interceptor<TForm>
 
   /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-  validate?: FormValidation
+  validate?: (values: Partial<TForm>) => PossiblePromise<boolean>
 
   /** Validation behavior options */
   validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
@@ -146,49 +116,3 @@ export interface FormHandlerParams {
   /** Injection key to override the default */
   injectionKey?: InjectionKey
 }
-export interface FormHandlerReturn {
-  /** Current form state */
-  formState: FormState
-
-  /** Current form values */
-  values: Record<string, any>
-
-  /** Function to clear one or more errors on a desired field or the whole form*/
-  clearError: ClearError
-
-  /** Function to clear a desired field*/
-  clearField: ClearField
-
-  /** Submit handler */
-  handleSubmit: HandleSubmit
-
-  /** Function that returns the modified values of the form */
-  modifiedValues: ModifiedValues
-
-  /** Method to register a field and make it interact with the current form */
-  register: Register
-
-  /** Method to build a form configuration */
-  build: Build
-
-  /** Function to reset a field */
-  resetField: ResetField
-
-  /** Function to reset the whole form */
-  resetForm: ResetForm
-
-  /** Function to set an error on a field programmatically */
-  setError: SetError
-
-  /** Function to set the value of a field programmatically */
-  setValue: SetValue
-
-  /** Triggers the validation of a field */
-  triggerValidation: TriggerValidation
-
-  /** Method to unregister a field and make it stop interacting with the current form */
-  unregister: (name: string) => void
-}
-
-/** Form handler solution as a composable function */
-export type UseFormHandler = (_?: FormHandlerParams) => FormHandlerReturn

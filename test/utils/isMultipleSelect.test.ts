@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import isMultipleSelect from '../isMultipleSelect'
+import isMultipleSelect from '@/utils/isMultipleSelect'
 
 describe('isMultipleSelect', () => {
   it('should return true for multiple select', () => {

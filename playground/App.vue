@@ -3,38 +3,24 @@
   <form @submit.prevent="submitForm">
     <input v-bind="register('playground')" />
     <button>Submit</button>
-    <button
-      type="button"
-      @click="
-        () => {
-          initialValues = {
-            playground: 'Hello Vue 3',
-          }
-        }
-      "
-    >
-      Change initialValues
-    </button>
   </form>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useFormHandler } from '../src/index'
 
-const initialValues = ref({
-  playground: '',
-})
-
-const { register, handleSubmit } = useFormHandler({
-  initialValues,
-})
+const { register, handleSubmit, values, build } = useFormHandler()
 
 const submitForm = () => {
   handleSubmit((form: any) => {
     console.log(form)
   })
 }
+
+const form = build({
+  playground: {}
+})
+
 </script>
 
 <style>

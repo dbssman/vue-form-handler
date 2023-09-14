@@ -8,7 +8,7 @@ export default (el: any) => {
   if (Array.isArray(el)) {
     if (isRadioInput(el[0])) {
       return (
-        el.find(({ checked, disabled }) => checked && !disabled)?.value ||
+        el.find(({ checked }) => checked)?.value ||
         el[0].value
       )
     }

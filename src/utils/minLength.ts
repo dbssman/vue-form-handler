@@ -1,3 +1,5 @@
+import isNil from "./isNil"
+
 /**
  * @param min - Minimum length of the string
  * @param message - The validation message
@@ -13,7 +15,7 @@ export default (
     message = `This field must be at least ${min} characters`
   ) =>
   (value: any) => {
-    if (value && value.length < min) {
+    if (!isNil(value) && value.length < min) {
       return message
     }
     return true

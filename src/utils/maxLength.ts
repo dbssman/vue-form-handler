@@ -1,3 +1,5 @@
+import isNil from "./isNil"
+
 /**
  * @param {number} max - Maximum length of the string
  * @param {string} message - The validation message
@@ -13,7 +15,7 @@ export default (
     message = `This field must be less than ${max} characters`
   ) =>
   (value: any) => {
-    if (value && value.length > max) {
+    if (!isNil(value) && value.length > max) {
       return message
     }
     return true

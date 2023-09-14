@@ -1,3 +1,5 @@
+import isNil from "./isNil"
+
 /**
  * @param max - The maximum value
  * @param message - The validation message
@@ -10,7 +12,7 @@
  */
 export default (max: number, message = `This field must be less than ${max}`) =>
   (value: any) => {
-    if (value && value > max) {
+    if (!isNil(value) && value > max) {
       return message
     }
     return true

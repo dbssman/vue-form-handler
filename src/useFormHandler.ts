@@ -1,30 +1,17 @@
-import { Build, FormHandlerReturn } from './types/formHandler'
-import { NativeValidations } from './types/validations'
+import {
+  Build,
+  FormHandlerParams,
+  HandleSubmitErrorFn,
+  HandleSubmitSuccessFn,
+} from './types/formHandler'
 import { DEFAULT_FIELD_VALUE, defaultInjectionKey } from './constants'
 import {
-  ModifiedValues,
-  TriggerValidation,
-  UseFormHandler,
-  ResetField,
-  ResetForm,
-  InitControl,
-  SetError,
-  ClearError,
-  SetValue,
-  ClearField,
-  SetDirty,
-  SetTouched,
-  HandleBlur,
-  HandleChange,
-  FormState,
-  HandleSubmit,
-  Register,
-  IsValidForm,
-  Refs,
-  ValidationsConfiguration,
-  Unregister,
   FieldReference,
   RegisterReturn,
+  WrappedReference,
+  RegisterOptions,
+  FormState,
+  NativeValidations,
 } from './types'
 import {
   computed,
@@ -37,8 +24,6 @@ import {
 import { isEqual } from 'lodash-es'
 import {
   getNativeFieldValue,
-  validateField,
-  validateForm,
   getDefaultFieldValue,
   refFn,
   transformValidations,
@@ -54,29 +39,43 @@ export const initialState = () => ({
   isValid: true,
 })
 
-export const useFormHandler: UseFormHandler = ({
-  initialValues = {},
+type Refs<T> = Record<keyof T, WrappedReference>
+
+interface ValidateField<T> {
+  name: keyof T
+  values: T
+  formState: FormState<T>
+  _refs: any
+}
+
+export const useFormHandler = <
+  TForm extends Record<string, any> = Record<string, any>,
+  TInitial extends Partial<TForm> = Partial<TForm>,
+>({
+  initialValues = {} as TInitial,
   interceptor,
   validate,
   validationMode = 'onChange',
   injectionKey = defaultInjectionKey,
-} = {}) => {
-  const values: Record<string, any> = reactive({ ...unref(initialValues) })
-  const formState = reactive<FormState>({ ...initialState() })
+}: FormHandlerParams<TForm, TInitial> = {}) => {
+  const values: Partial<TForm> = reactive({ ...unref(initialValues) })
 
-  let _refs: Refs = {}
+  const formState = reactive({
+    ...(initialState() as FormState<TForm>),
+  }) as FormState<TForm>
 
-  const _getDefault = (name: string): any =>
+  let _refs: Refs<TForm> = {} as Refs<TForm>
+
+  const _getDefault = (name: keyof TForm): TForm[keyof TForm] =>
     _refs[name]?._defaultValue ?? getDefaultFieldValue(_refs[name]?.ref)
-  const _getInitial = (name: string): any =>
-    (unref(initialValues) as Record<string, any>)?.[name] ?? _getDefault(name)
-  const _initControl: InitControl = (name, options) => {
+  const _getInitial = (name: keyof TForm): any =>
+    unref(initialValues)?.[name] ?? _getDefault(name)
+  const _initControl = (name: keyof TForm, options: RegisterOptions) => {
     const needsReset = options.disabled && _refs[name] && !_refs[name]._disabled
     _refs[name] = {
       ...(_refs[name] || {}),
       _validations: {
-        ...(!options.useNativeValidation &&
-          transformValidations(options as ValidationsConfiguration)),
+        ...(!options.useNativeValidation && transformValidations(options)),
         ...(options.validate || {}),
       },
       _defaultValue: options.defaultValue,
@@ -88,8 +87,7 @@ export const useFormHandler: UseFormHandler = ({
       return
     }
     if (
-      (!initialValues ||
-        (unref(initialValues) as Record<string, any>)?.[name] === undefined) &&
+      (!initialValues || unref(initialValues)?.[name] === undefined) &&
       values[name] === undefined
     ) {
       values[name] = _getDefault(name)
@@ -108,10 +106,40 @@ export const useFormHandler: UseFormHandler = ({
     formState.isTouched = Object.values(formState.touched).some(Boolean)
   }
 
-  const clearError: ClearError = (name) => {
+  const _validateField = async <T>({
+    name,
+    values,
+    formState,
+    _refs,
+  }: ValidateField<Partial<T>>) => {
+    if (!Object.keys(_refs[name]?._validations ?? {}).length) {
+      return
+    }
+    if (_refs[name]._disabled) {
+      return
+    }
+    for (const validation of Object.values(_refs[name]._validations)) {
+      const result = await (validation as any)(values[name])
+      if (result !== true) {
+        formState.errors[name] = result
+        break
+      }
+      delete formState.errors[name]
+    }
+  }
+
+  const _validateForm = async <T extends Record<string, any>>(
+    params: Omit<ValidateField<T>, 'name'>
+  ) => {
+    for (const name of Object.keys(params.values)) {
+      await _validateField({ ...params, name })
+    }
+  }
+
+  const clearError = (name?: keyof TForm) => {
     try {
       if (!name) {
-        formState.errors = {}
+        formState.errors = {} as FormState<TForm>['errors']
         return
       }
       delete formState.errors[name]
@@ -120,19 +148,19 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const triggerValidation: TriggerValidation = async (name) => {
+  const triggerValidation = async (name?: keyof TForm) => {
     try {
       if (!name) {
-        await validateForm({ formState, values, _refs })
+        await _validateForm({ formState, values, _refs })
         return
       }
-      await validateField({ formState, name, _refs, values })
+      await _validateField({ formState, name, _refs, values })
     } finally {
       _updateValidState()
     }
   }
 
-  const setDirty: SetDirty = (name, dirty) => {
+  const setDirty = (name: keyof TForm, dirty: boolean) => {
     if (formState.dirty[name] !== dirty) {
       if (dirty) {
         formState.dirty[name] = true
@@ -144,7 +172,7 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const setTouched: SetTouched = (name, touched) => {
+  const setTouched = (name: keyof TForm, touched: boolean) => {
     if (formState.touched[name] !== touched) {
       if (touched) {
         formState.touched[name] = true
@@ -156,14 +184,14 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const resetField: ResetField = (name) => {
+  const resetField = (name: keyof TForm) => {
     values[name] = _getInitial(name)
     setTouched(name, false)
     setDirty(name, false)
     clearError(name)
   }
 
-  const resetForm: ResetForm = () => {
+  const resetForm = () => {
     Object.assign(values, {
       ...Object.fromEntries(
         Object.keys(values).map((key) => [key, _getInitial(key)])
@@ -172,18 +200,21 @@ export const useFormHandler: UseFormHandler = ({
     Object.assign(formState, initialState())
   }
 
-  const setError: SetError = (name, error) => {
+  const setError = (name: keyof TForm, error: string) => {
     formState.errors[name] = error
     _updateValidState()
   }
 
-  const modifiedValues: ModifiedValues = () => {
+  const modifiedValues = computed(() => {
     return Object.fromEntries(
       Object.entries(values).filter(([name]) => formState.dirty[name])
-    )
-  }
+    ) as Partial<TForm>
+  })
 
-  const setValue: SetValue = async (name, value = DEFAULT_FIELD_VALUE) => {
+  const setValue = async (
+    name: keyof TForm,
+    value: any = DEFAULT_FIELD_VALUE
+  ) => {
     const field = _refs[name]
     if (
       !field?._disabled &&
@@ -199,11 +230,11 @@ export const useFormHandler: UseFormHandler = ({
           setError,
           setValue,
           triggerValidation,
-          value,
+          value: value as TForm[keyof TForm],
           values,
         })))
     ) {
-      values[name] = value
+      values[name] = value as any
       setDirty(name, !isEqual(value, _getInitial(name)))
       if (field && field._dependentFields) {
         for (const dependentField of field._dependentFields) {
@@ -222,20 +253,20 @@ export const useFormHandler: UseFormHandler = ({
       )
     ) {
       const prev = values[name]
-      values[name] = undefined
+      values[name] = undefined as any
       values[name] = prev
     }
   }
 
-  const handleBlur: HandleBlur = (name) => {
+  const handleBlur = (name: keyof TForm) => {
     setTouched(name, true)
     if (['always', 'onBlur'].includes(validationMode)) {
       triggerValidation(name)
     }
   }
 
-  const handleChange: HandleChange = async (
-    name,
+  const handleChange = async (
+    name: keyof TForm,
     value = DEFAULT_FIELD_VALUE
   ) => {
     await setValue(name, value)
@@ -245,7 +276,7 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const clearField: ClearField = async (name) => {
+  const clearField = async (name: keyof TForm) => {
     const defaultValue: any = _getDefault(name)
     if (defaultValue !== values[name]) {
       await setValue(name, defaultValue)
@@ -253,7 +284,7 @@ export const useFormHandler: UseFormHandler = ({
     }
   }
 
-  const unregister: Unregister = (name) => {
+  const unregister = (name: keyof TForm) => {
     delete _refs[name]
     delete values[name]
     delete formState.errors[name]
@@ -264,7 +295,7 @@ export const useFormHandler: UseFormHandler = ({
     _updateValidState()
   }
 
-  const register: Register = (name, options = {}) => {
+  const register = (name: keyof TForm, options: RegisterOptions = {}) => {
     const {
       validate,
       defaultValue,
@@ -281,10 +312,10 @@ export const useFormHandler: UseFormHandler = ({
       modelValue: values[name],
       'onUpdate:modelValue': async (value: any) =>
         await handleChange(name, value),
-      ref: refFn(name, _refs, values),
+      ref: refFn<TForm>(name, _refs, values),
       onBlur: () => handleBlur(name),
       onClear: () => clearField(name),
-      ...(disabled && { disabled: true }),
+      ...(disabled ? { disabled: true } : { disabled: undefined }),
       ...(withDetails && {
         isDirty: !!formState.dirty[name],
         isTouched: !!formState.touched[name],
@@ -301,27 +332,37 @@ export const useFormHandler: UseFormHandler = ({
         },
       }),
       ...(useNativeValidation && {
-        ...({
-          ...nativeValidations,
+        ...{
+          ...(nativeValidations as NativeValidations),
           ...(pattern && {
-            pattern: pattern instanceof RegExp ? pattern.source : pattern,
+            pattern:
+              pattern instanceof RegExp
+                ? pattern.source
+                : (pattern as NativeValidations['pattern']),
           }),
-        } as NativeValidations),
+        },
       }),
     }
   }
 
-  const build: Build = (configuration) => {
-    const staticConfig = unref(configuration)
-    return computed(() =>
-      objectKeys(staticConfig).reduce((acc, key) => {
-        acc[key] = register(String(key), staticConfig[key])
-        return acc
-      }, {} as Record<keyof typeof staticConfig, Readonly<RegisterReturn>>)
+  const build: Build<TForm> = (configuration) => {
+    const plainConfig = unref(configuration)
+    const built = computed(() =>
+      objectKeys(plainConfig).reduce(
+        (acc, key) => {
+          acc[key] = register(key as unknown as keyof TForm, plainConfig[key])
+          return acc
+        },
+        {} as Record<
+          keyof typeof plainConfig,
+          Readonly<RegisterReturn<typeof plainConfig>>
+        >
+      )
     )
+    return built
   }
 
-  const isValidForm: IsValidForm = async () => {
+  const isValidForm = async () => {
     if (validate) {
       return await validate(values)
     }
@@ -329,9 +370,12 @@ export const useFormHandler: UseFormHandler = ({
     return formState.isValid
   }
 
-  const handleSubmit: HandleSubmit = async (successFn, errorFn) => {
+  const handleSubmit = async (
+    successFn: HandleSubmitSuccessFn<TForm>,
+    errorFn?: HandleSubmitErrorFn<TForm>
+  ) => {
     if (await isValidForm()) {
-      successFn(values)
+      successFn(values as TForm)
       return
     }
     if (errorFn) {
@@ -347,14 +391,14 @@ export const useFormHandler: UseFormHandler = ({
     { deep: true }
   )
 
-  const toExpose: FormHandlerReturn = {
+  const toExpose = {
+    build,
     clearError,
     clearField,
     formState: readonly(formState),
     handleSubmit,
-    modifiedValues,
+    modifiedValues: readonly(modifiedValues),
     register,
-    build,
     resetField,
     resetForm,
     setError,

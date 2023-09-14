@@ -1,3 +1,5 @@
+import isNil from './isNil'
+
 /**
  * @param pattern - RegExp pattern
  * @param message - The validation message
@@ -8,9 +10,12 @@
  * pattern('abc') // true
  * pattern('123') // 'This field is invalid'
  */
-export default (pattern: RegExp, message = 'This field is invalid') =>
+export default (pattern: string | RegExp, message = 'This field is invalid') =>
   (value: any) => {
-    if (value && !pattern.test(value)) {
+    if (typeof pattern === 'string') {
+      pattern = new RegExp(pattern)
+    }
+    if (!isNil(value) && !pattern.test(value)) {
       return message
     }
     return true

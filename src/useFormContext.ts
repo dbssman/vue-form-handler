@@ -2,6 +2,8 @@ import { inject } from '@vue/runtime-core'
 import { defaultInjectionKey } from './constants'
 import { FormHandlerReturn, InjectionKey } from './types'
 
-export const useFormContext = (
+export const useFormContext = <
+  T extends Record<string, any> = Record<string, any>,
+>(
   key: InjectionKey = defaultInjectionKey
-): FormHandlerReturn => inject(key) as FormHandlerReturn
+) => inject<FormHandlerReturn<T>>(key)

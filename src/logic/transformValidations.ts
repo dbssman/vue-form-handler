@@ -5,6 +5,22 @@ import {
 } from '../types'
 import { max, maxLength, min, minLength, pattern, required } from '../utils'
 
+const isValidationWithMessage = (
+  validation: any
+): validation is ValidationWithMessage => {
+  return (
+    typeof validation === 'object' &&
+    validation !== null &&
+    'value' in validation &&
+    'message' in validation
+  )
+}
+
+const getValidationForConfiguration = (validation: any, fn: Function) =>
+  isValidationWithMessage(validation)
+    ? fn(validation.value, validation.message)
+    : fn(validation)
+
 export default (validations: ValidationsConfiguration = {}): Validations => {
   return {
     ...(validations.required && {
@@ -14,46 +30,25 @@ export default (validations: ValidationsConfiguration = {}): Validations => {
           : required(),
     }),
     ...(validations.min && {
-      min:
-        typeof validations.min === 'number'
-          ? min(validations.min)
-          : min(validations.min.value as number, validations.min.message),
+      min: getValidationForConfiguration(validations.min, min),
     }),
     ...(validations.max && {
-      max:
-        typeof validations.max === 'number'
-          ? max(validations.max)
-          : max(validations.max.value as number, validations.max.message),
+      max: getValidationForConfiguration(validations.max, max),
     }),
     ...(validations.minLength && {
-      minLength:
-        typeof validations.minLength === 'number'
-          ? minLength(validations.minLength)
-          : minLength(
-              validations.minLength.value as number,
-              validations.minLength.message
-            ),
+      minLength: getValidationForConfiguration(
+        validations.minLength,
+        minLength
+      ),
     }),
     ...(validations.maxLength && {
-      maxLength:
-        typeof validations.maxLength === 'number'
-          ? maxLength(validations.maxLength)
-          : maxLength(
-              validations.maxLength.value as number,
-              validations.maxLength.message
-            ),
+      maxLength: getValidationForConfiguration(
+        validations.maxLength,
+        maxLength
+      ),
     }),
     ...(validations.pattern && {
-      pattern: !(validations.pattern as ValidationWithMessage)?.value
-        ? pattern(
-            (typeof validations.pattern === 'string'
-              ? new RegExp(validations.pattern)
-              : validations.pattern) as RegExp
-          )
-        : pattern(
-            (validations.pattern as ValidationWithMessage).value as RegExp,
-            (validations.pattern as ValidationWithMessage).message as string
-          ),
+      pattern: getValidationForConfiguration(validations.pattern, pattern),
     }),
   }
 }

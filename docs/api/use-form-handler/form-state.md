@@ -54,12 +54,12 @@ const { register, formState } = useFormHandler()
 ## Type Declarations
 
 ```ts
-export interface FormState {
+export interface FormState<T> {
   isDirty: boolean
   isTouched: boolean
   isValid: boolean
-  dirty: Record<string, boolean>
-  touched: Record<string, boolean>
-  errors: Record<string, string>
+  dirty: Record<keyof T, boolean>
+  touched: Record<keyof T, boolean>
+  errors: Record<keyof T, string | undefined>
 }
 ```

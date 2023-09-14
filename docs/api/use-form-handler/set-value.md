@@ -77,5 +77,5 @@ Just calling `triggerValidation` after a value is set ensures the validations ar
 ## Type Declarations
 
 ```ts
-export type SetValue = (name: string, value: any) => Promise<void>
+export type SetValue = (name: keyof T, value?: any) => Promise<void>
 ```

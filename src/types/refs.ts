@@ -39,4 +39,4 @@ export interface WrappedReference {
   _dependentFields?: string[]
 }
 
-export type Refs = Record<string, WrappedReference>
+export type Refs<T> = Record<keyof T, WrappedReference>

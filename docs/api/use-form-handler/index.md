@@ -165,37 +165,47 @@ Using the `always` validationMode will have a more significant impact on perform
 ## Type Declarations
 
 ```ts
-export type Interceptor = (_: InterceptorParams) => Promise<boolean> | boolean
-
-export type FormValidation = (
-  values: Record<string, any>
-) => Promise<boolean> | boolean
-
-export interface FormHandlerParams {
-  initialValues?:
-    | Record<string, any>
-    | Ref<Record<string, any>>
-    | ComputedRef<Record<string, any>>
-  interceptor?: Interceptor
-  validate?: FormValidation
-  validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
+export declare const useFormHandler: <
+  T extends Record<string, any> = Record<string, any>,
+  R extends T = T,
+>({
+  initialValues,
+  interceptor,
+  validate,
+  validationMode,
+  injectionKey,
+}?: FormHandlerParams<T, R>) => {
+  build: Build<T>
+  clearError: (name?: keyof T | undefined) => void
+  clearField: (name: keyof T) => Promise<void>
+  formState: {
+    readonly isDirty: boolean
+    readonly isTouched: boolean
+    readonly isValid: boolean
+    readonly dirty: import('@vue/reactivity').DeepReadonly<
+      import('@vue/reactivity').UnwrapRef<Record<keyof T, boolean>>
+    >
+    readonly touched: import('@vue/reactivity').DeepReadonly<
+      import('@vue/reactivity').UnwrapRef<Record<keyof T, boolean>>
+    >
+    readonly errors: import('@vue/reactivity').DeepReadonly<
+      import('@vue/reactivity').UnwrapRef<Record<keyof T, string | undefined>>
+    >
+  }
+  handleSubmit: (
+    successFn: HandleSubmitSuccessFn,
+    errorFn?: HandleSubmitErrorFn
+  ) => Promise<void>
+  modifiedValues: <TModified extends T>() => TModified
+  register: (name: keyof T, options?: RegisterOptions) => RegisterReturn
+  resetField: (name: keyof T) => void
+  resetForm: () => void
+  setError: (name: keyof T, error: string) => void
+  setValue: (name: keyof T, value?: any) => Promise<void>
+  triggerValidation: (name?: keyof T | undefined) => Promise<void>
+  unregister: (name: keyof T) => void
+  values: import('@vue/reactivity').DeepReadonly<
+    import('@vue/reactivity').UnwrapNestedRefs<T>
+  >
 }
-export interface FormHandlerReturn {
-  formState: FormState
-  values: Record<string, any>
-  clearError: ClearError
-  clearField: ClearField
-  handleSubmit: HandleSubmit
-  modifiedValues: ModifiedValues
-  register: Register
-  register: Build
-  resetField: ResetField
-  resetForm: ResetForm
-  setError: SetError
-  setValue: SetValue
-  triggerValidation: TriggerValidation
-  unregister: (name: string) => void
-}
-
-export type FormHandler = (_?: FormHandlerParams) => FormHandlerReturn
 ```

@@ -108,5 +108,5 @@ All the fields get validated when triggering the validation without specifying a
 ## Type Declarations
 
 ```ts
-export type TriggerValidation = (name?: string) => Promise<void>
+export type TriggerValidation = (name?: keyof T | undefined) => Promise<void>
 ```

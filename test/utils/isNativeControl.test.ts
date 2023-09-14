@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import isNativeControl from '../isNativeControl'
+import isNativeControl from '@/utils/isNativeControl'
 
 describe('isNativeControl', () => {
   it('should return true for input control', () => {
