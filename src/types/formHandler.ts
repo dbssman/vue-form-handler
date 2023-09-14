@@ -1,6 +1,12 @@
 import { ComputedRef, Ref } from '@vue/runtime-core'
 import { RegisterOptions, RegisterReturn } from './register'
 
+type ComputableUnion<T> = T | Ref<T> | ComputedRef<T>
+
+type ConfigType<T> = Partial<Record<keyof T, RegisterOptions>>
+
+type PossiblePromise<T> = T | Promise<T>
+
 export interface FormState<T> {
   isDirty: boolean
   isTouched: boolean
@@ -17,11 +23,15 @@ export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
 export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
 
 export type Build<T extends Record<string, any> = Record<string, any>> = <
-  TBuild extends Partial<Record<keyof T, RegisterOptions>>,
+  TBuild extends Partial<T>,
 >(
-  configuration: TBuild | Ref<TBuild> | ComputedRef<TBuild>
-) => ComputedRef<Record<keyof TBuild, Readonly<RegisterReturn<TBuild>>>>
-
+  configuration: ComputableUnion<ConfigType<TBuild>>
+) => ComputedRef<
+  Record<
+    keyof TBuild,
+    Readonly<RegisterReturn<Partial<Record<keyof TBuild, RegisterOptions>>>>
+  >
+>
 export interface PartialReturn<T> {
   /** Current form values */
   values: Partial<T>
@@ -79,23 +89,23 @@ export interface FormHandlerReturn<T extends Record<string, any>>
 
 export type Interceptor<T> = (
   _: InterceptorParams<T>
-) => Promise<boolean> | boolean
+) => PossiblePromise<boolean>
 
 export type SubmitValidation = (
   values: Record<string, any>
-) => Promise<boolean> | boolean
+) => PossiblePromise<boolean>
 
 export type InjectionKey = string | Symbol
 
 export interface FormHandlerParams<TForm, TInitial> {
   /** Values to initialize the form */
-  initialValues?: TInitial | Ref<TInitial> | ComputedRef<TInitial>
+  initialValues?: ComputableUnion<TInitial>
 
   /** Field change interceptor */
   interceptor?: Interceptor<TForm>
 
   /** Validation function to execute before submitting (when using this individual validations are invalidated) */
-  validate?: (values: Partial<TForm>) => Promise<boolean> | boolean
+  validate?: (values: Partial<TForm>) => PossiblePromise<boolean>
 
   /** Validation behavior options */
   validationMode?: 'onChange' | 'onBlur' | 'onSubmit' | 'always'
