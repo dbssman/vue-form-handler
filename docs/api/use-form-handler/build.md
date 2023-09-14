@@ -76,9 +76,13 @@ Notice how the template looks much cleaner with this approach, and this helps us
 
 ```ts
 export type Build<T extends Record<string, any> = Record<string, any>> = <
-  TBuild extends Partial<Record<keyof T, RegisterOptions>>,
+  TBuild extends Partial<T>,
 >(
-  configuration: TBuild | Ref<TBuild> | ComputedRef<TBuild>
-) => ComputedRef<Record<keyof TBuild, Readonly<RegisterReturn<TBuild>>>>
-
+  configuration: ComputableUnion<ConfigType<TBuild>>
+) => ComputedRef<
+  Record<
+    keyof TBuild,
+    Readonly<RegisterReturn<Partial<Record<keyof TBuild, RegisterOptions>>>>
+  >
+>
 ```
