@@ -1,4 +1,3 @@
-
 <template>
   <template v-if="error">
     <span>{{ error }}</span>
@@ -11,10 +10,10 @@ import { DeepReadonly, computed } from '@vue/runtime-core'
 import { FormState, InjectionKey } from './types'
 
 const props = defineProps<{
-  name:string;
-  formState?: DeepReadonly<FormState<Record<string,any>>>;
-  injectionKey?: InjectionKey;
-}>();
+  name: string
+  formState?: DeepReadonly<FormState<Record<string, any>>>
+  injectionKey?: InjectionKey
+}>()
 
 const usableFormState = computed(() =>
   props.formState
@@ -25,6 +24,4 @@ const usableFormState = computed(() =>
 const error = computed(() => usableFormState.value?.errors[props.name])
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

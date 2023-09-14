@@ -97,7 +97,10 @@ export type SubmitValidation = (
 
 export type InjectionKey = string | Symbol
 
-export interface FormHandlerParams<TForm, TInitial> {
+export interface FormHandlerParams<
+  TForm extends Record<string, any> = Record<string, any>,
+  TInitial extends Record<string, any> = Record<string, any>,
+> {
   /** Values to initialize the form */
   initialValues?: ComputableUnion<TInitial>
 
