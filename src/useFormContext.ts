@@ -6,4 +6,4 @@ export const useFormContext = <
   T extends Record<string, any> = Record<string, any>,
 >(
   key: InjectionKey = defaultInjectionKey
-) => inject<FormHandlerReturn<T>>(key)
+) => inject<FormHandlerReturn<T>>(key) as FormHandlerReturn<T>
