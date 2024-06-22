@@ -11,16 +11,20 @@ export interface FormState<T> {
   isDirty: boolean
   isTouched: boolean
   isValid: boolean
+  isValidating: boolean
   dirty: Record<keyof T, boolean>
   touched: Record<keyof T, boolean>
   errors: Record<keyof T, string | undefined>
+  validating: Record<keyof T, boolean>
 }
 
 /** Optional function to be called after a form failed to submit */
 export type HandleSubmitErrorFn<T> = (errors: FormState<T>['errors']) => void
 
 /** Expected function to be called after a form submitted successfully */
-export type HandleSubmitSuccessFn<T> = (values: Record<keyof T, any>) => void
+export type HandleSubmitSuccessFn<T> = (
+  values: Record<keyof T, any>
+) => PossiblePromise<void>
 
 export type Build<T extends Record<string, any> = Record<string, any>> = <
   TBuild extends Partial<T>,
