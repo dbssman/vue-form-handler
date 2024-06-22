@@ -1,15 +1,35 @@
 <template>
   <h2>Playground</h2>
   <form @submit.prevent="submitForm">
-    <input v-bind="register('playground')" />
+    <input
+      v-bind="
+        register('playground', {
+          validate: {
+            syncValidation: (value: string) =>
+              value?.length > 0 || 'Value cannot be empty',
+          },
+        })
+      "
+    />
     <button>Submit</button>
+    <pre>{{ formState }}</pre>
   </form>
 </template>
 
 <script setup lang="ts">
 import { useFormHandler } from '../src/index'
 
-const { register, handleSubmit, values, build } = useFormHandler()
+const { register, handleSubmit, formState, build } = useFormHandler()
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const testValidation = async (value: string) => {
+  await sleep(3000)
+  if (value === 'test') {
+    return 'Value cannot be "test"'
+  }
+  return true
+}
 
 const submitForm = () => {
   handleSubmit((form: any) => {
@@ -18,9 +38,8 @@ const submitForm = () => {
 }
 
 const form = build({
-  playground: {}
+  playground: {},
 })
-
 </script>
 
 <style>
