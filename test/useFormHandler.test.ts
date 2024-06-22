@@ -3,6 +3,8 @@ import { initialState, useFormHandler } from '@/useFormHandler'
 import { expect, it, describe } from 'vitest'
 import { retry } from './testing-utils'
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 describe('useFormHandler()', () => {
   describe('register()', () => {
     it('should register a field', () => {
@@ -12,6 +14,7 @@ describe('useFormHandler()', () => {
       expect(field.onBlur).toBeDefined()
       expect(field.isDirty).toBeUndefined()
       expect(field.isTouched).toBeUndefined()
+      expect(field.isValidating).toBeUndefined()
       expect(field.onClear).toBeDefined()
       expect(field.onChange).toBeDefined()
       expect(field.modelValue).toBe(null)
@@ -37,11 +40,12 @@ describe('useFormHandler()', () => {
       expect(field.modelValue).toBeDefined()
       expect(field['onUpdate:modelValue']).toBeDefined()
     })
-    it('should apply dirty and touched states when withDetails is specified', () => {
+    it('should apply dirty, touched and validation states when withDetails is specified', () => {
       const { register } = useFormHandler()
       const field = register('field', { withDetails: true })
       expect(field.isDirty).toBeDefined()
       expect(field.isTouched).toBeDefined()
+      expect(field.isValidating).toBeDefined()
     })
     it('should apply default value', () => {
       const { values, register } = useFormHandler()
@@ -141,6 +145,55 @@ describe('useFormHandler()', () => {
       await clearField('field')
       expect(values.field).toBe(null)
       expect(formState.isDirty).toBeTruthy()
+    })
+    it('should set validating state when async validation is in progress', async () => {
+      const { register, formState, triggerValidation } = useFormHandler()
+      register('field', {
+        validate: {
+          asyncValidation: async (value: string) => {
+            await sleep(200)
+            return value === 'test' || 'error'
+          },
+        },
+      })
+      triggerValidation('field')
+      await sleep(20)
+      expect(formState.isValidating).toBeTruthy()
+      expect(formState.validating).toStrictEqual({ field: true })
+      await sleep(200)
+      expect(formState.isValidating).toBeFalsy()
+      expect(formState.validating).toStrictEqual({})
+    })
+    it('should correctly validate when async validation fails', async () => {
+      const { register, formState, triggerValidation } = useFormHandler()
+      register('field', {
+        validate: {
+          asyncValidation: async (value: string) => {
+            await sleep(200)
+            return value === 'test' || 'error'
+          },
+        },
+      })
+      triggerValidation('field')
+      await sleep(200)
+      expect(formState.errors.field).toBe('error')
+      expect(formState.isValid).toBeFalsy()
+      expect(formState.validating).toStrictEqual({})
+      expect(formState.isValidating).toBeFalsy()
+    })
+    it('should not set validating state for sync validation', async () => {
+      const { register, formState, triggerValidation } = useFormHandler()
+      register('field', {
+        validate: {
+          error: (value: string) => value === 'test' || 'error',
+        },
+      })
+      triggerValidation('field')
+      await sleep(10)
+      expect(formState.errors.field).toBe('error')
+      expect(formState.isValid).toBeFalsy()
+      expect(formState.isValidating).toBeFalsy()
+      expect(formState.validating).toStrictEqual({})
     })
     it('should set an error programmatically', async () => {
       const { formState, setError } = useFormHandler()

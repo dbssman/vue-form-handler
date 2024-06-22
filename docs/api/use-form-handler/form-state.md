@@ -4,14 +4,16 @@ Provides you with the reactive state of the form, including validation, dirty an
 
 ## Return
 
-| attribute | type                      | description                                                    |
-| --------- | ------------------------- | -------------------------------------------------------------- |
-| dirty     | `Record<string, boolean>` | Object containing all the inputs that have been modified       |
-| errors    | `Record<string, string>`  | Object containing all the current field errors of the form     |
-| touched   | `Record<string, boolean>` | Object containing all the inputs the users has interacted with |
-| isDirty   | `boolean`                 | True if there is any modified field on the form                |
-| isTouched | `boolean`                 | True if there has been any interaction with a form field       |
-| isValid   | `boolean`                 | True if there are no form errors                               |
+| attribute    | type                      | description                                                    |
+| ------------ | ------------------------- | -------------------------------------------------------------- |
+| dirty        | `Record<string, boolean>` | Object containing all the fields that have been modified       |
+| errors       | `Record<string, string>`  | Object containing all the current field errors of the form     |
+| touched      | `Record<string, boolean>` | Object containing all the fields the users has interacted with |
+| validating   | `Record<string, boolean>` | Object containing all the fields undergoing validation         |
+| isDirty      | `boolean`                 | True if there is any modified field on the form                |
+| isTouched    | `boolean`                 | True if there has been any interaction with a form field       |
+| isValid      | `boolean`                 | True if there are no form errors                               |
+| isValidating | `boolean`                 | True if there are field validations in progress                |
 
 ## Rules
 
@@ -58,8 +60,10 @@ export interface FormState<T> {
   isDirty: boolean
   isTouched: boolean
   isValid: boolean
+  isValidating: boolean
   dirty: Record<keyof T, boolean>
   touched: Record<keyof T, boolean>
   errors: Record<keyof T, string | undefined>
+  validating: Record<keyof T, boolean>
 }
 ```

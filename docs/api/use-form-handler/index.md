@@ -182,6 +182,7 @@ export declare const useFormHandler: <
     readonly isDirty: boolean
     readonly isTouched: boolean
     readonly isValid: boolean
+    readonly isValidating: boolean
     readonly dirty: import('@vue/reactivity').DeepReadonly<
       import('@vue/reactivity').UnwrapRef<Record<keyof T, boolean>>
     >
@@ -190,6 +191,9 @@ export declare const useFormHandler: <
     >
     readonly errors: import('@vue/reactivity').DeepReadonly<
       import('@vue/reactivity').UnwrapRef<Record<keyof T, string | undefined>>
+    >
+    readonly validating: import('@vue/reactivity').DeepReadonly<
+      import('@vue/reactivity').UnwrapRef<Record<keyof T, boolean>>
     >
   }
   handleSubmit: (

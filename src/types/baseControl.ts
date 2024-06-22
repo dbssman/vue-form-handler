@@ -29,6 +29,9 @@ export interface BaseControlProps<
   /** Current touched state of the control */
   isTouched?: boolean
 
+  /** Current validating state of the control */
+  isValidating?: boolean
+
   /** Handler binding for native inputs */
   onChange?: (el: any) => Promise<void>
 }

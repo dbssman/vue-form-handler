@@ -6,6 +6,7 @@ export const BaseInputProps = {
   name: { type: String, required: true },
   isDirty: { type: Boolean, default: () => false },
   isTouched: { type: Boolean, default: () => false },
+  isValidating: { type: Boolean, default: () => false },
   disabled: { type: Boolean, default: () => false },
   error: { type: String, default: () => '' },
   onBlur: { type: Function, required: true },
