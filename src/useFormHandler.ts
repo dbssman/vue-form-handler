@@ -34,9 +34,11 @@ export const initialState = () => ({
   touched: {},
   dirty: {},
   errors: {},
+  validating: {},
   isDirty: false,
   isTouched: false,
   isValid: true,
+  isValidating: false,
 })
 
 type Refs<T> = Record<keyof T, WrappedReference>
@@ -106,6 +108,10 @@ export const useFormHandler = <
     formState.isTouched = Object.values(formState.touched).some(Boolean)
   }
 
+  const _updateValidatingState = () => {
+    formState.isValidating = Object.values(formState.validating).some(Boolean)
+  }
+
   const _validateField = async <T>({
     name,
     values,
@@ -119,7 +125,15 @@ export const useFormHandler = <
       return
     }
     for (const validation of Object.values(_refs[name]._validations)) {
+      const timeout = setTimeout(
+        () => setValidating(name as keyof TForm, true),
+        20
+      )
       const result = await (validation as any)(values[name])
+
+      clearTimeout(timeout)
+
+      setValidating(name as keyof TForm, false)
       if (result !== true) {
         formState.errors[name] = result
         break
@@ -181,6 +195,19 @@ export const useFormHandler = <
       }
       delete formState.touched[name]
       _updateTouchedState()
+    }
+  }
+
+  const setValidating = (name: keyof TForm, validating: boolean) => {
+    console.log(validating)
+    if (formState.validating[name] !== validating) {
+      if (validating) {
+        formState.validating[name] = true
+        _updateValidatingState()
+        return
+      }
+      delete formState.validating[name]
+      _updateValidatingState()
     }
   }
 
