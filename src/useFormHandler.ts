@@ -346,6 +346,7 @@ export const useFormHandler = <
       ...(withDetails && {
         isDirty: !!formState.dirty[name],
         isTouched: !!formState.touched[name],
+        isValidating: !!formState.validating[name],
       }),
       ...(native !== false && {
         onChange: async () => {
