@@ -39,6 +39,7 @@ Coming soon...
 | disabled              | `boolean`                            | Disabled state binding for the field                                                                                      |
 | isDirty               | `boolean`                            | Dirty state binding for the field. Only returned if `withDetails` is true                                                 |
 | isTouched             | `boolean`                            | Touched state binding for the field. Only returned if `withDetails` is true                                               |
+| isValidating          | `boolean`                            | Validating state binding for the field. Only returned if `withDetails` is true                                            |
 | onChange              | `(el: any) => Promise<void>`         | Value update handler for native inputs                                                                                    |
 | required              | `boolean \| string`                  | Native required validation. Only returned if `useNativeValidations` is set to true and `required` is set.                 |
 | min                   | `number \| Object`                   | Native min validation. Only returned if `useNativeValidations` is set to true and `min` is set.                           |
@@ -243,7 +244,6 @@ Custom validations are kept very simple, can be synchronous or asynchronous. We 
 ## Type Declarations
 
 ```ts
-
 interface ValidationWithMessage {
   value: number | string | RegExp
   message: string
@@ -281,6 +281,7 @@ export type Register = (
   onChange?: (() => Promise<void>) | undefined
   isDirty?: boolean | undefined
   isTouched?: boolean | undefined
+  isValidating?: boolean | undefined
   disabled?: boolean | undefined
   name: keyof T
   modelValue: T[keyof T]
