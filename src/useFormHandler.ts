@@ -124,22 +124,21 @@ export const useFormHandler = <
     if (_refs[name]._disabled) {
       return
     }
+    const timeout = setTimeout(
+      () => setValidating(name as keyof TForm, true),
+      20
+    )
     for (const validation of Object.values(_refs[name]._validations)) {
-      const timeout = setTimeout(
-        () => setValidating(name as keyof TForm, true),
-        20
-      )
       const result = await (validation as any)(values[name])
 
-      clearTimeout(timeout)
-
-      setValidating(name as keyof TForm, false)
       if (result !== true) {
         formState.errors[name] = result
         break
       }
       delete formState.errors[name]
     }
+    clearTimeout(timeout)
+    setValidating(name as keyof TForm, false)
   }
 
   const _validateForm = async <T extends Record<string, any>>(
